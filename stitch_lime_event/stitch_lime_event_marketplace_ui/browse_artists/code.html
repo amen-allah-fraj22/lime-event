@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME - Browse Artists</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#464747",
+                        "surface": "#f9f9f9",
+                        "surface-tint": "#566500",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-dim": "#dadada",
+                        "tertiary": "#5e5e5e",
+                        "on-primary-container": "#4c5900",
+                        "outline": "#767962",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-fixed-variant": "#404c00",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary-fixed": "#e4e2e1",
+                        "tertiary-fixed": "#e3e2e2",
+                        "primary-fixed-dim": "#b5d302",
+                        "surface-container": "#eeeeee",
+                        "on-surface": "#1a1c1c",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#535454",
+                        "primary-container": "#b7d507",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "on-secondary-container": "#656464",
+                        "secondary": "#5f5e5e",
+                        "tertiary-container": "#c9c8c8",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#e4e2e1",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d1f032",
+                        "outline-variant": "#c6c9ae",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#181e00",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9f9",
+                        "primary": "#566500",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b5d302",
+                        "on-surface-variant": "#454934"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom Scrollbar for Sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background-color: #e2e2e2;
+            border-radius: 4px;
+        }
+        
+        /* Range Slider Styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #b7d507;
+            cursor: pointer;
+            margin-top: -6px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e2e2e2;
+            border-radius: 2px;
+        }
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #e2e2e2;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-surface dark:bg-inverse-surface shadow-sm sticky top-0 z-50 transition-all duration-300">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<!-- Brand Logo -->
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed flex items-center gap-2" href="#">
+<span class="material-symbols-outlined filled-icon text-3xl">sunny</span>
+                LIME
+            </a>
+<!-- Navigation Links (Web) -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1 font-label-md text-label-md hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all rounded-sm px-2" href="#">Browse</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all rounded-sm px-2 pb-1" href="#">Events</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors font-label-md text-label-md hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all rounded-sm px-2 pb-1" href="#">My Profile</a>
+</div>
+<!-- Trailing Action -->
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center bg-surface-container-highest rounded-full px-4 py-2 border-2 border-transparent focus-within:border-primary-container focus-within:shadow-[0_0_0_3px_rgba(183,213,7,0.3)] transition-all">
+<span class="material-symbols-outlined text-secondary mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-on-surface font-body-md w-48 focus:ring-0 p-0 placeholder:text-secondary-fixed-dim" placeholder="Search artists..." type="text"/>
+</div>
+<button class="md:hidden text-on-surface p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border-2 border-surface-variant cursor-pointer hover:border-primary-container transition-colors hidden md:block">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait photo of a professional young woman with dark hair pulled back, smiling gently. The lighting is soft and natural, emphasizing a clean, approachable, and modern aesthetic consistent with a high-end platform profile picture. Subtle warm tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeH5M9KvTCIRsJ1l5Bp98OxZZX0FeLHGWYHQEeQ3prtpDulYl-nZnl2UFnCBviz9AO6GWYJ5RWP98icSq6CteGIvenZoKTRHFNHnQp8ZkbzAWSJQBj8c0l_zusGvX80kZgoPKpZcMFfseh-zSuCDDcpaIeewVAnpg_1LDR2x_ILDzld5-b5KKdqT01nJhUXBE5OkX7yyi5XpEGCdL_Xlj_QlTq9l5YosTKilqDBKkIYd6aC9ed8-VcWjj1fERjkkxj2N9dLr4TgHk"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<div class="flex-grow flex flex-col md:flex-row w-full max-w-[1600px] mx-auto overflow-hidden">
+<!-- Left Sidebar: Filters -->
+<aside class="w-full md:w-80 flex-shrink-0 bg-surface border-r border-surface-variant h-[calc(100vh-80px)] sticky top-[80px] overflow-y-auto sidebar-scroll hidden md:block">
+<div class="p-margin-desktop space-y-8">
+<div class="flex items-center justify-between pb-4 border-b border-surface-variant">
+<h2 class="font-headline-md text-headline-md-mobile text-on-surface">Filters</h2>
+<button class="text-secondary hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-wider">Clear All</button>
+</div>
+<!-- Genre Filter -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface uppercase text-secondary">Genre</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-surface group-hover:border-primary transition-colors">
+<input checked="" class="opacity-0 absolute inset-0 cursor-pointer peer" type="checkbox"/>
+<span class="material-symbols-outlined text-[14px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity absolute">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Traditional / Mezwed</span>
+<span class="ml-auto text-secondary text-sm">42</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-surface group-hover:border-primary transition-colors">
+<input class="opacity-0 absolute inset-0 cursor-pointer peer" type="checkbox"/>
+<span class="material-symbols-outlined text-[14px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity absolute">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Electronic / DJ</span>
+<span class="ml-auto text-secondary text-sm">86</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-surface group-hover:border-primary transition-colors">
+<input checked="" class="opacity-0 absolute inset-0 cursor-pointer peer" type="checkbox"/>
+<span class="material-symbols-outlined text-[14px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity absolute">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Jazz &amp; Blues</span>
+<span class="ml-auto text-secondary text-sm">15</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-surface group-hover:border-primary transition-colors">
+<input class="opacity-0 absolute inset-0 cursor-pointer peer" type="checkbox"/>
+<span class="material-symbols-outlined text-[14px] text-primary opacity-0 peer-checked:opacity-100 transition-opacity absolute">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface">Acoustic / Indie</span>
+<span class="ml-auto text-secondary text-sm">29</span>
+</label>
+<button class="text-primary font-label-sm text-label-sm hover:underline mt-2">Show more (12)</button>
+</div>
+</div>
+<!-- Location Filter -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface uppercase text-secondary">Location</h3>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-on-surface focus:outline-none focus:border-primary-container focus:shadow-[0_0_0_3px_rgba(183,213,7,0.3)] transition-all cursor-pointer">
+<option value="">All Cities</option>
+<option value="tunis">Tunis</option>
+<option selected="" value="sousse">Sousse</option>
+<option value="sfax">Sfax</option>
+<option value="djerba">Djerba</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Price Range Slider -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="font-label-md text-label-md text-on-surface uppercase text-secondary">Price / Event (TND)</h3>
+<span class="font-label-sm text-primary font-bold">150 - 800</span>
+</div>
+<div class="pt-2">
+<!-- Simplified single slider for visual representation, complex range slider needs JS -->
+<input class="w-full h-1 bg-surface-variant rounded-lg appearance-none cursor-pointer" max="2000" min="50" type="range" value="800"/>
+<div class="flex justify-between mt-2 text-secondary text-sm">
+<span>50 TND</span>
+<span>2000+ TND</span>
+</div>
+</div>
+</div>
+<!-- Availability Date Picker (Visual Mockup) -->
+<div class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface uppercase text-secondary">Availability</h3>
+<div class="relative">
+<div class="w-full flex items-center bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 cursor-pointer hover:border-primary-container transition-all">
+<span class="material-symbols-outlined text-secondary mr-3">calendar_month</span>
+<span class="font-body-md text-on-surface">Select Date</span>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area: Artist Grid -->
+<main class="flex-grow p-margin-mobile md:p-margin-desktop bg-surface-container-low min-h-[calc(100vh-80px)]">
+<!-- Page Header & Active Filters -->
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Fresh Talent</h1>
+<p class="font-body-lg text-body-lg text-secondary mt-2">Found 128 artists matching your criteria in <span class="font-semibold text-on-surface">Sousse</span></p>
+</div>
+<div class="flex items-center gap-4">
+<span class="font-body-md text-secondary">Sort by:</span>
+<div class="relative">
+<select class="appearance-none bg-surface border-2 border-surface-variant rounded-full px-6 py-2 pr-10 font-label-md text-label-md text-on-surface focus:outline-none focus:border-primary-container cursor-pointer">
+<option>Recommended</option>
+<option>Highest Rated</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary pointer-events-none text-[20px]">sort</span>
+</div>
+</div>
+</div>
+<!-- Active Filter Chips -->
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface border border-outline-variant text-sm font-label-sm">
+                    Traditional / Mezwed <span class="material-symbols-outlined text-[16px] ml-1 cursor-pointer hover:text-error transition-colors">close</span>
+</span>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface border border-outline-variant text-sm font-label-sm">
+                    Jazz &amp; Blues <span class="material-symbols-outlined text-[16px] ml-1 cursor-pointer hover:text-error transition-colors">close</span>
+</span>
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-surface border border-outline-variant text-sm font-label-sm">
+                    Sousse <span class="material-symbols-outlined text-[16px] ml-1 cursor-pointer hover:text-error transition-colors">close</span>
+</span>
+</div>
+<!-- Artist Grid (Bento/Card Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Artist Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border border-surface-variant">
+<div class="relative h-64 overflow-hidden">
+<img alt="Artist Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Dynamic shot of a male electronic music DJ performing live at a vibrant venue. He is wearing modern streetwear, focused on his mixing console. The lighting is moody with splashes of neon green and subtle blue accents, fitting the high-energy, contemporary aesthetic of the LIME platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnXSqRVi1yfANelxVEVvv-0xf9VwquRPVPqbd3XY5o6cjjPPQlByjSBoJK7s1BjkZkcS2XVoF2GXlXHj684O1Pc7JvgBFp7E0XWpdvIl7I-ycwtAemRi5V1xF_YIXnp6HQFzLrwxaCrAXuOj5JAT-gYPSts9kva0oqUTUE_j7rfIB54u1b7Wq6PaKLIiKxIlgP9UmxsCf7oqcui6CWFnwZMBrnU_syTgCoL1BedkwA0sVif5lyiSUoPp9BbQEui-cR_3g0DY-9bbQ"/>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined filled-icon text-[#FACC15] text-[16px]">star</span> 4.9
+                        </div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur font-label-sm text-label-sm text-on-surface">Electronic / DJ</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md-mobile text-on-surface font-bold">DJ Amine</h3>
+<span class="font-label-md text-primary font-bold">450 TND <span class="text-secondary font-normal text-sm">/ev</span></span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 mb-6">High-energy electronic sets blending contemporary beats with subtle North African rhythmic influences. Perfect for club nights and modern weddings.</p>
+<div class="mt-auto pt-4 border-t border-surface-variant flex gap-3">
+<button class="flex-1 bg-transparent border-2 border-on-surface text-on-surface font-label-md py-2.5 rounded-lg hover:bg-surface-variant transition-colors">View Profile</button>
+<button class="flex-1 bg-primary-container text-[#2E2E2E] font-label-md font-bold py-2.5 rounded-lg hover:bg-[#d1f032] hover:shadow-lg transition-all">Send Request</button>
+</div>
+</div>
+</article>
+<!-- Artist Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border border-surface-variant">
+<div class="relative h-64 overflow-hidden">
+<img alt="Artist Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A professional female jazz singer performing on stage, holding a vintage microphone. She is wearing an elegant black dress. The background is a soft, dark blur with warm spotlighting highlighting her face and the microphone. The mood is sophisticated, soulful, and premium, aligning with a high-end talent marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Y8bXLW60IxTzStotTMVA-nn7gq2boo0N44fVaxRu2Ih46Yh2p2PUNUznj0GINYTKF9yexPvJ6rwdipmo1jGY-f2X462CPSPQpwcQEFp2CTbj4tk1FsCT68IFuUJOMj67yWiQNmzMR_eA4gohy4-Ppo1X6VYDjQUz5BEeYhA6PnnmmHWll7Fg1Xwal7RvAShInsUtMkWEPWtCoNWa5K1OL1PHGTylC_QTY3_M7K7W7HWHiWw_wwo9eJz1YhDNp74hJHd9agR-kEM"/>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined filled-icon text-[#FACC15] text-[16px]">star</span> 4.8
+                        </div>
+<div class="absolute top-4 left-4">
+<span class="px-3 py-1 rounded-full bg-primary-container text-[#2E2E2E] font-label-sm text-label-sm font-bold">New</span>
+</div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur font-label-sm text-label-sm text-on-surface">Jazz &amp; Blues</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md-mobile text-on-surface font-bold">Yasmine Quartet</h3>
+<span class="font-label-md text-primary font-bold">600 TND <span class="text-secondary font-normal text-sm">/ev</span></span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 mb-6">A sophisticated four-piece jazz ensemble delivering smooth vocals and classic standards ideal for corporate galas and elegant receptions.</p>
+<div class="mt-auto pt-4 border-t border-surface-variant flex gap-3">
+<button class="flex-1 bg-transparent border-2 border-on-surface text-on-surface font-label-md py-2.5 rounded-lg hover:bg-surface-variant transition-colors">View Profile</button>
+<button class="flex-1 bg-primary-container text-[#2E2E2E] font-label-md font-bold py-2.5 rounded-lg hover:bg-[#d1f032] hover:shadow-lg transition-all">Send Request</button>
+</div>
+</div>
+</article>
+<!-- Artist Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border border-surface-variant">
+<div class="relative h-64 overflow-hidden">
+<img alt="Artist Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a skilled male musician's hands playing a traditional oud instrument. The lighting is warm and directional, emphasizing the rich wood grain of the instrument and the performer's technique. The background is a clean, neutral tone, creating a refined and culturally rich aesthetic suitable for a modern Tunisian platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdPRBpuP5fWN_a5Ld5fRSdTOLAFModKbKdX19Odam_wIkcu40Cmh1b9wmwNUESH9Ltw7hdyJRWVAOS0wpyGO8ojEA11fp_Y5yMGJCltTuem5rhrB0FGz3SNuQiAkkwRytyNumZqZN1bAezu29i4_mEy8LrU9BKF-Uk1F76Fwex5KZGFrbXFD958RiynYskwWYhhdGZ6szPvrPWg-tMDOwpPQzwJfTGF-pQebSB4qh7V7qAXUvN4FzLfCqJ0yIcYja4eK-yLow4mSs"/>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined filled-icon text-[#FACC15] text-[16px]">star</span> 5.0
+                        </div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur font-label-sm text-label-sm text-on-surface">Traditional / Mezwed</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md-mobile text-on-surface font-bold">Maestro Sami</h3>
+<span class="font-label-md text-primary font-bold">350 TND <span class="text-secondary font-normal text-sm">/ev</span></span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 mb-6">Masterful traditional performances bringing authentic Tunisian flavor to any gathering. Specializing in intimate acoustic sessions.</p>
+<div class="mt-auto pt-4 border-t border-surface-variant flex gap-3">
+<button class="flex-1 bg-transparent border-2 border-on-surface text-on-surface font-label-md py-2.5 rounded-lg hover:bg-surface-variant transition-colors">View Profile</button>
+<button class="flex-1 bg-primary-container text-[#2E2E2E] font-label-md font-bold py-2.5 rounded-lg hover:bg-[#d1f032] hover:shadow-lg transition-all">Send Request</button>
+</div>
+</div>
+</article>
+<!-- Artist Card 4 -->
+<article class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full border border-surface-variant">
+<div class="relative h-64 overflow-hidden">
+<img alt="Artist Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A lively indie pop band performing in a brightly lit studio space. A female lead singer with short hair is singing passionately while playing an acoustic guitar, backed by a drummer. The overall vibe is fresh, energetic, and contemporary, using bright, clean lighting and a minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkVZVdAzZkSC2zdtvWh_XNtT1XukahRepAxrlijQMDNwSIfQTQnA1wPp5rRZLRkP-9RY9O2Dxu4jgG4mD2JbkiSIH4T3ZpMOZ8FwAV87Wehza5bVKBAyExDZKy3eiy6X4TZN3Q4Y41xEl2VnEl3enXCITaqnMsd1OXbRwO1ZLDCTAYBY4gTFyZJwshk_e_6VrKa970Fzl6XFscNkutzv7msnv8hMDM35pSvUBxP_BSFS8jHGcdqd85fI8ezIZRN4A6ozxtACK2RJg"/>
+<div class="absolute top-4 right-4 bg-surface-container-lowest/90 backdrop-blur px-2 py-1 rounded text-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined filled-icon text-[#FACC15] text-[16px]">star</span> 4.7
+                        </div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur font-label-sm text-label-sm text-on-surface">Acoustic / Indie</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md-mobile text-on-surface font-bold">The Sunsets</h3>
+<span class="font-label-md text-primary font-bold">500 TND <span class="text-secondary font-normal text-sm">/ev</span></span>
+</div>
+<p class="font-body-md text-secondary line-clamp-2 mb-6">Upbeat acoustic covers and fresh original tracks. A favorite for outdoor festivals, beach parties, and casual daytime events.</p>
+<div class="mt-auto pt-4 border-t border-surface-variant flex gap-3">
+<button class="flex-1 bg-transparent border-2 border-on-surface text-on-surface font-label-md py-2.5 rounded-lg hover:bg-surface-variant transition-colors">View Profile</button>
+<button class="flex-1 bg-primary-container text-[#2E2E2E] font-label-md font-bold py-2.5 rounded-lg hover:bg-[#d1f032] hover:shadow-lg transition-all">Send Request</button>
+</div>
+</div>
+</article>
+</div>
+<!-- Pagination -->
+<div class="mt-12 flex justify-center">
+<nav class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-surface-variant text-secondary hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-primary-container text-[#2E2E2E] font-bold shadow-sm">1</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-surface-variant text-on-surface hover:border-primary transition-colors font-medium">2</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-surface-variant text-on-surface hover:border-primary transition-colors font-medium">3</button>
+<span class="text-secondary px-2">...</span>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-surface-variant text-on-surface hover:border-primary transition-colors font-medium">12</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-surface-variant text-secondary hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</nav>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline mt-auto w-full transition-opacity duration-300">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto">
+<div class="flex flex-col gap-4">
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed flex items-center gap-2" href="#">
+<span class="material-symbols-outlined filled-icon">sunny</span>
+                    LIME
+                </a>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant max-w-md">
+                    © 2024 LIME Marketplace. Tunisians talented together.
+                </p>
+</div>
+<div class="flex flex-col md:items-end justify-center">
+<div class="flex flex-wrap gap-6 font-label-sm text-label-sm">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Contact Support</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Tunisian Artist Hub</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

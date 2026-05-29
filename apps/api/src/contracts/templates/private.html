@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LIME Event Contract</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; color: #2E2E2E; }
+    h1 { color: #b7d507; border-bottom: 2px solid #b7d507; padding-bottom: 8px; }
+    .field { margin: 16px 0; }
+    .label { font-weight: bold; }
+    .signature { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 16px; }
+  </style>
+</head>
+<body>
+  <h1>LIME Event — Performance Contract</h1>
+  <p class="field"><span class="label">Event:</span> {{eventTitle}}</p>
+  <p class="field"><span class="label">Date:</span> {{eventDate}}</p>
+  <p class="field"><span class="label">Artist:</span> {{artistName}}</p>
+  <p class="field"><span class="label">Organizer:</span> {{organizerName}}</p>
+  <p class="field"><span class="label">Agreed Fee:</span> {{agreedPrice}} TND</p>
+  <p class="field">
+    <span class="label">Terms:</span>
+    Full fee payable via LIME platform. Cancellation fee may apply within 7 days of the event.
+  </p>
+  <section class="signature">
+    <p class="label">Organizer Signature:</p>
+    <p>{{organizerSignatureUrl}}</p>
+    <p class="label">Artist Signature:</p>
+    <p>{{artistSignatureUrl}}</p>
+  </section>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME | My Events</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        body {
+            background-color: #f9f9f9;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f9f9f9",
+                        "inverse-surface": "#2f3131",
+                        "primary": "#566500",
+                        "on-surface": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "outline-variant": "#c6c9ae",
+                        "inverse-primary": "#b5d302",
+                        "outline": "#767962",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-container": "#c9c8c8",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "on-primary-container": "#4c5900",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "secondary": "#5f5e5e",
+                        "on-tertiary-container": "#535454",
+                        "primary-container": "#b7d507",
+                        "on-primary-fixed-variant": "#404c00",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#454934",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#e4e2e1",
+                        "on-primary-fixed": "#181e00",
+                        "surface-container-low": "#f3f3f3",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "primary-fixed": "#d1f032",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#566500",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-secondary-container": "#656464",
+                        "on-secondary-fixed-variant": "#474747",
+                        "primary-fixed-dim": "#b5d302",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e3e2e2",
+                        "surface-dim": "#dadada",
+                        "tertiary": "#5e5e5e",
+                        "surface-container-highest": "#e2e2e2",
+                        "secondary-container": "#e4e2e1",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eeeeee"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant flex flex-col p-4 gap-2 z-50 hidden md:flex">
+<div class="mb-8 px-2 pt-2">
+<h1 class="font-headline-md text-headline-md font-black text-primary">LIME</h1>
+<div class="mt-4">
+<p class="font-label-md text-label-md text-primary">Organizer Portal</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Manage your talent</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary-container text-on-primary-container font-bold rounded-lg transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">event</span> My Events
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">book_online</span> Bookings
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">description</span> Contracts
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">payments</span> Payments
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">notifications</span> Notifications
+            </a>
+</nav>
+<div class="mt-auto">
+<button class="w-full bg-primary-container text-on-primary-container font-bold py-3 rounded-lg flex items-center justify-center gap-2 active:scale-98 transition-all hover:bg-primary-fixed">
+<span class="material-symbols-outlined">add</span> Create Event
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen flex flex-col relative">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-gutter py-4 w-full sticky top-0 z-40 bg-surface shadow-sm">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 w-64 focus:ring-2 focus:ring-primary-container text-label-md font-label-md" placeholder="Search events..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 text-secondary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-tertiary-container overflow-hidden border-2 border-primary-container">
+<img alt="User Profile Avatar" data-alt="A professional studio portrait of a corporate event organizer, smiling warmly. The image has high-key lighting, a minimalist blurred office background, and follows a clean, modern aesthetic with a soft focus. The person is dressed in smart-casual attire, reflecting a zesty yet professional Tunisian talent marketplace atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYyvMHdZ66OEXPN6cIsNPwJehec5wsBmsTs50FEz8TpDbPvUDCkQTVq45iHRNA_5ODc9H_hB3_1by_jTvvOotgctUT_SbAPwOqiCkORgVdPB_dtpJsBG-d424qZUBnXA9Y7OokJBWu2U3hGUBuMjEneH29COe2BGOlw_i5AAqa-J6lTflGfIbTzb3utZl28tfHnv9IfzrRnGrZ0d2Zbr8fpawcrnlX74Ua-C_Moknopo4PJLeXfijmGZdGOf96Fu2eiqMCoWtgqFc"/>
+</div>
+</div>
+</header>
+<!-- Content Body -->
+<div class="flex-1 p-gutter max-w-container-max w-full mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">My Events</h2>
+<p class="font-body-md text-body-md text-secondary">You have 12 active events this month.</p>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 border-2 border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">filter_list</span> Filter
+                    </button>
+<button class="flex-1 md:flex-none bg-primary-container text-on-primary-container font-bold px-6 py-2 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined">add_circle</span> New Event
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Stats (Introductory) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow border-l-4 border-primary-container">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Active Events</p>
+<h3 class="font-headline-lg text-headline-lg mt-2">08</h3>
+<p class="text-primary font-label-md text-label-md mt-1">+2 from last week</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow border-l-4 border-[#3b82f6]">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Open Roles</p>
+<h3 class="font-headline-lg text-headline-lg mt-2">24</h3>
+<p class="text-secondary font-label-md text-label-md mt-1">Pending matches</p>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow border-l-4 border-outline-variant">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Drafts</p>
+<h3 class="font-headline-lg text-headline-lg mt-2">03</h3>
+<p class="text-secondary font-label-md text-label-md mt-1">Ready for review</p>
+</div>
+</div>
+<!-- Table View Section -->
+<div class="bg-surface-container-lowest rounded-xl custom-shadow overflow-hidden border border-outline-variant">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Event Name</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Type</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Date</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">City</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Artists Contacted</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant">Status</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-fixed-dim flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">music_note</span>
+</div>
+<span class="font-body-md text-body-md font-bold text-on-surface">Carthage Jazz Nights</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Festival</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">June 15</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Carthage</td>
+<td class="px-6 py-4">
+<div class="flex -space-x-2">
+<img alt="Artist 1" class="h-8 w-8 rounded-full border-2 border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbZxjAn1JQ34Cc4ugn6Zl45LAnqKd9HptwrfPSjQLu_GTx-FH5jIJzjwu8APUh2x56VLtIJOpOFluKfz0cAHw4Ti5Z15yaiVzoyYFpdaTGP8dkVMBQHbylgVDfVh5V_jle4RifirzsjDAqDOsgLI4uTUZ2tl1yzu1h5G4IMknUPPt69TVNv_Sh3zHNoQvpYhaKfx8CKgJ8R-I6kGYV_BaxuxFINVyWsxKn7UWEL5RP1ZWToofaRQtjMZHJzxmbfbzOETeuQoixwCM"/>
+<img alt="Artist 2" class="h-8 w-8 rounded-full border-2 border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6fNCTZRt1mDruJ64dwvvE2VztwM8RjPrG-XDjDzuAi8bj0Dz7MT4zMwQ4D7Ust4B3q8J7jjHrk2xhJcFUR3PdQn56Ps1Vph1ZlVYMwUppHhjJ9Sv95Y1E5Z0RM5rJCzK8X0QP3kzScoQ2V8ZpoeRJcBcqk7Taim_lLwLeirLwIwJIWRNfc-6YO5YgJS2vMp2PSCaGwGXMpNqsiMfFfSxnpHAL9MWoi7v0cRERSHvQu-VkuYgWB4xku2InAILIb9XDTxRce0CG5jU"/>
+<img alt="Artist 3" class="h-8 w-8 rounded-full border-2 border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6y9pZqHgHgZ-szfsLYIvBA4eHMfOeGxfV_9jKiD5_axtZrXvXP9sG1XmDd_CZD4tHhE_uxmNoepKRmTYuiKy1bBkVmVdtnRVtSnOXU9EFQ8j5nQEbAey1KDbNTZ4bBu1sN7ERm9Hk44N9MefDPtkjwAB3wgSaZg8S8-eWXxbqNB-GlBfamY_FpZlJa5uctJ8Ixf5ty3nVP4MntzQyXKbL_gi1bB8q40jpgwm7JoIor4ihjM2eb_pInXBTqi3dcOj6czZ2Gre-76M"/>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-label-sm">3 artists</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-[#ecfccb] text-[#3f6212] font-label-sm text-label-sm">Contracted</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="View Matches">
+<span class="material-symbols-outlined">groups</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="Manage">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined">celebration</span>
+</div>
+<span class="font-body-md text-body-md font-bold text-on-surface">Summer Beach Gala</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Private</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">June 14</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Hammamet</td>
+<td class="px-6 py-4">
+<div class="flex -space-x-2">
+<img alt="Artist 1" class="h-8 w-8 rounded-full border-2 border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkbOSuCaRxJHO9RPKIBxTqsHenPq5AOaLbIaxolrkFa8j0odWxoX57UkcqZzv54vopqQmc3LCl8hbr7Gk2g4FgQASnggqXogXKVzd1M9wfmvRU_5cJN_zvqHkW7JkYR9HV4HnEAQmezUwsswQIa6MmLmqJu-D5SCe_F1K5KtF_ylekTwi59jRtju9ucICEQM4ZkuVA1Ay4k30UuhKq2QOx9Xxe3PwRtazZzc8CZnRZvAl8h2aav_Kg6-W5ZHcByucW4yiMVjnLTB0"/>
+<img alt="Artist 2" class="h-8 w-8 rounded-full border-2 border-surface-container-lowest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBybcQDvF2Vy-9t5adnjCd-Y_tB6mE_jD8toUziQq2g1t12npXHpjI4baU3-hyMDq77ZcVTtKos_ANzTnEu8W65sB9py8TEDMwMIKEPR1qgCxY1EfuFpAxJBsVyBbZteJOH-Zu1wG68ZLX32E1RGu7RctdlHPq-oBJN4rupxvneRD9roy45Cn4PJNIjOxY4WG324AJjfGzvwVj77OuOzJSGvSZrxGQhK6CMY9zNu2772uTKP1-qU__x_EozuP7QMHwfMfjXrZJZh64"/>
+<div class="h-8 w-8 rounded-full bg-surface-container-high border-2 border-surface-container-lowest flex items-center justify-center text-[10px] font-bold">+3</div>
+</div>
+<p class="text-[10px] mt-1 text-secondary font-label-sm">5 artists</p>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-[#dbeafe] text-[#1e40af] font-label-sm text-label-sm">Open</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="View Matches">
+<span class="material-symbols-outlined">groups</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="Manage">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">business</span>
+</div>
+<span class="font-body-md text-body-md font-bold text-on-surface">Corporate Summer Kick-off</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Corporate</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">July 02</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Tunis</td>
+<td class="px-6 py-4">
+<span class="text-secondary font-label-sm italic">None contacted</span>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-surface-variant text-secondary font-label-sm text-label-sm">Draft</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="View Matches">
+<span class="material-symbols-outlined">groups</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-highest text-secondary transition-all" title="Manage">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-variant mt-auto border-t border-outline-variant py-12">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-headline-md text-headline-md font-bold text-on-surface-variant">LIME</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-2 text-center md:text-left">© 2024 LIME Music &amp; Talent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Contact Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a>
+</div>
+</div>
+</footer>
+<!-- Floating Action Button -->
+<button aria-label="Create New Event" class="fixed bottom-8 right-8 w-16 h-16 bg-primary-container text-on-primary-container rounded-full shadow-lg hover:scale-110 active:scale-90 transition-all z-50 flex items-center justify-center group">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="absolute right-20 bg-inverse-surface text-surface px-4 py-2 rounded-lg text-label-sm font-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">New Event</span>
+</button>
+</main>
+<!-- Mobile Navigation Drawer Overlay (Logic placeholder) -->
+<div class="fixed inset-0 bg-black/50 z-[60] hidden opacity-0 transition-opacity duration-300" id="mobile-overlay"></div>
+<script>
+        // Micro-interaction for hover feedback on table rows
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateY(-2px)';
+                row.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+                row.style.zIndex = '10';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateY(0)';
+                row.style.boxShadow = 'none';
+                row.style.zIndex = '1';
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('w-80');
+            searchInput.parentElement.classList.remove('w-64');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('w-80');
+            searchInput.parentElement.classList.add('w-64');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                            String           @id @default(uuid())
+  email                         String           @unique
+  clerk_user_id                 String           @unique
+  is_verified                   Boolean          @default(false)
+  is_active                     Boolean          @default(true)
+  created_at                    DateTime         @default(now())
+  roles                         String[]         @default(["organizer"])
+  active_role                   String           @default("organizer")
+  artist_profile                ArtistProfile?
+  booking_requests_as_artist    BookingRequest[] @relation("artist")
+  booking_requests_as_organizer BookingRequest[] @relation("organizer")
+  events                        Event[]
+  notifications                 Notification[]
+}
+
+model ArtistProfile {
+  id              String   @id @default(uuid())
+  user_id         String   @unique
+  display_name    String
+  bio             String?
+  genres          String[]
+  city            String?
+  pricing_min     Int?
+  pricing_max     Int?
+  portfolio_links Json?
+  avg_rating      Float    @default(0)
+  total_bookings  Int      @default(0)
+  agency_id       String?
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id               String           @id @default(uuid())
+  organizer_id     String
+  title            String
+  event_type       EventType
+  city             String?
+  venue            String?
+  event_date       DateTime
+  start_time       String?
+  duration_hours   Float?
+  guest_count      Int?
+  budget_min       Int?
+  budget_max       Int?
+  style_tags       String[]
+  status           String           @default("draft")
+  created_at       DateTime         @default(now())
+  booking_requests BookingRequest[]
+  organizer        User             @relation(fields: [organizer_id], references: [id], onDelete: Cascade)
+}
+
+model BookingRequest {
+  id               String        @id @default(uuid())
+  event_id         String
+  artist_id        String
+  organizer_id     String
+  status           BookingStatus @default(pending)
+  message          String?
+  quote_amount     Int?
+  quote_conditions Json?
+  quote_expires_at DateTime?
+  created_at       DateTime      @default(now())
+  artist           User          @relation("artist", fields: [artist_id], references: [id], onDelete: Cascade)
+  event            Event         @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  organizer        User          @relation("organizer", fields: [organizer_id], references: [id], onDelete: Cascade)
+  contract         Contract?
+  messages         Message[]
+  payment          Payment?
+}
+
+model Contract {
+  id                  String         @id @default(uuid())
+  booking_request_id  String         @unique
+  pdf_url             String?
+  organizer_signed_at DateTime?
+  artist_signed_at    DateTime?
+  organizer_signature String?
+  artist_signature    String?
+  status              ContractStatus @default(draft)
+  template_type       String?
+  booking_request     BookingRequest @relation(fields: [booking_request_id], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id                 String         @id @default(uuid())
+  booking_request_id String         @unique
+  gross_amount       Int
+  commission_amount  Int
+  net_amount         Int
+  status             PaymentStatus  @default(pending)
+  payment_method     String?
+  payment_intent_id  String?
+  held_at            DateTime?
+  released_at        DateTime?
+  booking_request    BookingRequest @relation(fields: [booking_request_id], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  user_id    String
+  type       String
+  title      String
+  body       String
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id                 String         @id @default(uuid())
+  booking_request_id String
+  sender_id          String
+  content            String
+  created_at         DateTime       @default(now())
+  booking_request    BookingRequest @relation(fields: [booking_request_id], references: [id], onDelete: Cascade)
+}
+
+model Rating {
+  id                 String   @id @default(uuid())
+  booking_request_id String
+  reviewer_id        String
+  reviewee_id        String
+  score              Int
+  categories         Json?
+  comment            String?
+  created_at         DateTime @default(now())
+
+  @@unique([booking_request_id, reviewer_id])
+}
+
+model AvailabilityBlock {
+  id         String   @id @default(uuid())
+  artist_id  String
+  date       DateTime @db.Date
+  is_blocked Boolean  @default(true)
+
+  @@unique([artist_id, date])
+}
+
+enum Role {
+  artist
+  organizer
+  agency
+  admin
+}
+
+enum EventType {
+  wedding
+  corporate
+  festival
+  private
+  club
+  other
+}
+
+enum BookingStatus {
+  pending
+  quoted
+  negotiating
+  accepted
+  contracted
+  completed
+  declined
+  cancelled
+  expired
+}
+
+enum ContractStatus {
+  draft
+  pending_organizer
+  pending_artist
+  signed
+  disputed
+  void
+}
+
+enum PaymentStatus {
+  pending
+  held
+  released
+  refunded
+  disputed
+}

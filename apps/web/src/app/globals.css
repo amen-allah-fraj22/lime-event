@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Plain CSS fallbacks (visible even if Tailwind fails to compile) */
+html {
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+:root {
+  --color-primary: #b7d507;
+  --color-text: #2e2e2e;
+  --color-accent: #808080;
+  --color-background: #f9f9f9;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+a {
+  color: #566500;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+@layer components {
+  .lime-input {
+    @apply w-full rounded-lg border-2 border-surface-variant bg-white px-4 py-3 text-sm outline-none transition-all;
+    @apply focus:border-lime-container focus:shadow-[0_0_0_3px_rgba(183,213,7,0.3)];
+  }
+  .lime-btn-primary {
+    @apply rounded-lg bg-lime-container px-6 py-3 font-semibold text-brand-text shadow-sm transition hover:brightness-95;
+  }
+  .lime-btn-outline {
+    @apply rounded-lg border-2 border-brand-text bg-transparent px-6 py-3 font-semibold text-brand-text transition hover:bg-surface-container;
+  }
+  .lime-btn-secondary {
+    @apply rounded-lg border-2 border-surface-variant bg-white px-6 py-3 font-semibold text-brand-text transition hover:bg-surface-container;
+  }
+  .lime-card {
+    @apply rounded-xl border border-surface-variant bg-white shadow-card;
+  }
+  .lime-chip {
+    @apply rounded-full bg-lime/20 px-3 py-1 text-xs font-medium text-brand-text;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* Visible by default so a broken dev cache / missing JS still shows content */
+  .fade-in-section {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition:
+      opacity 0.8s ease-out,
+      transform 0.8s ease-out;
+  }
+
+  .fade-in-section.is-visible {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+  }
+
+  .nav-scrolled {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .nav-transparent {
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  .lime-btn-pill {
+    @apply rounded-full bg-primary-container px-8 py-4 text-label-md font-semibold text-on-primary-fixed transition-all hover:scale-[1.03] hover:shadow-lg;
+  }
+
+  .lime-btn-pill-outline {
+    @apply rounded-full border-2 border-on-surface bg-transparent px-8 py-4 text-label-md font-semibold text-on-surface transition-all hover:scale-[1.03] hover:bg-on-surface hover:text-surface-container-lowest;
+  }
+
+  .dashboard-active-nav {
+    font-weight: 700;
+    border-right: 4px solid #566500;
+    background-color: rgba(183, 213, 7, 0.1);
+    color: #566500;
+  }
+
+  .dashboard-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .step-transition {
+    transition:
+      opacity 0.3s ease-in-out,
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, #eeeeee 25%, #f5f5f5 50%, #eeeeee 75%);
+    background-size: 200% 100%;
+    animation: shimmer-animation 1.5s infinite;
+  }
+
+  @keyframes shimmer-animation {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .custom-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #566500;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 4px solid #b7d507;
+  }
+
+  .quote-card {
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .quote-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .stepper-line {
+    width: 2px;
+    position: absolute;
+    left: 15px;
+    top: 32px;
+    bottom: 0;
+  }
+
+  .contract-paper {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .unread-indicator {
+    border-left: 4px solid #b7d507;
+  }
+
+  .tab-active {
+    color: #566500;
+    position: relative;
+  }
+
+  .tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #b7d507;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+}

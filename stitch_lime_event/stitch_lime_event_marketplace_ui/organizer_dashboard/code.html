@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME Event - Organizer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#566500",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#656464",
+                        "on-primary-container": "#4c5900",
+                        "primary": "#566500",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed-dim": "#b5d302",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e3e2e2",
+                        "on-tertiary-container": "#535454",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#e4e2e1",
+                        "primary-container": "#b7d507",
+                        "inverse-primary": "#b5d302",
+                        "secondary": "#5f5e5e",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed": "#e4e2e1",
+                        "tertiary-container": "#c9c8c8",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-surface-variant": "#454934",
+                        "on-surface": "#1a1c1c",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "outline-variant": "#c6c9ae",
+                        "on-primary-fixed": "#181e00",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-container": "#eeeeee",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#404c00",
+                        "surface": "#f9f9f9",
+                        "primary-fixed": "#d1f032",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "tertiary": "#5e5e5e",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-bright": "#f9f9f9",
+                        "outline": "#767962",
+                        "background": "#f9f9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            font-weight: 700;
+            border-right: 4px solid #566500;
+            background-color: rgba(183, 213, 7, 0.1);
+            color: #566500;
+        }
+        .custom-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .hover-scale:hover {
+            transform: scale(1.01);
+            box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest dark:bg-inverse-surface custom-shadow z-50 flex flex-col py-base">
+<div class="px-6 py-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">LIME Event</h1>
+<p class="font-label-sm text-secondary opacity-70">Talent Marketplace</p>
+</div>
+<nav class="flex-1 space-y-1 px-4">
+<a class="flex items-center gap-3 px-4 py-3 active-nav rounded-r-lg transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="event_seat">event_seat</span>
+<span class="font-label-md">My Events</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="book_online">book_online</span>
+<span class="font-label-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-md">Contracts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-md">Notifications</span>
+</a>
+</nav>
+<div class="mt-auto px-4 pb-8 space-y-1">
+<button class="w-full bg-primary-container text-on-primary-fixed font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 mb-6 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>New Event</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:bg-surface-container transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-64 min-h-screen pb-20">
+<!-- Top App Bar -->
+<header class="h-16 flex items-center justify-between px-margin-desktop bg-surface sticky top-0 z-40">
+<div class="flex-1 max-w-xl">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary-container text-body-md" placeholder="Search events or artists..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-gutter">
+<div class="flex gap-4">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</button>
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant">
+<div class="text-right">
+<p class="font-label-md text-on-surface">Malek Ben Ali</p>
+<p class="text-[10px] uppercase tracking-wider text-secondary">Pro Organizer</p>
+</div>
+<img alt="Artist Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" data-alt="A close-up professional headshot of a stylish middle-aged man with short hair and a neat beard. He is wearing a crisp white shirt and looking confidently into the camera. The background is a soft, out-of-focus modern office setting with warm lighting, reflecting a corporate professional yet approachable vibe typical of a high-end marketplace user." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaCrt7BtauHRP2XKu5ro5q7_uZ-62E3DV9QQ_Xh-XrXvMbE2F-wOoWApvKraE4o3Iost_dFCEigAGsC4Ixea0BUWLtA_9nI2_Eyk-Lr-DP61KOIKfGrHkqXMPZAAO0_AcQx4C0zV1N8Ec49CruuQQpA48tgoHJeJlZBeNbdjrAJlHhroNg1O94rdjB4npAs2JXeG1je7Ui5XoTjcYhFklWtwcuwH1XAXgKiUw6wNeVpR1S7fnVs87zdbScjUOyXdaPjizLsWk4tIc"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="px-margin-desktop py-8 max-w-container-max mx-auto">
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Welcome back, Malek</h2>
+<p class="text-secondary font-body-lg">Here’s what’s happening with your events today.</p>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-12">
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow hover-scale transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/20 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="event">event</span>
+</div>
+<span class="text-primary font-bold text-label-sm">+2 this month</span>
+</div>
+<p class="text-secondary font-label-md uppercase tracking-wider">Active Events</p>
+<h3 class="text-headline-md font-bold mt-1">12</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow hover-scale transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary-container/30 rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="send">send</span>
+</div>
+<span class="text-secondary font-bold text-label-sm">4 awaiting</span>
+</div>
+<p class="text-secondary font-label-md uppercase tracking-wider">Pending Requests</p>
+<h3 class="text-headline-md font-bold mt-1">08</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow hover-scale transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/20 rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="verified_user">verified_user</span>
+</div>
+<span class="text-primary font-bold text-label-sm">100% Secure</span>
+</div>
+<p class="text-secondary font-label-md uppercase tracking-wider">Contracts Signed</p>
+<h3 class="text-headline-md font-bold mt-1">24</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow hover-scale transition-all">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary-container rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<span class="text-secondary font-bold text-label-sm">Total 2024</span>
+</div>
+<p class="text-secondary font-label-md uppercase tracking-wider">Total Spent (TND)</p>
+<h3 class="text-headline-md font-bold mt-1">45.2k</h3>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<!-- Main Activity Column -->
+<div class="lg:col-span-2 space-y-12">
+<section>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">My Active Events</h3>
+<a class="text-primary font-label-md hover:underline" href="#">View All</a>
+</div>
+<div class="space-y-6">
+<!-- Event Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden custom-shadow group flex flex-col md:flex-row">
+<div class="w-full md:w-48 h-48 relative overflow-hidden">
+<img alt="Event visual" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A wide-angle shot of a high-end outdoor gala event at dusk. String lights are hung across the venue, casting a warm golden glow. Sophisticated guests in formal attire are mingling near a modern stage setup. The overall atmosphere is elegant, vibrant, and festive, using a palette of deep blues, warm yellows, and sharp blacks." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwjp0lYWTyVQqbEzcrLkj8C9JhgaoAz8GLP8qD93wLFMRwVGYnF_QurWCW93nKBRIwgKzpJ_GiDu6XL0u6zqQzNqzZajgCKaWcrW-FArb2RJafGeR_J3HPLuZcQKq6VUAksr-xiVbISId2ZLb0j7AcpGJHgUXzIfMindTJtdUMrIzOIyKwZ6XrJSQZnKPtguFpd5OVPAW84PSN10BD848jR26LkLtQ_y4lyQ-6hEWALlE3sbBqSRkpBo1La3FXdPda5b0l-NbY2P0"/>
+<div class="absolute top-2 left-2 bg-primary-container text-on-primary-fixed px-3 py-1 rounded-full text-[10px] font-bold uppercase">Confirmed</div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline-md text-headline-md mb-1">Carthage Jazz Nights</h4>
+<span class="text-secondary font-label-sm">June 15, 2024</span>
+</div>
+<p class="text-secondary text-body-md mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                            Théâtre de Carthage, Tunis
+                                        </p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-3">
+<img alt="Artist 1" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Close up portrait of a young male musician with curly hair smiling. Studio lighting, soft white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8OzNJL2Y11eOQ2BGQOaOXy984QiU50JYWbAfMbiLsnDpg1sZ5_6G8FY6FJ1AEkZ-Q8alsdlfaLcXQBZrHIkcz2cjcNzz2UB0RhfgMSAY20GvqSFCNglxENNdK3NtXzm2jXjAJBIX3EJ9fQ-y8TrU1b_JBY07dUtTUv5KC356XnDhWrgV0n7Hudzk51MTSwHs-hsYitVQUeZuoXVTyfAkbJ5s-MX2nFyQ9Yj7Jbnx_qQiF2TiFFkEEI3OGzxvDqQpWBobdqvtjkMc"/>
+<img alt="Artist 2" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Close up portrait of a female vocalist with long dark hair. Moody dramatic lighting with hints of blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKPN9rIn7rM6o6QfXwiVIpW5yj5g4UvITeccon7rr4H_XUZZBbKpfIssDNVqzEvwdPD31gZGUZmvj2VXeXCsmy0sklOpzcOYI-KxNMeFOQkLbi0NsCLhcWb7UVabqAeHUmIJEqbnsXKYjcu8sXT6YXmrlP3kgBsDrjeOE9JW0z6S2T38QwI1dRWmkE1whSaTQBd7MlDYcq2Spyqt0u8eiciiV00UXFKGNFOsMaFl-qxDIbUcj29ggYLpye8i207uLPnJU-SRYbVrs"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container text-[10px] flex items-center justify-center font-bold text-secondary">+2</div>
+</div>
+<button class="border-2 border-on-surface text-on-surface px-4 py-2 rounded-lg font-label-md hover:bg-on-surface hover:text-surface transition-colors">Manage Bookings</button>
+</div>
+</div>
+</div>
+<!-- Event Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden custom-shadow group flex flex-col md:flex-row">
+<div class="w-full md:w-48 h-48 relative overflow-hidden">
+<img alt="Event visual" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="An energetic view from the crowd at a modern electronic music festival. Vibrant lime green and purple laser beams cut through the air. The stage features high-resolution LED screens displaying abstract geometric patterns. The lighting is high-contrast and high-energy, creating a professional concert vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE_O295FBfK85p92XyhMta3A1n7UvFH27IVoWpxUHWxEHda3naao3mwI8kgHJsIRWkiQokb5J88BQ-Q-2_zotFL7V_LgmBoYy1giB-9jweNbwCVNBtLXgu9J4M7xDfkwV39EI0SMt5W7itjWiDG-cjnT91MF9HK_AOV1N8SEL-AOAPlcoTK9R2k4xBYdx2SWWkjZ2NcLKhvWaM1a8rZI0MsfbcqznhsrGoQ5sJdm0LQF7SoY0MPLOmtMZoQlQ7IFkGFlsG3R4mR-U"/>
+<div class="absolute top-2 left-2 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase">In Selection</div>
+</div>
+<div class="flex-1 p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-headline-md text-headline-md mb-1">Corporate Summer Kick-off</h4>
+<span class="text-secondary font-label-sm">July 02, 2024</span>
+</div>
+<p class="text-secondary text-body-md mb-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                            Gammarth Beach Resort
+                                        </p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-3">
+<img alt="Artist 3" class="w-8 h-8 rounded-full border-2 border-surface-container-lowest object-cover" data-alt="Headshot of a man in a black turtleneck against a gray background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMk8MnC_wOZlQ7NvXWeV8RS83eV0b435kOyjm2ZyFsfS1WybmLaZsu3i54hz6cdrHedrRFJeBd7erNft5CDCDodiUeWbAwdBzV7UGapgS9Aymfy5a3TsgxHLrHpFyx6zV_olhCMVWNmqxE_AQ1wKviJJldgAcabhLyXkV3nKBZ6Q-7OZR7AX3RO-KxIQlGyYJDrL-P_ghnZUhAHtQ-nOlJPAsKpI-mH92YD-9nxX2NWwc-l_ukxrnF-UVy_MoyU_QUWaic67oJmew"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-container text-[10px] flex items-center justify-center font-bold text-secondary">3 slots</div>
+</div>
+<button class="bg-primary-container text-on-primary-fixed px-4 py-2 rounded-lg font-label-md hover:opacity-90 transition-opacity">Select Talent</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Sidebar Content Column -->
+<div class="space-y-12">
+<section>
+<h3 class="font-headline-md text-headline-md mb-6">Recent Activity</h3>
+<div class="bg-surface-container-lowest p-6 rounded-xl custom-shadow space-y-6 relative overflow-hidden">
+<div class="absolute left-8 top-10 bottom-10 w-0.5 bg-surface-container"></div>
+<!-- Activity Item 1 -->
+<div class="relative pl-10">
+<div class="absolute left-[-4px] top-1 w-4 h-4 rounded-full bg-primary-container border-4 border-surface-container-lowest"></div>
+<p class="font-label-md text-on-surface">Contract Signed</p>
+<p class="text-secondary text-label-sm">DJ Marwan for Carthage Jazz Nights</p>
+<p class="text-[10px] text-secondary/60 mt-1 uppercase">2 hours ago</p>
+</div>
+<!-- Activity Item 2 -->
+<div class="relative pl-10">
+<div class="absolute left-[-4px] top-1 w-4 h-4 rounded-full bg-tertiary-container border-4 border-surface-container-lowest"></div>
+<p class="font-label-md text-on-surface">Payment Processed</p>
+<p class="text-secondary text-label-sm">Deposit for Sound System Vendor</p>
+<p class="text-[10px] text-secondary/60 mt-1 uppercase">5 hours ago</p>
+</div>
+<!-- Activity Item 3 -->
+<div class="relative pl-10">
+<div class="absolute left-[-4px] top-1 w-4 h-4 rounded-full bg-secondary border-4 border-surface-container-lowest"></div>
+<p class="font-label-md text-on-surface">New Inquiry</p>
+<p class="text-secondary text-label-sm">Anis Group requested venue details</p>
+<p class="text-[10px] text-secondary/60 mt-1 uppercase">Yesterday</p>
+</div>
+<!-- Activity Item 4 -->
+<div class="relative pl-10">
+<div class="absolute left-[-4px] top-1 w-4 h-4 rounded-full bg-primary-container border-4 border-surface-container-lowest"></div>
+<p class="font-label-md text-on-surface">Event Created</p>
+<p class="text-secondary text-label-sm">Corporate Summer Kick-off</p>
+<p class="text-[10px] text-secondary/60 mt-1 uppercase">2 days ago</p>
+</div>
+</div>
+</section>
+<section>
+<h3 class="font-headline-md text-headline-md mb-6">Quick Actions</h3>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex flex-col items-center justify-center gap-3 p-4 bg-surface-container-low rounded-xl hover:bg-primary-container/10 transition-all text-secondary hover:text-primary border-2 border-transparent hover:border-primary-container/30 group">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">search</span>
+<span class="font-label-sm">Browse Artists</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-4 bg-surface-container-low rounded-xl hover:bg-primary-container/10 transition-all text-secondary hover:text-primary border-2 border-transparent hover:border-primary-container/30 group">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">history_edu</span>
+<span class="font-label-sm">Draft Contract</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+            searchInput.parentElement.classList.add('transition-transform');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

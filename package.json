@@ -1,0 +1,24 @@
+{
+  "name": "lime-event",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev -w @lime/api",
+    "dev:web": "npm run dev -w @lime/web",
+    "build:api": "npm run build -w @lime/api",
+    "build:web": "npm run build -w @lime/web",
+    "test:api": "npm run test -w @lime/api",
+    "db:migrate": "npm run db:deploy -w @lime/api",
+    "db:seed": "npm run db:seed -w @lime/api",
+    "db:setup": "npm run db:setup -w @lime/api",
+    "dev:web:clean": "npm run dev:clean -w @lime/web",
+    "fix:web:styles": "npm run dev:clean -w @lime/web",
+    "test:e2e": "npm run test:e2e -w @lime/web"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

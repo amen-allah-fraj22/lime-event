@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME - Fresh bookings, Fresh talent.</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#464747",
+                        "surface": "#f9f9f9",
+                        "surface-tint": "#566500",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-dim": "#dadada",
+                        "tertiary": "#5e5e5e",
+                        "on-primary-container": "#4c5900",
+                        "outline": "#767962",
+                        "secondary-fixed-dim": "#c8c6c6",
+                        "on-secondary": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-fixed-variant": "#404c00",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "secondary-fixed": "#e4e2e1",
+                        "tertiary-fixed": "#e3e2e2",
+                        "primary-fixed-dim": "#b5d302",
+                        "surface-container": "#eeeeee",
+                        "on-surface": "#1a1c1c",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-background": "#1a1c1c",
+                        "surface-bright": "#f9f9f9",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#535454",
+                        "primary-container": "#b7d507",
+                        "on-secondary-fixed": "#1b1c1c",
+                        "on-secondary-container": "#656464",
+                        "secondary": "#5f5e5e",
+                        "tertiary-container": "#c9c8c8",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#e4e2e1",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d1f032",
+                        "outline-variant": "#c6c9ae",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#181e00",
+                        "error": "#ba1a1a",
+                        "background": "#f9f9f9",
+                        "primary": "#566500",
+                        "tertiary-fixed-dim": "#c7c6c6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b5d302",
+                        "on-surface-variant": "#454934",
+                        "brand-text": "#2E2E2E"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .input-focus-glow:focus {
+            box-shadow: 0 0 0 3px rgba(183, 213, 7, 0.3);
+            border-color: #b7d507;
+        }
+        .tab-active {
+            background-color: #b7d507;
+            color: #2E2E2E;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            background-color: transparent;
+            color: #5f5e5e;
+        }
+    </style>
+</head>
+<body class="bg-surface text-brand-text font-body-md h-screen w-full flex">
+<div class="hidden lg:flex lg:w-1/2 bg-primary-container relative flex-col justify-between p-12 overflow-hidden">
+<div class="z-10">
+<h1 class="font-headline-xl text-headline-xl text-brand-text mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-4xl fill-icon">sunny</span>
+                LIME
+            </h1>
+<p class="font-headline-md text-headline-md text-brand-text">Fresh bookings, Fresh talent.</p>
+</div>
+<div class="absolute inset-0 z-0 flex items-center justify-center opacity-80 mix-blend-multiply">
+<img alt="LIME Brand Graphic" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF01h0XWgi__qgd2q8I-Q8Eu8I4Z64E_Z29CeUG_REYVhlCmxEWB1gAVwdfuCK6b95aPD72I16OCB4IL2Mi1m2CUdO-C3M_u4XIW7u3YJfpIDpCJQERokg8ER9Rr2YX0Ub5XZP6CLFiFzh_nB4xqE_xMJsc4ipG5zhUBdwybPSwagPVEWygkG-ZEpXUrarQDCCofB6T1w0nHfpYUaZEYgwLiRyG0IFvWjBr4cDKECpvglGcLNb1dV2O7S_pev3yE2ACjEqn8qlXM8"/>
+</div>
+<div class="z-10 relative">
+<p class="font-body-md text-body-md text-on-primary-container max-w-md">Join the vibrant Tunisian music and talent scene. Connect, book, and perform with the best.</p>
+</div>
+</div>
+<div class="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 sm:p-12 lg:p-24 bg-surface-container-lowest h-full overflow-y-auto" id="auth-container">
+<div class="w-full max-w-md" id="signup-form-wrapper">
+<div class="text-center mb-8">
+<h2 class="font-headline-lg text-headline-lg text-brand-text mb-2">Create an Account</h2>
+<p class="font-body-md text-body-md text-secondary">Join the freshest talent network.</p>
+</div>
+<div class="flex rounded-full bg-surface-container p-1 mb-8">
+<button class="tab-active flex-1 py-2 px-4 rounded-full font-label-md text-label-md text-center transition-all duration-200" onclick="switchRole('Artist')" type="button">Artist</button>
+<button class="tab-inactive flex-1 py-2 px-4 rounded-full font-label-md text-label-md text-center transition-all duration-200" onclick="switchRole('Organizer')" type="button">Organizer</button>
+<button class="tab-inactive flex-1 py-2 px-4 rounded-full font-label-md text-label-md text-center transition-all duration-200" onclick="switchRole('Agency')" type="button">Agency</button>
+</div>
+<form class="space-y-5">
+<div>
+<label class="block font-label-sm text-label-sm text-brand-text uppercase mb-1" for="name">Full Name</label>
+<input class="w-full bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-body-md text-brand-text focus:outline-none input-focus-glow transition-all" id="name" name="name" placeholder="John Doe" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-brand-text uppercase mb-1" for="email">Email Address</label>
+<input class="w-full bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-body-md text-brand-text focus:outline-none input-focus-glow transition-all" id="email" name="email" placeholder="john@example.com" required="" type="email"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-brand-text uppercase mb-1" for="password">Password</label>
+<input class="w-full bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-body-md text-brand-text focus:outline-none input-focus-glow transition-all" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<button class="w-full bg-primary-container text-brand-text font-label-md text-label-md font-bold py-3 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-200" type="button">
+                    Sign Up as <span id="role-display">Artist</span>
+</button>
+</form>
+<div class="mt-6 flex items-center justify-center space-x-4">
+<span class="h-px bg-surface-variant w-full"></span>
+<span class="font-label-sm text-label-sm text-secondary uppercase whitespace-nowrap">Or continue with</span>
+<span class="h-px bg-surface-variant w-full"></span>
+</div>
+<div class="mt-6">
+<button class="w-full bg-surface-container-lowest border-2 border-surface-variant text-brand-text font-label-md text-label-md py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors duration-200" type="button">
+<img alt="Google Logo" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8D8B8oOVZbqIq1EcARVxJSaIW_cRAcySgUt96ylrRH51P__XZ1vA5wM1PqyiXMSx3a4jrL7dBI0l1vbN64uPu5UW6gqpFW63ZXH2IZZhIgVki0NKsBEHorMHVqVV1wN7RiQDa42KxRE2EJV6mOZXTiyJLtsQoBgqcPJD5aKbJNbTQhIq_2Wu5h_8vk4bTFo-nXImunc_1GVmOWyBGppbs8glPPZHzbhW9nmYY5qkNcqKKTEyX30tdBP7hiX2Joj5aQkEEFRhYD0s"/>
+                    Google
+                </button>
+</div>
+<p class="mt-8 text-center font-body-md text-body-md text-secondary">
+                Already have an account? <button class="text-primary font-bold hover:underline" onclick="toggleForm('login')" type="button">Log in</button>
+</p>
+</div>
+<div class="w-full max-w-md hidden" id="login-form-wrapper">
+<div class="text-center mb-8">
+<h2 class="font-headline-lg text-headline-lg text-brand-text mb-2">Welcome Back</h2>
+<p class="font-body-md text-body-md text-secondary">Log in to manage your bookings.</p>
+</div>
+<form class="space-y-5">
+<div>
+<label class="block font-label-sm text-label-sm text-brand-text uppercase mb-1" for="login-email">Email Address</label>
+<input class="w-full bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-body-md text-brand-text focus:outline-none input-focus-glow transition-all" id="login-email" name="email" placeholder="john@example.com" required="" type="email"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<label class="block font-label-sm text-label-sm text-brand-text uppercase" for="login-password">Password</label>
+<a class="font-label-sm text-label-sm text-primary hover:underline" href="#">Forgot?</a>
+</div>
+<input class="w-full bg-surface-container-lowest border-2 border-surface-variant rounded-lg px-4 py-3 font-body-md text-body-md text-brand-text focus:outline-none input-focus-glow transition-all" id="login-password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<button class="w-full bg-primary-container text-brand-text font-label-md text-label-md font-bold py-3 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-200" type="button">
+                    Log In
+                </button>
+</form>
+<div class="mt-6 flex items-center justify-center space-x-4">
+<span class="h-px bg-surface-variant w-full"></span>
+<span class="font-label-sm text-label-sm text-secondary uppercase whitespace-nowrap">Or continue with</span>
+<span class="h-px bg-surface-variant w-full"></span>
+</div>
+<div class="mt-6">
+<button class="w-full bg-surface-container-lowest border-2 border-surface-variant text-brand-text font-label-md text-label-md py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors duration-200" type="button">
+<img alt="Google Logo" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOGczCV8zhjJKtBG1iHbb1OMkSMbTSjgGhWmM88m_1MMzwD4y8KgFQ2lBdRHwbqIfnNJYFoSBAWmBFMvavZ7LCJJPynZt-AoR9I1Z5yRBX5s9v4Iw3n0bb4vUIMF3UUKK1QRKsVvIKbuxbBx7t7ZJBwSrOEj-Sl4jWqc02P3dLwxbt-cME7aqXHuaV5CcHDIxKqAfx5oWtuk-aPK00xZGx7f1pJeqibqbJ_IHXBicAaXWnTZRc2Jm8Dk851GDwHpSQ_2YRSDqKAHg"/>
+                    Google
+                </button>
+</div>
+<p class="mt-8 text-center font-body-md text-body-md text-secondary">
+                Don't have an account? <button class="text-primary font-bold hover:underline" onclick="toggleForm('signup')" type="button">Sign up</button>
+</p>
+</div>
+</div>
+<script>
+        function switchRole(role) {
+            const buttons = document.querySelectorAll('#signup-form-wrapper .rounded-full > button');
+            buttons.forEach(btn => {
+                if (btn.textContent === role) {
+                    btn.classList.remove('tab-inactive');
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                    btn.classList.add('tab-inactive');
+                }
+            });
+            document.getElementById('role-display').textContent = role;
+        }
+
+        function toggleForm(formType) {
+            const signupForm = document.getElementById('signup-form-wrapper');
+            const loginForm = document.getElementById('login-form-wrapper');
+            
+            if (formType === 'login') {
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+            }
+        }
+    </script>
+</body></html>

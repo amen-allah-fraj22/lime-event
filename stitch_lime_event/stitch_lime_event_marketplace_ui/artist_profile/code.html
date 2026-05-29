@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME - Artist Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed-variant": "#464747",
+                      "surface": "#f9f9f9",
+                      "surface-tint": "#566500",
+                      "on-secondary-fixed-variant": "#474747",
+                      "surface-variant": "#e2e2e2",
+                      "inverse-on-surface": "#f1f1f1",
+                      "surface-dim": "#dadada",
+                      "tertiary": "#5e5e5e",
+                      "on-primary-container": "#4c5900",
+                      "outline": "#767962",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#f3f3f3",
+                      "inverse-surface": "#2f3131",
+                      "on-primary-fixed-variant": "#404c00",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "secondary-fixed": "#e4e2e1",
+                      "tertiary-fixed": "#e3e2e2",
+                      "primary-fixed-dim": "#b5d302",
+                      "surface-container": "#eeeeee",
+                      "on-surface": "#1a1c1c",
+                      "surface-container-highest": "#e2e2e2",
+                      "on-background": "#1a1c1c",
+                      "surface-bright": "#f9f9f9",
+                      "surface-container-high": "#e8e8e8",
+                      "on-tertiary-container": "#535454",
+                      "primary-container": "#b7d507",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "on-secondary-container": "#656464",
+                      "secondary": "#5f5e5e",
+                      "tertiary-container": "#c9c8c8",
+                      "error-container": "#ffdad6",
+                      "on-error": "#ffffff",
+                      "secondary-container": "#e4e2e1",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "primary-fixed": "#d1f032",
+                      "outline-variant": "#c6c9ae",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed": "#181e00",
+                      "error": "#ba1a1a",
+                      "background": "#f9f9f9",
+                      "primary": "#566500",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#b5d302",
+                      "on-surface-variant": "#454934"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "margin-desktop": "40px",
+                      "gutter": "24px",
+                      "margin-mobile": "16px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "headline-xl": ["Plus Jakarta Sans"],
+                      "body-md": ["Hanken Grotesk"],
+                      "label-md": ["Hanken Grotesk"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+              },
+              "boxShadow": {
+                  "soft": "0px 4px 20px rgba(0, 0, 0, 0.04)"
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { background-color: #f9f9f9; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .btn-primary { background-color: #b7d507; color: #1a1c1c; font-weight: 700; transition: all 0.2s; border-radius: 0.5rem; }
+        .btn-primary:hover { transform: scale(1.01); box-shadow: 0px 6px 24px rgba(183, 213, 7, 0.2); }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04); border-radius: 1rem; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="docked full-width top-0 shadow-sm bg-surface dark:bg-inverse-surface z-50 sticky">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max mx-auto">
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sunny</span>
+                LIME
+            </a>
+<!-- Desktop Nav Links -->
+<div class="hidden md:flex items-center gap-8 font-label-md text-label-md">
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1" href="#">Browse</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors pb-1" href="#">Events</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:text-primary transition-colors pb-1" href="#">My Profile</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-label-md text-label-md text-secondary hover:text-primary transition-colors">Logout</button>
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover border-2 border-surface-container" data-alt="A small circular portrait photograph of a young professional user. The lighting is soft and flattering, creating a high-end modern look. The background is neutral, ensuring the user remains the focus. The overall aesthetic is clean and corporate modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfrMUvaOY0HPj0SPV8ICf9ZjuUsBuPq5jFpd-8xpxVzaAKiRLcAmhWZgpBnSq0_Knk4gK2PzgHYgaNBSfd0lBgP9sLRmNxFgxYG5uzTO8u_VkRtL6mbTWnbgkJfVy7yaBdOiGIlN_6w3zHSIIiK1XepGbpafVkwjDA1K5OhbyRrIkszv9_yjUqy6GIBwoFqAhAnzV_zMraScr_n_PYcj9pXK4kRjez9LD8EEDSlB-TyjO6x584zFjxyLyQQe-ZUGTnuM09msfCyWo"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section with Cover & Avatar -->
+<section class="relative w-full max-w-container-max mx-auto md:px-margin-desktop mt-4 md:mt-8 mb-12">
+<div class="w-full h-[250px] md:h-[400px] md:rounded-xl overflow-hidden relative">
+<img alt="Cover Photo" class="w-full h-full object-cover" data-alt="A wide cinematic shot of a vibrant musical performance in Tunisia. The stage is bathed in dynamic, colorful lighting, capturing the high-energy and zesty professionalism of the LIME brand. The image is crisp, high-resolution, and perfectly suited for a premium marketplace hero banner." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQfaos_to-nAFfTDyGFqsUyHK5hoHOSsdA8oYpOztze-PYJl68yi6g19PSHxGBFt3vkU5gdSi0lWDH4wq3LlHv4Z-hZZcqDRNyS72M91CfL-nW-fQlnuQJBzDPv4LNEIv8CoTWea8Rd1Kzu-gN3s6Rj26UopgsobzLfKRq7S1Il174nN275K0X4O4ELe9KAFlyHNtuZuStF-2hPSyKdZLoOKR53hGO9_8Lb19I7M0OFEFdRqrbfqLHG1ChjAp4PE53JwPPJCXeG6Q"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+</div>
+<!-- Profile Info Overlay / Overlapping Card -->
+<div class="glass-card -mt-20 md:-mt-32 mx-margin-mobile md:mx-12 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-end gap-6 relative z-10">
+<div class="relative -mt-16 md:-mt-24">
+<img alt="Artist Avatar" class="w-32 h-32 md:w-48 md:h-48 rounded-xl object-cover border-4 border-surface shadow-lg" data-alt="A close-up, high-quality portrait of a charismatic Tunisian musician. They are looking confidently at the camera, embodying the approachable yet authoritative personality of the LIME brand. The lighting is bright and modern, creating a fresh and professional appearance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHGRREyAAyLx8cwSpf-nmEvYT6rW-Uk8qgEYh5FPie9tSX89KEr7p7twDs_bA_4gg_Q3gqvyCDS0r4J0RqowE2DdCSU3sG52jLV81rKYji4lvRToX3PxIFITQZr1Trw4u-ctGXy_96aGeSuRhQAUkdoQFtQwt7Sr9GueXVMK3yE50Cc6lnkv-lbv7gDtjk5rvaqPCZTH_aj6rcrRqAeZPVJrlusJo7ZvRWDZK8dSKkN1EP6TRwWX9CLxPogzBDijYQpBZ0T4kG3Xg"/>
+<div class="absolute bottom-2 right-2 bg-primary-container text-on-primary-container font-label-sm text-label-sm px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[14px]">verified</span> PRO
+                    </div>
+</div>
+<div class="flex-grow flex flex-col gap-2">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-on-surface m-0">DJ Youssef</h1>
+<div class="flex items-center gap-2 text-secondary mt-1 font-body-md text-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span> Tunis, Tunisia
+                            </div>
+</div>
+<button class="btn-primary px-8 py-4 font-label-md text-label-md uppercase tracking-wider flex items-center gap-2 justify-center w-full md:w-auto">
+<span class="material-symbols-outlined">calendar_add_on</span> Send Booking Request
+                        </button>
+</div>
+<div class="flex flex-wrap gap-2 mt-4">
+<span class="bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-full font-label-sm text-label-sm">Electronic</span>
+<span class="bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-full font-label-sm text-label-sm">House</span>
+<span class="bg-surface-container-highest text-on-surface px-3 py-1.5 rounded-full font-label-sm text-label-sm">Techno</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Tabs Navigation -->
+<div class="w-full border-b border-surface-variant mb-8 sticky top-[72px] bg-surface z-40">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex overflow-x-auto gap-8 no-scrollbar">
+<button class="font-label-md text-label-md py-4 text-primary border-b-2 border-primary whitespace-nowrap" id="tab-about" onclick="switchTab('about')">About</button>
+<button class="font-label-md text-label-md py-4 text-secondary hover:text-primary whitespace-nowrap" id="tab-portfolio" onclick="switchTab('portfolio')">Portfolio</button>
+<button class="font-label-md text-label-md py-4 text-secondary hover:text-primary whitespace-nowrap" id="tab-pricing" onclick="switchTab('pricing')">Pricing</button>
+<button class="font-label-md text-label-md py-4 text-secondary hover:text-primary whitespace-nowrap" id="tab-reviews" onclick="switchTab('reviews')">Reviews (42)</button>
+</div>
+</div>
+<!-- Content Area -->
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-24 min-h-[400px]">
+<!-- About Tab -->
+<div class="tab-content active grid grid-cols-1 md:grid-cols-3 gap-gutter" id="content-about">
+<div class="md:col-span-2 space-y-8">
+<section class="bg-surface-container-lowest p-8 rounded-2xl shadow-soft">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Biography</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed mb-4">
+                            Youssef is a premier electronic music producer and DJ based in Tunis. With over a decade of experience blending traditional Tunisian rhythms with modern techno and house beats, he brings a unique, high-energy atmosphere to any event.
+                        </p>
+<p class="font-body-md text-body-md text-secondary leading-relaxed">
+                            Known for his precise mixing and reading of the crowd, Youssef has headlined major festivals across North Africa and holds residencies at top clubs in the capital. His setup includes industry-standard Pioneer CDJs and a custom analog synth rig for live elements.
+                        </p>
+</section>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-soft border border-surface-variant">
+<h3 class="font-label-md text-label-md uppercase text-secondary mb-4 tracking-widest">Quick Stats</h3>
+<ul class="space-y-4">
+<li class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="text-on-surface-variant font-body-md text-body-md">Experience</span>
+<span class="font-label-md text-label-md text-on-surface">10+ Years</span>
+</li>
+<li class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="text-on-surface-variant font-body-md text-body-md">Events Completed</span>
+<span class="font-label-md text-label-md text-on-surface">150+</span>
+</li>
+<li class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="text-on-surface-variant font-body-md text-body-md">Response Time</span>
+<span class="font-label-md text-label-md text-primary">~2 Hours</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Portfolio Tab -->
+<div class="tab-content space-y-12" id="content-portfolio">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Latest Mixes &amp; Performances</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Placeholder for embedded media -->
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-soft border border-surface-variant aspect-video flex items-center justify-center relative group cursor-pointer">
+<img alt="SoundCloud Mix Thumbnail" class="w-full h-full object-cover absolute inset-0 opacity-80 group-hover:opacity-100 transition-opacity" data-alt="A close up shot of a DJ mixing desk with glowing buttons and sliders. The atmosphere is dark but illuminated by the colorful LEDs of the equipment, suggesting a professional and dynamic musical environment. High contrast, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBtJxUFLBlCLvyVTON3YLi_dtxqxddVt7SBeXVe0gCPJMo379IEDZD643kvuXyOw5zAOgniVndJ6om0jZYi8Wgz12R9y3IklE9CENKeaLJ6l-JGhu-GKuZMlq0yQcf34c6IN9T1Kc-BojyI8Lp4E1FbBEwtfjssugIzrY2L_W-q98qp_dzK_CvbduyzlpT-oFwZmuFi_9V-q8XiFSy3vlp4DJHJvsGZ7woLOpb903tGi7gM8A2ojU8hMTlR_9kr0SIxHBYEs_3pDs"/>
+<div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+<span class="material-symbols-outlined text-white text-[64px] z-10 drop-shadow-lg group-hover:scale-110 transition-transform">play_circle</span>
+<div class="absolute bottom-4 left-4 z-10 text-white">
+<p class="font-label-sm text-label-sm uppercase opacity-80">SoundCloud</p>
+<p class="font-headline-md text-headline-md">Summer Sunset Mix '24</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pricing Tab -->
+<div class="tab-content max-w-3xl mx-auto" id="content-pricing">
+<h2 class="font-headline-md text-headline-md text-on-surface text-center mb-8">Packages &amp; Rates</h2>
+<div class="bg-surface-container-lowest rounded-2xl shadow-soft overflow-hidden">
+<div class="p-8 border-b border-surface-variant flex justify-between items-center">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Standard DJ Set</h3>
+<p class="font-body-md text-body-md text-secondary mt-1">Up to 3 hours of continuous music.</p>
+</div>
+<div class="text-right">
+<p class="font-label-sm text-label-sm uppercase text-secondary tracking-widest">Starting from</p>
+<p class="font-headline-xl text-headline-lg text-primary">800 TND</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 flex justify-end">
+<button class="btn-primary px-6 py-3 font-label-md text-label-md uppercase tracking-wider">Request Custom Quote</button>
+</div>
+</div>
+</div>
+<!-- Reviews Tab -->
+<div class="tab-content max-w-4xl mx-auto" id="content-reviews">
+<div class="flex items-center gap-4 mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Client Reviews</h2>
+<div class="flex items-center text-primary-container">
+<span class="material-symbols-outlined" data-weight="fill">star</span>
+<span class="material-symbols-outlined" data-weight="fill">star</span>
+<span class="material-symbols-outlined" data-weight="fill">star</span>
+<span class="material-symbols-outlined" data-weight="fill">star</span>
+<span class="material-symbols-outlined" data-weight="fill">star_half</span>
+</div>
+<span class="font-label-md text-label-md text-secondary">4.8 (42 Reviews)</span>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-lowest p-6 rounded-2xl shadow-soft">
+<p class="font-body-md text-body-md text-on-surface italic mb-4">"Absolutely killed it at our corporate event. The energy was perfect, and he knew exactly how to read the crowd. Highly recommend!"</p>
+<p class="font-label-sm text-label-sm text-secondary">- Sarah T. (Event Organizer)</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full mt-auto border-t border-outline-variant dark:border-outline bg-surface-container-lowest dark:bg-inverse-surface grid grid-cols-1 md:grid-cols-2 gap-gutter px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto flat no shadows transition-opacity duration-300">
+<div>
+<p class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">sunny</span> LIME
+            </p>
+<p class="font-body-md text-body-md text-primary dark:text-primary-fixed">© 2024 LIME Marketplace. Tunisians talented together.</p>
+</div>
+<div class="flex flex-col md:flex-row gap-4 md:gap-8 justify-end items-start md:items-center font-label-sm text-label-sm">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Contact Support</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary hover:underline decoration-primary transition-all" href="#">Tunisian Artist Hub</a>
+</div>
+</footer>
+<script>
+        function switchTab(tabId) {
+            // Update Tab Styling
+            const tabs = ['about', 'portfolio', 'pricing', 'reviews'];
+            tabs.forEach(id => {
+                const btn = document.getElementById(`tab-${id}`);
+                if (id === tabId) {
+                    btn.className = "font-label-md text-label-md py-4 text-primary border-b-2 border-primary whitespace-nowrap";
+                } else {
+                    btn.className = "font-label-md text-label-md py-4 text-secondary hover:text-primary whitespace-nowrap";
+                }
+            });
+
+            // Update Content Visibility
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`content-${tabId}`).classList.add('active');
+        }
+    </script>
+</body></html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#566500",
+                    "inverse-surface": "#2f3131",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#656464",
+                    "on-primary-container": "#4c5900",
+                    "primary": "#566500",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "surface-variant": "#e2e2e2",
+                    "on-background": "#1a1c1c",
+                    "surface-container-highest": "#e2e2e2",
+                    "primary-fixed-dim": "#b5d302",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#e3e2e2",
+                    "on-tertiary-container": "#535454",
+                    "on-tertiary": "#ffffff",
+                    "secondary-container": "#e4e2e1",
+                    "primary-container": "#b7d507",
+                    "inverse-primary": "#b5d302",
+                    "secondary": "#5f5e5e",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "inverse-on-surface": "#f1f1f1",
+                    "surface-dim": "#dadada",
+                    "secondary-fixed": "#e4e2e1",
+                    "tertiary-container": "#c9c8c8",
+                    "tertiary-fixed-dim": "#c7c6c6",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f3f3f3",
+                    "on-tertiary-fixed-variant": "#464747",
+                    "on-surface-variant": "#454934",
+                    "on-surface": "#1a1c1c",
+                    "secondary-fixed-dim": "#c8c6c6",
+                    "outline-variant": "#c6c9ae",
+                    "on-primary-fixed": "#181e00",
+                    "on-secondary-fixed-variant": "#474747",
+                    "surface-container": "#eeeeee",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed-variant": "#404c00",
+                    "surface": "#f9f9f9",
+                    "primary-fixed": "#d1f032",
+                    "error-container": "#ffdad6",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#5e5e5e",
+                    "surface-container-high": "#e8e8e8",
+                    "surface-bright": "#f9f9f9",
+                    "outline": "#767962",
+                    "background": "#f9f9f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "40px",
+                    "container-max": "1280px",
+                    "margin-mobile": "16px",
+                    "base": "8px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-md": ["Hanken Grotesk"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "label-md": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f9f9f9; color: #1a1c1c; font-family: 'Hanken Grotesk', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background">
+<!-- Sidebar Navigation Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col py-base shadow-[0px_4px_20px_rgba(0,0,0,0.04)] bg-surface z-50">
+<div class="px-6 mb-10 pt-4">
+<h1 class="text-headline-md font-headline-lg font-bold text-primary">LIME Event</h1>
+<p class="text-label-sm text-secondary font-label-md">Talent Marketplace</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event_seat</span>
+<span class="font-label-md text-label-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-md text-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Earnings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+</nav>
+<div class="px-4 py-4 mt-auto border-t border-surface-variant/30">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-secondary hover:bg-surface-container transition-colors duration-200 mb-2" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-3">
+<img alt="Artist Profile" class="w-8 h-8 rounded-full object-cover" data-alt="A professional close-up portrait of a stylish modern musician in a high-key studio environment. The lighting is soft and flattering, emphasizing clean lines and a contemporary urban fashion aesthetic. The color palette is composed of soft neutrals and whites with a vibrant lime green highlight. The overall mood is sophisticated, creative, and professional, reflecting a high-end talent marketplace identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfMgMahtZbOrvKwze4-7Zldbns5W1ozgxLxlrc6B7BrxQkTvQjExCh1Q3nbifnTIkxB2ffk6i-hCBWAeOU77c-Pv-Vsn8T8h4eCOYqz4KQP1LxiDSqSp7b8r5xcFTefGHv7wd8w2amFISz_WGatm08MTmOasNfZwmenc26SlL6tHKXhm6I6vq3p9KcK3bI_AczELix9KkbKKTyrVfALVGxOHzTOynvnGIHbQjzit5Ghayh9yeo2jkLFQm7fZqSQput_61ZTnGdbwA"/>
+<div class="overflow-hidden">
+<p class="text-label-md font-bold truncate">Elyes G.</p>
+<p class="text-label-sm text-secondary truncate">Saxophonist</p>
+</div>
+<button class="ml-auto text-secondary hover:text-error transition-colors">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen p-margin-desktop">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center h-16 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-background">Artist Dashboard</h2>
+<p class="text-body-md text-secondary">Welcome back, Elyes. You have 3 new booking requests today.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-secondary">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-lowest border-outline-variant border rounded-lg focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all outline-none text-label-md" placeholder="Search events..." type="text"/>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold text-label-md hover:scale-[1.02] active:scale-[0.98] transition-all shadow-sm">
+                    New Event
+                </button>
+</div>
+</header>
+<!-- Stats Grid (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-12">
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-primary-container/20 rounded-lg text-primary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<span class="text-label-sm text-primary font-bold bg-primary-container/10 px-2 py-1 rounded">+2 new</span>
+</div>
+<p class="text-label-md text-secondary uppercase tracking-wider">Pending Requests</p>
+<h3 class="text-headline-md font-bold text-on-background mt-1">12</h3>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-secondary-container rounded-lg text-secondary">
+<span class="material-symbols-outlined">confirmation_number</span>
+</div>
+</div>
+<p class="text-label-md text-secondary uppercase tracking-wider">Active Bookings</p>
+<h3 class="text-headline-md font-bold text-on-background mt-1">28</h3>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-primary-container/20 rounded-lg text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<p class="text-label-md text-secondary uppercase tracking-wider">Earnings (TND)</p>
+<h3 class="text-headline-md font-bold text-on-background mt-1">4,250.00</h3>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 group hover:shadow-md transition-all">
+<div class="flex items-center justify-between mb-4">
+<div class="p-2 bg-tertiary-container rounded-lg text-secondary">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<span class="text-label-sm text-primary font-bold">+15%</span>
+</div>
+<p class="text-label-md text-secondary uppercase tracking-wider">Profile Views</p>
+<h3 class="text-headline-md font-bold text-on-background mt-1">1,402</h3>
+</div>
+</section>
+<!-- Main Dashboard Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: New Booking Requests -->
+<section class="lg:col-span-8">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md">New Booking Requests</h3>
+<button class="text-primary font-label-md hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Request Card 1 -->
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 flex flex-col md:flex-row gap-6 items-start md:items-center hover:scale-[1.005] transition-transform">
+<div class="w-16 h-16 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Event Logo" class="w-full h-full object-cover" data-alt="A macro shot of a sophisticated event logo printed on a luxury invitation card. The invitation is made from textured premium off-white paper with elegant black typography. The surrounding environment features blurred soft yellow event lighting and a professional corporate atmosphere. The style is minimalist and clean, representing high-end event planning and professional bookings in a bright, modern light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC62Mi7JPPo1w9QLAwxEsXc1ynjI4Xij1Ee90uFcFaYX_HsLjtSwf_02ZFXf6YbwubG_kf4b7TqDMhNTZfOB-5sueutmLmM1RvAE0rKx4334rZJooE7MCGgWteir2waDyjD-SRdR9cwY9JyLrr-17Xwix9WbOHUkRcK98U-RESMu8URruxNxPyXSUWM9X-LMrSAYKIJ9BcM8byhJkR9uHmqjDw83uGtxenuirwJ69q6btlSTki1cf-dYdOrkwz38_ZTi5oLYHzk-A"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary-container/20 text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded">Wedding</span>
+<h4 class="font-bold text-body-lg">The Westin Gammarth Gala</h4>
+</div>
+<p class="text-secondary text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person</span> Eventify Tunisia
+                                <span class="mx-2 text-surface-variant">•</span>
+<span class="material-symbols-outlined text-[18px]">location_on</span> Tunis, Tunisia
+                            </p>
+<div class="flex items-center gap-4 mt-3 text-label-md text-on-background font-semibold">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span> Oct 24, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">payments</span> 1,200 TND</span>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none border-2 border-on-background text-on-background px-4 py-2 rounded-lg font-bold text-label-md hover:bg-surface-container transition-all">Send Quote</button>
+<button class="flex-1 md:flex-none bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-bold text-label-md hover:opacity-90 transition-all">View Details</button>
+</div>
+</div>
+<!-- Request Card 2 -->
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 flex flex-col md:flex-row gap-6 items-start md:items-center hover:scale-[1.005] transition-transform">
+<div class="w-16 h-16 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Event Logo" class="w-full h-full object-cover" data-alt="A sleek and modern condenser microphone on a professional stage with blurred colorful background stage lights. The lighting is crisp and highlights the metallic texture of the microphone. The scene suggests a premium lounge or private club setting. The palette is dominated by deep dark tones and bright vibrant accent lights, creating an atmosphere of professional musical performance and exclusive artistry in a minimalist contemporary style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV7R9IrVGgPWFgj9kjk0T_el1H_qvvbqHDQSAv2o5D4NJyc7QnIVivUgnCtliFOKyhtrAy5evA1AtqdaJVmUsFHdYMyxrCMbjJ6laMCyc_9MGhQdFWb9e7IWeas7cPqU42fncx_IsD4zZhDgbziZ0RRQ3CgtNGFG1OWGrb7Aq4JKloNpWCJb0UPPLcIvPjTkUm6k3kN798CJeqMQfzUJ0qii8EgNjnGGOcr0-zKdCOmTxUo6yBMMUED6K_ZkANNklxcOip84w4l3I"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary-container/20 text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded">Corporate</span>
+<h4 class="font-bold text-body-lg">Tech Conf 2023 Afterparty</h4>
+</div>
+<p class="text-secondary text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person</span> Orange Tunisia
+                                <span class="mx-2 text-surface-variant">•</span>
+<span class="material-symbols-outlined text-[18px]">location_on</span> Sousse, Tunisia
+                            </p>
+<div class="flex items-center gap-4 mt-3 text-label-md text-on-background font-semibold">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span> Nov 12, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">payments</span> 2,500 TND</span>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none border-2 border-on-background text-on-background px-4 py-2 rounded-lg font-bold text-label-md hover:bg-surface-container transition-all">Send Quote</button>
+<button class="flex-1 md:flex-none bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-bold text-label-md hover:opacity-90 transition-all">View Details</button>
+</div>
+</div>
+<!-- Request Card 3 -->
+<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 flex flex-col md:flex-row gap-6 items-start md:items-center hover:scale-[1.005] transition-transform">
+<div class="w-16 h-16 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Event Logo" class="w-full h-full object-cover" data-alt="An abstract artistic representation of a luxury event space featuring floating glass elements and warm ambient lighting. The perspective is from a low angle, highlighting the vastness and elegance of the hall. The design is modern and minimalist with a clean light-mode aesthetic. Soft shadows and high-contrast lime green accents provide a sense of high-end branding and professional marketplace quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAgneYc7WrcbJ7NPXrMyfOegtERrP6H8xiTHLGn21qVFRywp-ZrnBwPUM8FThnglQYKdz5C105qPgqZ75wpT3XYG77omeKW5PYYILt2qxR7sL5ejpKO4MetaVvAYjdXrTBtYRDTpf4baqznmEn8oof4wA7NH2AV7cQYqhBuDGHnO_x1k7jlOHwSQAVxi3Cb0JFpFZ7MxjPU0eEClIGR_rowAJnT0F5475tkd_o3PpDASQ8BNvOqqcchjn1G_OLwp85lWTLXKEYA7M"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary-container/20 text-primary text-[10px] uppercase font-bold px-2 py-0.5 rounded">Private</span>
+<h4 class="font-bold text-body-lg">Birthday Garden Concert</h4>
+</div>
+<p class="text-secondary text-body-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">person</span> Private Booker
+                                <span class="mx-2 text-surface-variant">•</span>
+<span class="material-symbols-outlined text-[18px]">location_on</span> La Marsa, Tunisia
+                            </p>
+<div class="flex items-center gap-4 mt-3 text-label-md text-on-background font-semibold">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">calendar_today</span> Oct 30, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px] text-primary">payments</span> 800 TND</span>
+</div>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none border-2 border-on-background text-on-background px-4 py-2 rounded-lg font-bold text-label-md hover:bg-surface-container transition-all">Send Quote</button>
+<button class="flex-1 md:flex-none bg-primary-container text-on-primary-container px-4 py-2 rounded-lg font-bold text-label-md hover:opacity-90 transition-all">View Details</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Upcoming Events Timeline -->
+<aside class="lg:col-span-4">
+<div class="bg-white p-8 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/10 h-full">
+<h3 class="font-headline-md text-headline-md mb-8">Upcoming Events</h3>
+<div class="relative pl-8 space-y-12">
+<!-- Vertical Line -->
+<div class="absolute left-[11px] top-1 bottom-1 w-0.5 bg-surface-container-highest"></div>
+<!-- Timeline Item 1 -->
+<div class="relative">
+<div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-primary border-4 border-white shadow-sm ring-4 ring-primary-container/20"></div>
+<div>
+<p class="text-label-sm font-bold text-primary mb-1">TOMORROW, 19:00</p>
+<h4 class="font-bold text-body-lg text-on-background">Grand Opening Night</h4>
+<p class="text-secondary text-label-md">Dar El Jeld Hotel &amp; Spa</p>
+<div class="mt-4 p-4 bg-surface-container-low rounded-lg border-l-4 border-primary">
+<p class="text-label-sm text-secondary italic">"Need sound check at 17:30 sharp."</p>
+</div>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative">
+<div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-secondary border-4 border-white shadow-sm"></div>
+<div>
+<p class="text-label-sm font-bold text-secondary mb-1">OCT 28, 20:30</p>
+<h4 class="font-bold text-body-lg text-on-background">Jazz &amp; Cocktails Session</h4>
+<p class="text-secondary text-label-md">The Residence Tunis</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative">
+<div class="absolute -left-[27px] top-1 w-4 h-4 rounded-full bg-secondary border-4 border-white shadow-sm"></div>
+<div>
+<p class="text-label-sm font-bold text-secondary mb-1">NOV 04, 21:00</p>
+<h4 class="font-bold text-body-lg text-on-background">Foundation Gala 2023</h4>
+<p class="text-secondary text-label-md">Palais Ennejma Ezzahra</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-12 py-3 bg-surface-container-low text-on-background rounded-lg font-bold text-label-md hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                        Open Calendar
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Floating Action Button (FAB) - For New Quick Action -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 bg-primary-container text-on-primary-container rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all group">
+<span class="material-symbols-outlined text-[28px]">add</span>
+<span class="absolute right-full mr-4 bg-on-background text-white px-3 py-1.5 rounded-lg text-label-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">Quick Quote</span>
+</button>
+</div>
+<script>
+        // Micro-interaction for cards
+        document.querySelectorAll('.bg-white').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

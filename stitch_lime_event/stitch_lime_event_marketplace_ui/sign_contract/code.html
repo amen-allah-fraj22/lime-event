@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LIME | Contract Signing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f9f9f9",
+                      "inverse-surface": "#2f3131",
+                      "primary": "#566500",
+                      "on-surface": "#1a1c1c",
+                      "surface-bright": "#f9f9f9",
+                      "outline-variant": "#c6c9ae",
+                      "inverse-primary": "#b5d302",
+                      "outline": "#767962",
+                      "surface-container-high": "#e8e8e8",
+                      "tertiary-container": "#c9c8c8",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "surface-variant": "#e2e2e2",
+                      "on-primary-container": "#4c5900",
+                      "on-primary": "#ffffff",
+                      "background": "#f9f9f9",
+                      "on-background": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "secondary": "#5f5e5e",
+                      "on-tertiary-container": "#535454",
+                      "primary-container": "#b7d507",
+                      "on-primary-fixed-variant": "#404c00",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#454934",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e4e2e1",
+                      "on-primary-fixed": "#181e00",
+                      "surface-container-low": "#f3f3f3",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "primary-fixed": "#d1f032",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#566500",
+                      "on-tertiary-fixed-variant": "#464747",
+                      "on-secondary-container": "#656464",
+                      "on-secondary-fixed-variant": "#474747",
+                      "primary-fixed-dim": "#b5d302",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed": "#e3e2e2",
+                      "surface-dim": "#dadada",
+                      "tertiary": "#5e5e5e",
+                      "surface-container-highest": "#e2e2e2",
+                      "secondary-container": "#e4e2e1",
+                      "inverse-on-surface": "#f1f1f1",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#eeeeee"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "base": "8px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px"
+              },
+              "fontFamily": {
+                      "label-md": ["Hanken Grotesk"],
+                      "headline-xl": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "label-sm": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .contract-paper {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        canvas#signature-pad {
+            touch-action: none;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm dark:bg-surface-variant flex justify-between items-center px-gutter py-4 w-full sticky top-0 z-40">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high transition-colors p-2 rounded-full" onclick="window.history.back()">arrow_back</button>
+<span class="font-headline-md text-headline-md font-extrabold text-primary dark:text-inverse-primary">LIME</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">Waiting for artist counter-signature</span>
+<div class="w-10 h-10 rounded-full bg-tertiary-container overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A clean, professional headshot of a young creative professional with a friendly smile, set against a neutral, softly lit studio background. The lighting is bright and modern, emphasizing clarity and professionalism. The overall aesthetic is minimalist and high-end, fitting for a premium talent marketplace platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1AW2We64mfI6Io1ynvjuPbEa2vxZGfWFsOkvnbrVrshGxPzygt6ABFj26-RDXcvMcfOwFNeSJyCzqvF3wRzLM7hjs7In0HERW55v6ox3QJ-a8XAg8xneCn835FzB8z0IBtfNlXDNWKxJPfK_00vcOimpoZ1UXyASI9wpjvRDvPWadVlQLL1OKcJpODy5mG3fKsTtRVcvFPxRJG7g2CXT-RtQVmzKMxErVeZOYtZ2adPwdJNe-6GWX3CCLDje1KaYKcv4o4rAo93w"/>
+</div>
+</div>
+</header>
+<main class="flex flex-col md:flex-row h-[calc(100vh-72px)] overflow-hidden">
+<!-- Left Panel: Contract View (60%) -->
+<section class="w-full md:w-3/5 overflow-y-auto p-gutter bg-surface-container-low border-r border-outline-variant">
+<div class="max-w-3xl mx-auto bg-surface-container-lowest contract-paper p-12 rounded-lg border border-outline-variant/30">
+<!-- Contract Header -->
+<div class="flex justify-between items-start border-b-2 border-primary-container pb-8 mb-8">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Performance Agreement</h1>
+<p class="font-label-md text-label-md text-secondary">Document ID: #CTR-2024-SUM-082</p>
+</div>
+<span class="font-headline-md text-headline-md font-black text-primary">LIME</span>
+</div>
+<!-- Event Details -->
+<div class="mb-8">
+<h2 class="font-label-md text-label-md text-primary mb-4">EVENT SUMMARY</h2>
+<div class="grid grid-cols-2 gap-6 bg-surface-container p-6 rounded-lg">
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase mb-1">Event Name</p>
+<p class="font-body-md text-body-md font-bold">Summer Beach Gala</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase mb-1">Fee</p>
+<p class="font-body-md text-body-md font-bold text-primary">3,200 TND</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase mb-1">Date</p>
+<p class="font-body-md text-body-md">August 15, 2024</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase mb-1">Location</p>
+<p class="font-body-md text-body-md">Hammamet, Tunisia</p>
+</div>
+</div>
+</div>
+<!-- Terms & Conditions -->
+<div class="prose prose-sm max-w-none text-on-surface-variant font-body-md space-y-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Terms and Conditions</h3>
+<p><strong>1. Performance:</strong> The Artist agrees to provide musical performance services for a duration of 120 minutes. The performance will include a mix of requested genres as per previous discussions.</p>
+<p><strong>2. Payment:</strong> Total fee is 3,200 TND. A 30% deposit is required within 48 hours of contract signing. The remaining balance will be settled within 24 hours post-event.</p>
+<p><strong>3. Technical Requirements:</strong> The Organizer will provide standard audio equipment and stage lighting. The Artist is responsible for personal instruments and specific MIDI controllers.</p>
+<p><strong>4. Cancellation:</strong> Cancellation by either party within 14 days of the event will result in a 50% penalty fee of the total contract value.</p>
+<p><strong>5. Governing Law:</strong> This agreement shall be governed by the laws of the Republic of Tunisia.</p>
+<div class="pt-8 border-t border-outline-variant/30 mt-8">
+<p class="italic text-secondary font-label-sm">This is a legally binding electronic document generated via LIME Talent Management Portal.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Signing Area (40%) -->
+<section class="w-full md:w-2/5 p-gutter bg-surface flex flex-col justify-between">
+<div class="space-y-8 max-w-md mx-auto w-full">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Finalize Agreement</h3>
+<p class="font-body-md text-body-md text-secondary">Review the contract and provide your signature below to proceed.</p>
+</div>
+<!-- Signature Canvas -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-md text-label-md text-on-surface">DRAW SIGNATURE</label>
+<button class="text-primary hover:underline font-label-sm text-label-sm transition-all active:scale-95" id="clear-canvas">Clear</button>
+</div>
+<div class="border-2 border-outline-variant rounded-xl bg-white relative overflow-hidden h-48 flex items-center justify-center">
+<canvas class="absolute inset-0 w-full h-full" id="signature-pad"></canvas>
+<span class="pointer-events-none text-outline-variant font-label-md" id="canvas-placeholder">Sign here</span>
+</div>
+</div>
+<!-- Upload Alternative -->
+<div class="text-center">
+<p class="font-label-sm text-label-sm text-secondary mb-3">OR</p>
+<label class="flex items-center justify-center gap-2 border-2 border-dashed border-outline-variant rounded-lg p-4 cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-secondary">upload_file</span>
+<span class="font-label-md text-label-md text-on-surface">Upload Signature Image</span>
+<input class="hidden" type="file"/>
+</label>
+</div>
+<!-- Agreement Checkbox -->
+<div class="flex items-start gap-3 p-4 bg-surface-container-low rounded-lg border border-outline-variant/50">
+<input class="mt-1 w-5 h-5 rounded border-outline text-primary focus:ring-primary-container transition-all" id="agree" type="checkbox"/>
+<label class="font-body-md text-body-md text-on-surface-variant cursor-pointer" for="agree">
+                        I confirm that I have read and agree to the <strong>Terms of Service</strong> and the specifics of the <strong>Summer Beach Gala</strong> event contract.
+                    </label>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="max-w-md mx-auto w-full pt-8 space-y-4">
+<button class="w-full py-4 bg-primary-container text-on-primary-container font-headline-md text-headline-md rounded-xl shadow-sm hover:translate-y-[-2px] hover:shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled="" id="submit-signature">
+                    Sign Contract
+                </button>
+<p class="text-center font-label-sm text-label-sm text-secondary">
+                    Secure 256-bit encrypted signing process
+                </p>
+</div>
+</section>
+</main>
+<script>
+        // Simple Canvas Signature logic
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        const clearBtn = document.getElementById('clear-canvas');
+        const submitBtn = document.getElementById('submit-signature');
+        const agreeCheckbox = document.getElementById('agree');
+        const placeholder = document.getElementById('canvas-placeholder');
+
+        let isDrawing = false;
+        let hasSigned = false;
+
+        // Resize canvas to its display size
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#2E2E2E';
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function startDrawing(e) {
+            isDrawing = true;
+            placeholder.style.display = 'none';
+            hasSigned = true;
+            draw(e);
+            validateForm();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function validateForm() {
+            submitBtn.disabled = !(hasSigned && agreeCheckbox.checked);
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            placeholder.style.display = 'block';
+            hasSigned = false;
+            validateForm();
+        });
+
+        agreeCheckbox.addEventListener('change', validateForm);
+
+        submitBtn.addEventListener('click', () => {
+            submitBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-on-primary-container" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...</span>';
+            setTimeout(() => {
+                alert('Contract signed successfully! Sending to counter-signature.');
+                window.location.reload();
+            }, 1500);
+        });
+    </script>
+</body></html>

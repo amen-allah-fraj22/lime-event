@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quote Comparison | LIME Music &amp; Talent</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .quote-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.08);
+        }
+        .glass-badge {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f9f9f9",
+                      "inverse-surface": "#2f3131",
+                      "primary": "#566500",
+                      "on-surface": "#1a1c1c",
+                      "surface-bright": "#f9f9f9",
+                      "outline-variant": "#c6c9ae",
+                      "inverse-primary": "#b5d302",
+                      "outline": "#767962",
+                      "surface-container-high": "#e8e8e8",
+                      "tertiary-container": "#c9c8c8",
+                      "on-secondary-fixed": "#1b1c1c",
+                      "surface-variant": "#e2e2e2",
+                      "on-primary-container": "#4c5900",
+                      "on-primary": "#ffffff",
+                      "background": "#f9f9f9",
+                      "on-background": "#1a1c1c",
+                      "error": "#ba1a1a",
+                      "secondary": "#5f5e5e",
+                      "on-tertiary-container": "#535454",
+                      "primary-container": "#b7d507",
+                      "on-primary-fixed-variant": "#404c00",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#454934",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e4e2e1",
+                      "on-primary-fixed": "#181e00",
+                      "surface-container-low": "#f3f3f3",
+                      "secondary-fixed-dim": "#c8c6c6",
+                      "primary-fixed": "#d1f032",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#c7c6c6",
+                      "on-tertiary": "#ffffff",
+                      "surface-tint": "#566500",
+                      "on-tertiary-fixed-variant": "#464747",
+                      "on-secondary-container": "#656464",
+                      "on-secondary-fixed-variant": "#474747",
+                      "primary-fixed-dim": "#b5d302",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "on-error-container": "#93000a",
+                      "tertiary-fixed": "#e3e2e2",
+                      "surface-dim": "#dadada",
+                      "tertiary": "#5e5e5e",
+                      "surface-container-highest": "#e2e2e2",
+                      "secondary-container": "#e4e2e1",
+                      "inverse-on-surface": "#f1f1f1",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#eeeeee"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "base": "8px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "40px"
+              },
+              "fontFamily": {
+                      "label-md": ["Hanken Grotesk"],
+                      "headline-xl": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"],
+                      "label-sm": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-container">
+<!-- Top Navigation -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm sticky top-0 z-40 flex justify-between items-center px-gutter py-4 w-full">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-extrabold text-primary dark:text-inverse-primary">LIME</span>
+<div class="hidden md:flex h-6 w-px bg-outline-variant mx-2"></div>
+<div class="hidden md:flex flex-col">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Active Event</span>
+<span class="font-label-md text-label-md text-on-surface">Summer Beach Gala</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8">
+<a class="text-primary font-bold font-label-md text-label-md" href="#">Dashboard</a>
+<a class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high transition-colors font-label-md text-label-md px-2 py-1 rounded" href="#">My Events</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-secondary hover:bg-surface-container-high p-2 rounded-full transition-colors active:scale-95 duration-150">notifications</button>
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" data-alt="A professional headshot of a middle-aged male event organizer with a warm smile, wearing a clean white shirt. The background is a soft-focus modern office setting with natural sunlight and plants, maintaining a clean, high-end light-mode aesthetic for a professional talent marketplace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXuA_y5ovHawTLMw_QqI_Ik4DurWSo6BlwtvEzf6oKySDqGWTryXWFFPg_6WyuBEQNQv2O8azFcrASq9HB__pWK7kFvaHGXQxVWPtIDFlhBY5bkhynWKbBLXFFD4cQbThLx9JYRC7OpLOld9XJW04BReoeNe7T3rmGlinthojxVwmwP3yllRzknHXdmiyd-WZPQW67PZFCmKE8BsLQTmSHOCM2410uQ3GdwbyT_Xnk6HHrzwnjfbHCUQaWuKswbbXd5g0CjWagRHQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Breadcrumbs & Title -->
+<div class="mb-10">
+<div class="flex items-center gap-2 text-secondary mb-2 font-label-sm text-label-sm">
+<span class="hover:text-primary cursor-pointer transition-colors">Events</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="hover:text-primary cursor-pointer transition-colors">Summer Beach Gala</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface">Compare Quotes</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-2">Quote Comparison</h1>
+<p class="font-body-lg text-body-lg text-secondary">Review and compare performance offers for June 14, 2024</p>
+</div>
+<div class="flex items-center gap-2 bg-secondary-container px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="font-label-md text-label-md text-on-secondary-container">June 14, 2024</span>
+</div>
+</div>
+</div>
+<!-- Comparison Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1: Best Value -->
+<div class="quote-card bg-surface-container-lowest rounded-xl border-2 border-primary-container shadow-sm p-6 flex flex-col transition-all duration-300 relative">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-container text-on-primary-container px-4 py-1 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-md">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+                    BEST VALUE
+                </div>
+<div class="flex items-center gap-4 mb-6 pt-2">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="DJ Youssef" data-alt="A portrait of a charismatic Tunisian DJ named Youssef performing in a high-end music venue. He is wearing modern headphones and a stylish black t-shirt. The lighting is dynamic with soft lime green and blue neon accents, reflecting a zesty yet professional music marketplace atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARxpuTfKKCSmjlIIvr-3CNawyy1T5BmxpHbZb-RYieNVuCmIWbvILmyFn8Rc41Nt2Tb3WLygLjiikiO3Rv45wSjeP8P_PGVZ8e0Mj2hdlJXYyQrUxlhylXhW3Q0Bgj0zhVZvCTYCTJh0xNOG0HLvVYknC64LEIKPJ4f1L1I5a71iAxrSU_bKIEB5hLCM2sGvWd_uM6zu7jj4jGEoHzOljkBaIyz-rc3xxoYwfm7SRuN4WM6cP-WzrLb5lLK0U3ZqNzcKXBqijZWs4"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">DJ Youssef</h3>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.8</span>
+<span class="text-secondary font-normal">(124 reviews)</span>
+</div>
+</div>
+</div>
+<div class="mb-6 flex-grow">
+<div class="text-on-surface font-headline-lg text-headline-lg mb-4">3,200 <span class="text-label-md font-normal text-secondary">TND</span></div>
+<ul class="space-y-3">
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span>Includes premium sound system</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">check_circle</span>
+<span>Transportation included</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+<span class="text-primary font-bold">Flexible cancellation</span>
+</li>
+</ul>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-primary-container hover:bg-primary-fixed text-on-primary-container font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Accept This Quote</button>
+<button class="w-full bg-transparent border-2 border-outline hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Send Message</button>
+</div>
+</div>
+<!-- Card 2: Budget Choice -->
+<div class="quote-card bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex flex-col transition-all duration-300">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container">
+<img alt="DJ Marwan" data-alt="A sharp profile shot of a young, modern musician named Marwan against a minimalist gray studio background. He has a focused expression and is wearing a dark navy denim jacket. The image has high clarity, professional lighting, and a clean corporate minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1LXhDGN8GZhZwWD8xHGHx1nhrdIn__I_zfI4AyfejBl3zhSMTq9C06Ujp0n1tldEZhZwTRxFdbIu1UX2IvYDao4xKHtFBjahadaumCNV_Ro-8nUkLnmjp5dqA0IwGk7ZnK7sphG3vEnMd3TNXVZUthYYHZF2FI2_je1MlCLK8CuMa_-ksHLRm2n0Oab3et7lTsLJ_8FUf7d3kkf63Mz_Z8xOWggQtSvOXRAToLJiYfHEAknYSJKZabv6NfjQmSJUE17MCOdzzEYU"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">DJ Marwan</h3>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.5</span>
+<span class="text-secondary font-normal">(89 reviews)</span>
+</div>
+</div>
+</div>
+<div class="mb-6 flex-grow">
+<div class="text-on-surface font-headline-lg text-headline-lg mb-4">2,800 <span class="text-label-md font-normal text-secondary">TND</span></div>
+<ul class="space-y-3">
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<span>2h performance duration</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">info</span>
+<span>Standard equipment only</span>
+</li>
+<li class="flex items-start gap-3 text-error font-body-md">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span>Strict cancellation</span>
+</li>
+</ul>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-primary-container hover:bg-primary-fixed text-on-primary-container font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Accept This Quote</button>
+<button class="w-full bg-transparent border-2 border-outline hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Send Message</button>
+</div>
+</div>
+<!-- Card 3: Premium Choice -->
+<div class="quote-card bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex flex-col transition-all duration-300 relative">
+<div class="absolute top-4 right-4 flex items-center gap-1 bg-error-container text-on-error-container px-2 py-1 rounded font-label-sm text-label-sm font-bold animate-pulse">
+<span class="material-symbols-outlined text-[14px]">timer</span>
+                    Expiring in 5h
+                </div>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container">
+<img alt="Anis Group" data-alt="A dynamic shot of a full professional music ensemble performing live. In focus is the lead performer, Anis, under sophisticated stage lighting with deep shadows and brilliant highlights. The scene is energetic and high-end, featuring expensive musical equipment and a minimalist stage setup with a clean, luxury entertainment vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgloDJPfUAmNMwPvZaxgyFJSZvgRxp8pjXg6eBKrNTYIIUVSzoEc7pvIfHzo2vuh-bZ7THM4v4XU-si-QMKOYgX1Q9BVeg1GpwAQN7PykJTjObCITdci9ceQZX1X2_6r58yHt_mNoaw2xAPZGdftlZYfEFFeubmRIsPhMjlS5hBZLEpzwdsefBBY4bR2Ap2JGR0ZXDLAz7BZrdNuZTGEqy0JkvaDHp0t_6vOjlS7bE-v9GXHJMn7iFOtS0UPJks5RupALwA8PMoTY"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Anis Group</h3>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.9</span>
+<span class="text-secondary font-normal">(210 reviews)</span>
+</div>
+</div>
+</div>
+<div class="mb-6 flex-grow">
+<div class="text-on-surface font-headline-lg text-headline-lg mb-4">4,500 <span class="text-label-md font-normal text-secondary">TND</span></div>
+<ul class="space-y-3">
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">wb_iridescent</span>
+<span>Includes full light show</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-primary text-[20px]">groups</span>
+<span>Full 5-member band</span>
+</li>
+<li class="flex items-start gap-3 text-on-surface-variant font-body-md">
+<span class="material-symbols-outlined text-secondary text-[20px]">help</span>
+<span>Moderate cancellation</span>
+</li>
+</ul>
+</div>
+<div class="space-y-3">
+<button class="w-full bg-primary-container hover:bg-primary-fixed text-on-primary-container font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Accept This Quote</button>
+<button class="w-full bg-transparent border-2 border-outline hover:bg-surface-container-high text-on-surface font-label-md text-label-md py-4 rounded-lg font-bold transition-all active:scale-95">Send Message</button>
+</div>
+</div>
+</div>
+<!-- Details Accordion Section -->
+<div class="mt-16 bg-surface-container-low rounded-xl p-8 border border-outline-variant">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Quote Comparison Details</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="py-4 font-label-md text-label-md text-secondary uppercase tracking-widest">Service</th>
+<th class="py-4 font-label-md text-label-md text-on-surface">DJ Youssef</th>
+<th class="py-4 font-label-md text-label-md text-on-surface">DJ Marwan</th>
+<th class="py-4 font-label-md text-label-md text-on-surface">Anis Group</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-on-surface-variant">
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 font-bold text-on-surface">Performance</td>
+<td class="py-4">Full Evening (6h)</td>
+<td class="py-4">2h Fixed</td>
+<td class="py-4">Full Evening (5h)</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 font-bold text-on-surface">Equipment</td>
+<td class="py-4">Pro Sound System</td>
+<td class="py-4">Standard PA</td>
+<td class="py-4">Sound + Stage Lights</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container transition-colors">
+<td class="py-4 font-bold text-on-surface">Cancellation</td>
+<td class="py-4 text-primary font-semibold">Free up to 7 days</td>
+<td class="py-4 text-error">Non-refundable</td>
+<td class="py-4">50% refund up to 14 days</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<footer class="bg-surface-variant dark:bg-surface-dim border-t border-outline-variant mt-24">
+<div class="max-w-container-max mx-auto px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-md text-headline-md font-bold text-on-surface-variant">LIME</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 LIME Music &amp; Talent. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6 font-label-sm text-label-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Support</a>
+<a class="hover:text-primary transition-colors" href="#">About Us</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('.quote-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Subtle scale and depth effect handled by CSS
+            });
+        });
+
+        // Floating Action Button Simulation (Suppressed as per rules for Details/Comparison)
+        // No FAB here to prioritize the comparison table and cards.
+    </script>
+</body></html>

@@ -1,0 +1,5 @@
+node_modules
+*.spec.ts
+coverage
+.env
+.env.local
