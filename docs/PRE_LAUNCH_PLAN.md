@@ -19,12 +19,22 @@ Compiled from a codebase deep-analysis on 2026-08-03. Covers testing, bug fixes,
 
 ---
 
-## 1. Safety & housekeeping (do first, before touching anything else)
+## 1. Safety & housekeeping — ✅ DONE (2026-08-05)
 
-- [ ] Review the 179 uncommitted files (`git status`), commit in logical chunks (not one giant commit)
-- [ ] Push to remote so the work exists outside this one machine
-- [ ] Decide: is `.env.local` / real secrets accidentally staged anywhere? Double-check before pushing
-- [ ] Set up a `staging` branch so future work doesn't land directly on `main` untested
+- [x] Review the 179 uncommitted files (`git status`), commit in logical chunks (not one giant commit)
+- [x] Push to remote so the work exists outside this one machine
+- [x] Decide: is `.env.local` / real secrets accidentally staged anywhere? Double-check before pushing
+- [x] Set up a `staging` branch so future work doesn't land directly on `main` untested
+
+**What was done:** 10 commits (`7f8889b..7f26dec`) organised by domain — repo config, API layer, artist wizard, explore/events, booking & messaging, calendar, auth & mobile shell, e2e tests, project config/docs, and the untracking commit. Pushed to `origin/main`. `staging` branch created from `main` and pushed; **all further pre-launch work happens on `staging`.**
+
+**Secrets audit: clean.** `.env`, `apps/api/.env` and `apps/web/.env.local` are all correctly gitignored. Every secret-shaped string in a committed file is a placeholder (`sk_test_placeholder`, `[YOUR-PASSWORD]`, `YOUR_PROJECT_REF`). No credential was ever committed.
+
+**PII leak caught and blocked.** `prompt for agent .md` contained the founder's full name, date of birth, city, phone number and email. The repository is public, so committing it would have exposed that permanently. It is now gitignored.
+
+**~70 files deliberately excluded** from this public repo (all still on disk, just untracked): business plans, financial models, the founder's CV, market research, LaTeX sources/artifacts, the one-off Excel analysis scripts, working/backup folders, and the UI design mockups.
+
+**⚠️ Known limitation — history is not rewritten.** `deep-research-report.md` (competitor analysis) and `stitch_lime_event/` (design mockups) were untracked, but they were present in the **initial commit**, so they remain retrievable from git history and have been publicly visible since that commit. Removing them for real requires a history rewrite (`git filter-repo` / BFG) plus a force-push, which rewrites every commit hash — deliberately **not** done. Decide explicitly whether this matters before launch.
 
 ## 2. Known bugs to fix before launch
 

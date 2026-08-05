@@ -104,7 +104,7 @@ export function LandingPage() {
                 real-time calendar sync.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/artists" className="lime-btn-pill text-center">
+                <Link href="/explore/artists" className="lime-btn-pill text-center">
                   Find Artists Now
                 </Link>
                 <Link href="/sign-up?role=artist" className="lime-btn-pill-outline text-center">
@@ -164,7 +164,7 @@ export function LandingPage() {
                   ))}
                 </div>
                 <Link
-                  href="/artists"
+                  href="/explore/artists"
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-low py-3 text-label-md font-semibold text-on-surface transition-colors hover:bg-surface-variant sm:mt-6"
                 >
                   View All <MaterialIcon name="arrow_forward" size={18} />
@@ -408,7 +408,7 @@ export function LandingPage() {
                 </div>
                 <h3 className="mb-2 font-headline text-headline-md text-white">Organizer</h3>
                 <div className="mb-6 font-headline text-headline-xl text-primary-container">
-                  12.5% <span className="text-body-md font-normal text-surface-variant">fee</span>
+                  7% <span className="text-body-md font-normal text-surface-variant">fee</span>
                 </div>
                 <Link href="/sign-up?role=organizer" className="lime-btn-pill block w-full text-center">
                   Start Booking
@@ -433,7 +433,7 @@ export function LandingPage() {
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="/artists"
+                href="/explore/artists"
                 className="rounded-full bg-on-primary-fixed px-8 py-4 text-label-md font-semibold text-white transition-all hover:scale-[1.03] hover:shadow-lg"
               >
                 Find Artists Now

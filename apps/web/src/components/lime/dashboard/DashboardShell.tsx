@@ -124,7 +124,7 @@ export function DashboardShell({
             </Link>
           )}
           <Link
-            href="/artists"
+            href="/explore/artists"
             className="flex items-center gap-3 rounded-lg px-4 py-3 text-secondary transition-all hover:bg-surface-container"
           >
             <MaterialIcon name="search" size={22} />

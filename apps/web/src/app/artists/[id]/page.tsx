@@ -67,7 +67,7 @@ export default function ArtistProfilePage() {
       ) : notFound || !artist ? (
         <div className="mx-auto max-w-container-max px-margin-mobile py-24 text-center md:px-margin-desktop">
           <p className="font-headline text-headline-md text-on-surface">Artist not found</p>
-          <Link href="/artists" className="mt-4 inline-block text-primary hover:underline">
+          <Link href="/explore/artists" className="mt-4 inline-block text-primary hover:underline">
             Browse artists
           </Link>
         </div>

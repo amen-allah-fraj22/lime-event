@@ -22,6 +22,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // /explore/artists is the canonical browse experience: it is the one in
+      // the bottom navigation, the one the dashboard and role switcher send
+      // users to, and the only one that can open a booking request. /artists
+      // was an earlier, less capable duplicate.
+      { source: '/artists', destination: '/explore/artists', permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;
