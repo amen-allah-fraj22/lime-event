@@ -21,11 +21,27 @@ const api: AxiosInstance = axios.create({
 
 let authTokenGetter: (() => Promise<string | null>) | null = null;
 
+// Clerk's token getter is registered asynchronously (see ApiAuthProvider), after its own
+// `isLoaded` effect runs. Page-level effects that fetch data on mount can and do fire before
+// that registration completes, which used to send requests with no Authorization header and a
+// silent 401. Every request now waits for the first registration (auth state settled, whether
+// signed in or not) before deciding whether to attach a token, instead of racing it.
+let resolveAuthReady: () => void;
+const authReadyPromise = new Promise<void>((resolve) => {
+  resolveAuthReady = resolve;
+});
+let authReady = false;
+
 export function registerAuthTokenGetter(getter: (() => Promise<string | null>) | null) {
   authTokenGetter = getter;
+  if (!authReady) {
+    authReady = true;
+    resolveAuthReady();
+  }
 }
 
 api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  await authReadyPromise;
   if (authTokenGetter) {
     const token = await authTokenGetter();
     if (token) {

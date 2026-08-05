@@ -55,3 +55,6 @@ stitch_lime_event/stitch_lime_event_marketplace_ui lnding/
 
 # Generated Playwright HTML report
 apps/web/playwright-report/
+
+# Scratch file containing personal data (DOB, phone, address)
+prompt for agent .md

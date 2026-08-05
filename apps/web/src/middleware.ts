@@ -6,6 +6,8 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/artists',
   '/artists/:id',
+  '/explore/artists',
+  '/explore/events',
 ]);
 
 function signInUrlWithReturnBack(req: Request): string {
