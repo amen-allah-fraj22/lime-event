@@ -7,9 +7,13 @@ import { ErrorAlert } from '@/components/feedback/ErrorAlert';
 import { DashboardShell } from '@/components/lime/dashboard/DashboardShell';
 import api from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
+import { DEFAULT_TUNISIA_CITY, TUNISIA_CITY_GROUPS } from '@/lib/tunisia-cities';
 import { cn } from '@/lib/utils';
-
-const CITIES = ['Tunis', 'Sousse', 'Hammamet', 'Djerba'] as const;
+import {
+  EVENT_PHOTO_ACCEPT,
+  uploadEventPhoto,
+  validateEventPhotoFile,
+} from '@/lib/upload-event-photo';
 
 const EVENT_TYPE_OPTIONS = [
   { value: 'festival', label: 'Concert', icon: 'nightlife' },
@@ -48,7 +52,7 @@ export type EventWizardForm = {
 const defaultForm: EventWizardForm = {
   title: '',
   eventType: 'festival',
-  city: 'Tunis',
+  city: DEFAULT_TUNISIA_CITY,
   venue: '',
   eventDate: '',
   startTime: '20:00',
@@ -66,6 +70,27 @@ export function CreateEventWizard() {
   const [submitting, setSubmitting] = useState(false);
   const [createdEventId, setCreatedEventId] = useState<string | null>(null);
   const [matchCount, setMatchCount] = useState(0);
+
+  // Venue photo is optional: picked here, uploaded once the event exists (finalize()).
+  const [venuePhotoFile, setVenuePhotoFile] = useState<File | null>(null);
+  const [venuePhotoPreview, setVenuePhotoPreview] = useState<string | null>(null);
+
+  function pickVenuePhoto(file: File | undefined) {
+    if (!file) return;
+    const validationError = validateEventPhotoFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError(null);
+    setVenuePhotoFile(file);
+    setVenuePhotoPreview(URL.createObjectURL(file));
+  }
+
+  function clearVenuePhoto() {
+    setVenuePhotoFile(null);
+    setVenuePhotoPreview(null);
+  }
 
   const progress = (step / TOTAL_STEPS) * 100;
 
@@ -123,6 +148,16 @@ export function CreateEventWizard() {
       });
       const eventId = res.data.id as string;
       setCreatedEventId(eventId);
+
+      if (venuePhotoFile) {
+        try {
+          await uploadEventPhoto(eventId, venuePhotoFile);
+        } catch {
+          // Non-fatal: the event itself was created successfully; the
+          // organizer can add a photo later if this upload failed.
+        }
+      }
+
       const matchesRes = await api.get(`/events/${eventId}/matches`);
       setMatchCount(Array.isArray(matchesRes.data) ? matchesRes.data.length : 0);
       setStep(4);
@@ -235,10 +270,14 @@ export function CreateEventWizard() {
                     value={form.city}
                     onChange={(e) => patch('city', e.target.value)}
                   >
-                    {CITIES.map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
+                    {TUNISIA_CITY_GROUPS.map((group) => (
+                      <optgroup key={group.governorate} label={group.governorate}>
+                        {group.cities.map((c) => (
+                          <option key={`${group.governorate}-${c}`} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>
@@ -252,15 +291,51 @@ export function CreateEventWizard() {
                   />
                 </div>
               </div>
+              <div>
+                <label className="mb-2 block font-label-md uppercase text-on-background">
+                  Venue Photo <span className="normal-case text-secondary">(optional)</span>
+                </label>
+                {venuePhotoPreview ? (
+                  <div className="relative w-full max-w-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={venuePhotoPreview}
+                      alt="Venue preview"
+                      className="h-40 w-full rounded-xl object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={clearVenuePhoto}
+                      className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                    >
+                      <MaterialIcon name="close" size={18} />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex h-24 w-full max-w-xs cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-outline-variant text-secondary hover:border-primary-container hover:text-primary">
+                    <MaterialIcon name="add_a_photo" />
+                    <span className="font-label-sm">Add a photo of the venue</span>
+                    <input
+                      type="file"
+                      accept={EVENT_PHOTO_ACCEPT}
+                      className="hidden"
+                      onChange={(e) => pickVenuePhoto(e.target.files?.[0])}
+                    />
+                  </label>
+                )}
+              </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-2 block font-label-md uppercase text-on-background">Date</label>
-                  <input
-                    type="date"
-                    className="lime-input"
-                    value={form.eventDate}
-                    onChange={(e) => patch('eventDate', e.target.value)}
-                  />
+                  <div className="relative">
+                    <input
+                      type="date"
+                      className="lime-input w-full cursor-pointer appearance-none uppercase tracking-wide text-on-surface/90"
+                      value={form.eventDate}
+                      onChange={(e) => patch('eventDate', e.target.value)}
+                      style={{ minHeight: '52px' }}
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="mb-2 block font-label-md uppercase text-on-background">Time</label>
@@ -379,6 +454,10 @@ export function CreateEventWizard() {
               </p>
             </div>
             <div className="dashboard-shadow overflow-hidden rounded-2xl bg-white">
+              {venuePhotoPreview && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={venuePhotoPreview} alt="Venue" className="h-40 w-full object-cover" />
+              )}
               <div className="border-b border-primary-container/20 bg-primary-container/10 p-6">
                 <h4 className="font-headline text-headline-md text-primary">{form.title || 'Untitled event'}</h4>
                 <p className="text-secondary">

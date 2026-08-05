@@ -7,7 +7,7 @@ import { AddRolePromptModal } from '@/components/lime/AddRolePromptModal';
 import { useAuth } from '@clerk/nextjs';
 import { useRole } from '@/context/RoleContext';
 
-export default function NewEventPage() {
+export default function CreateEventPage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useAuth();
   const { hasRole, activeRole, setActiveRole } = useRole();
