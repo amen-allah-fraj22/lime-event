@@ -6,4 +6,52 @@ dist/
 *.log
 coverage/
 .turbo/
-apps/api/prisma/migrations/**/migration_lock.toml
+apps/api/uploads/
+
+# Build artifacts
+*.tsbuildinfo
+
+# Local-only agent/editor settings (.claude/launch.json IS committed)
+.claude/settings.local.json
+
+# ---------------------------------------------------------------------------
+# Business, financial and personal documents.
+# This is a public repository: the business plan, financial models, market
+# research and personal documents are deliberately kept out of it. They stay
+# on disk, they are just not versioned here.
+# ---------------------------------------------------------------------------
+*.docx
+*.xlsx
+*.doc
+*.pdf
+
+_originals_backup/
+_scripts_corrections/
+
+# LaTeX sources/build artifacts for the business-plan documents
+*.aux
+*.out
+*.toc
+*.synctex*
+Dossier_Collecte_LIME_Event.tex
+Plan_Affaires_LIME_Event.tex
+
+# One-off Excel/financial analysis scripts and their outputs
+analyze_excel.py
+extract_financial.py
+generate_model.py
+excel_analysis.json
+financial_v2_analysis.json
+financial_output.txt
+
+# Business-strategy / market-research notes (not application documentation)
+Plan_Affaires_LIME_Event_Copier_Coller.md
+LIME_EVENT_Manual_Correction_Guide.md
+docs/TAM_SAM_SOM_VALIDATION.md
+docs/MARKET_SIZING_AND_COST_BENCHMARKS_RESEARCH.md
+
+# Large UI design mockups (HTML + PNG reference material)
+stitch_lime_event/stitch_lime_event_marketplace_ui lnding/
+
+# Generated Playwright HTML report
+apps/web/playwright-report/
