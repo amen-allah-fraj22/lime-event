@@ -4,7 +4,8 @@ export type CalendarEntry = {
   date: string;
   status: string;
   city?: string | null;
-  kind: 'booking' | 'event' | 'blocked';
+  kind: 'booking' | 'event' | 'blocked' | 'manual_event' | 'override_blocked' | 'override_warn';
+  is_confirmed?: boolean;
 };
 
 export function sameDay(a: Date, b: Date): boolean {

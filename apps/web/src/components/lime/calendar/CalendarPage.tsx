@@ -15,11 +15,22 @@ import {
   entriesForDay,
   type CalendarEntry,
 } from './calendar-utils';
+import { CalendarManageSidebar } from './CalendarManageSidebar';
 
 type CalendarData = {
   bookings_as_artist: { id: string; title: string; date: string; status: string; city?: string | null }[];
-  events_as_organizer: { id: string; title: string; date: string; status: string; city?: string | null }[];
-  availability_blocks: { date: string; is_blocked: boolean }[];
+  events_as_organizer: {
+    id: string;
+    title: string;
+    date: string;
+    status: string;
+    city?: string | null;
+    is_confirmed?: boolean;
+  }[];
+  manual_events?: { id: string; title: string; date: string; start_time?: string; end_time?: string }[];
+  day_overrides?: { date: string; status: 'OPEN' | 'WARN' | 'BLOCKED' }[];
+  google_events?: { id: string; title: string; date: string; end_date?: string }[];
+  google_connected?: boolean;
 };
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -35,7 +46,7 @@ export function CalendarPage() {
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
 
-  useEffect(() => {
+  const fetchCalendar = () => {
     if (!dbUser?.id) return;
     setLoading(true);
     api
@@ -43,6 +54,10 @@ export function CalendarPage() {
       .then((res) => setData(res.data))
       .catch((e) => setError(getApiErrorMessage(e).message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchCalendar();
   }, [dbUser?.id]);
 
   const entries = useMemo((): CalendarEntry[] => {
@@ -52,16 +67,34 @@ export function CalendarPage() {
       list.push({ ...b, kind: 'booking' });
     }
     for (const e of data.events_as_organizer) {
-      list.push({ ...e, kind: 'event' });
+      list.push({ ...e, kind: 'event', is_confirmed: e.is_confirmed });
     }
-    for (const block of data.availability_blocks ?? []) {
-      if (!block.is_blocked) continue;
+    for (const event of data.manual_events ?? []) {
       list.push({
-        id: `block-${block.date}`,
-        title: 'Blocked',
-        date: block.date,
-        status: 'blocked',
-        kind: 'blocked',
+        id: `manual-${event.id}`,
+        title: event.title,
+        date: event.date,
+        status: 'manual',
+        kind: 'manual_event',
+      });
+    }
+    for (const ge of data.google_events ?? []) {
+      list.push({
+        id: `google-${ge.id}`,
+        title: ge.title,
+        date: ge.date,
+        status: 'google',
+        kind: 'google_event',
+      });
+    }
+    for (const override of data.day_overrides ?? []) {
+      if (override.status === 'OPEN') continue;
+      list.push({
+        id: `override-${override.date}`,
+        title: override.status === 'BLOCKED' ? 'Blocked' : 'Busy',
+        date: override.date,
+        status: override.status,
+        kind: override.status === 'BLOCKED' ? 'override_blocked' : 'override_warn',
       });
     }
     return list;
@@ -71,7 +104,7 @@ export function CalendarPage() {
     () =>
       entries.filter((e) => {
         const d = new Date(e.date);
-        return d.getFullYear() === year && d.getMonth() === month && e.kind !== 'blocked';
+        return d.getFullYear() === year && d.getMonth() === month && !e.kind.startsWith('override_');
       }),
     [entries, year, month],
   );
@@ -80,7 +113,11 @@ export function CalendarPage() {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return entries
-      .filter((e) => e.kind === 'booking' && new Date(e.date) >= now)
+      .filter(
+        (e) =>
+          (e.kind === 'booking' || (e.kind === 'event' && e.is_confirmed)) &&
+          new Date(e.date) >= now,
+      )
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(0, 6);
   }, [entries]);
@@ -155,8 +192,14 @@ export function CalendarPage() {
                 {cells.map((cell, i) => {
                   if (!cell.date) return <div key={i} />;
                   const dayEntries = entriesForDay(entries, cell.date);
-                  const booked = dayEntries.filter((e) => e.kind === 'booking');
-                  const blocked = dayEntries.some((e) => e.kind === 'blocked');
+                  const booked = dayEntries.filter(
+                    (e) => e.kind === 'booking' || (e.kind === 'event' && e.is_confirmed),
+                  );
+                  const manual = dayEntries.filter((e) => e.kind === 'manual_event');
+                  const google = dayEntries.filter((e) => e.kind === 'google_event');
+                  const displayEvents = [...booked, ...manual, ...google];
+                  const blocked = dayEntries.some((e) => e.kind === 'override_blocked');
+                  const warn = dayEntries.some((e) => e.kind === 'override_warn');
                   const isToday = cell.inMonth && sameDayCheck(cell.date, today);
                   const isSelected = selected && sameDayCheck(cell.date, selected);
 
@@ -186,13 +229,31 @@ export function CalendarPage() {
                           Blocked
                         </div>
                       )}
-                      {booked.slice(0, 2).map((e) => (
+                      {!blocked && warn && cell.inMonth && (
+                        <div className="mt-2 text-center text-[10px] font-bold uppercase text-amber-600">
+                          Busy
+                        </div>
+                      )}
+                      {displayEvents.slice(0, 2).map((e) => (
                         <div
                           key={e.id}
-                          className="mt-2 flex items-center gap-2 rounded-md border-l-4 border-primary-container bg-primary-container/10 p-1.5"
+                          className={cn(
+                            "mt-2 flex items-center gap-2 rounded-md border-l-4 p-1.5",
+                            e.kind === 'manual_event' 
+                              ? "border-amber-400 bg-amber-400/10" 
+                              : e.kind === 'google_event'
+                              ? "border-blue-400 bg-blue-400/10"
+                              : "border-primary-container bg-primary-container/10"
+                          )}
                         >
-                          <span className="h-2 w-2 shrink-0 rounded-full bg-primary-container" />
-                          <span className="truncate text-[10px] font-bold text-on-primary-container">
+                          <span className={cn(
+                            "h-2 w-2 shrink-0 rounded-full",
+                            e.kind === 'manual_event' ? "bg-amber-400" : e.kind === 'google_event' ? 'bg-blue-400' : "bg-primary-container"
+                          )} />
+                          <span className={cn(
+                            "truncate text-[10px] font-bold",
+                            e.kind === 'manual_event' ? "text-amber-700" : e.kind === 'google_event' ? 'text-blue-700' : "text-on-primary-container"
+                          )}>
                             {e.title}
                           </span>
                         </div>
@@ -205,27 +266,13 @@ export function CalendarPage() {
           </div>
 
           <div className="space-y-gutter lg:col-span-4">
-            <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-8">
-              <h3 className="mb-6 font-headline text-headline-md">Manage Availability</h3>
-              <p className="mb-4 text-sm text-secondary">
-                Availability blocks are created automatically when you sign contracts. Contact support to
-                adjust blocked dates.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-lg border-2 border-outline-variant bg-surface p-3">
-                  <p className="text-[10px] font-bold uppercase text-secondary">From</p>
-                  <p className="font-label-md">
-                    {selected?.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) ?? '—'}
-                  </p>
-                </div>
-                <div className="rounded-lg border-2 border-outline-variant bg-surface p-3">
-                  <p className="text-[10px] font-bold uppercase text-secondary">To</p>
-                  <p className="font-label-md">
-                    {selected?.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) ?? '—'}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <CalendarManageSidebar
+              userId={dbUser?.id ?? ''}
+              selectedDate={selected}
+              entriesForSelectedDate={selected ? entriesForDay(entries, selected) : []}
+              onRefresh={fetchCalendar}
+              googleConnected={data?.google_connected}
+            />
 
             <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-8">
               <div className="mb-6 flex items-center justify-between">
