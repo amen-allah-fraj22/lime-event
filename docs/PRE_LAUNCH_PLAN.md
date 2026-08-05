@@ -36,14 +36,22 @@ Compiled from a codebase deep-analysis on 2026-08-03. Covers testing, bug fixes,
 
 **⚠️ Known limitation — history is not rewritten.** `deep-research-report.md` (competitor analysis) and `stitch_lime_event/` (design mockups) were untracked, but they were present in the **initial commit**, so they remain retrievable from git history and have been publicly visible since that commit. Removing them for real requires a history rewrite (`git filter-repo` / BFG) plus a force-push, which rewrites every commit hash — deliberately **not** done. Decide explicitly whether this matters before launch.
 
-## 2. Known bugs to fix before launch
+## 2. Known bugs to fix before launch — ✅ DONE (2026-08-05)
 
 | Bug | Status | Notes |
 |---|---|---|
-| Duplicate header on `/messages/[bookingId]` | Fixed, not visually re-verified | Needs a real login to confirm in-browser |
-| Commission rate 12.5% vs plan's 7% | **Not fixed** | `apps/api/src/payments/payments.service.ts` — `COMMISSION_RATE` env default |
-| `/artists` vs `/explore/artists` duplication | **Not resolved** | Decide canonical route, redirect or remove the other |
-| Unknown bugs | **Unaudited** | No systematic pass has been done outside of the specific things caught by accident this session |
+| Duplicate header on `/messages/[bookingId]` | ✅ Fixed & confirmed | `BookingConversationView` renders its own back-header, so the extra `AppShell` wrapper produced two. Now identical in structure to the sibling `/bookings/[id]`. Still worth a logged-in visual pass in section 3. |
+| Commission rate 12.5% vs plan's 7% | ✅ Fixed | Replaced the flat 12.5% with the **published progressive scale** — 7% / 5% / 3% by band, applied like a tax bracket. 7 unit tests cover both boundaries, the 600 TND pilot average and a zero fee. |
+| `/artists` vs `/explore/artists` duplication | ✅ Resolved | `/explore/artists` is canonical (bottom nav, dashboard + role-switcher target, only one that can open a booking request). `/artists` now 308-redirects to it; duplicate page removed; internal links repointed. `/artists/[id]` and `/artists/me` untouched. **Verified live: `/artists` → `/explore/artists`.** |
+| Unknown bugs | ✅ First audit done | Typecheck found **7 latent errors**, all now fixed (see below). Runtime/behavioural auditing still belongs to the section 3 regression pass. |
+
+**The public landing page was advertising the wrong price.** Beyond the API default, `LandingPage.tsx` displayed "12.5% fee" to every visitor — contradicting the business plan sent to the expert. Now shows 7%, verified rendering live.
+
+**Two latent type bugs found by the first `tsc` run** (silent at runtime, but the compile was broken):
+- `CalendarEntry.kind` omitted `'google_event'`, even though the calendar creates entries with that kind from the API's `google_events` payload and then filters and styles by it — every such comparison was statically impossible, so synced Google Calendar entries could never be treated correctly.
+- `ArtistProfileFull` omitted `pricing_min` / `pricing_max`, which exist on the Prisma model and are read by the wizard's pricing step.
+
+**Current state: web typecheck 0 errors (was 7), API typecheck 0 errors, all 14 API tests pass.**
 
 ## 3. Full regression pass (systematic, not incidental)
 
