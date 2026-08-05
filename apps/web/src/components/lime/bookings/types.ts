@@ -3,6 +3,7 @@ export type BookingDetail = {
   status: string;
   message?: string | null;
   quote_amount?: number | null;
+  agreed_fee?: number | null;
   quote_expires_at?: string | null;
   quote_conditions?: Record<string, unknown> | null;
   created_at: string;
@@ -21,17 +22,22 @@ export type BookingDetail = {
   };
   artist: {
     id: string;
-    artist_profile?: {
-      id: string;
-      display_name: string;
-      bio?: string | null;
-      genres: string[];
-      city?: string | null;
-      avg_rating: number;
-      total_bookings: number;
-    } | null;
+    artist_profile?: import('@/lib/artist-profile-types').ArtistProfileFull | null;
   };
   organizer: { id: string; email: string };
   contract?: { id: string; status: string } | null;
-  messages: { id: string; sender_id: string; content: string; created_at: string }[];
+  messages: {
+    id: string;
+    sender_id: string;
+    content: string;
+    created_at: string;
+    message_type?: string | null;
+  }[];
+  negotiation_offers?: {
+    id: string;
+    proposed_by: string;
+    fee: number;
+    status: string;
+    created_at: string;
+  }[];
 };
