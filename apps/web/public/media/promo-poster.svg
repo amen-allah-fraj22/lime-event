@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="Promo video placeholder — live music scene">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1c1c"/>
+      <stop offset="1" stop-color="#2E2E2E"/>
+    </linearGradient>
+    <radialGradient id="stage" cx="0.5" cy="0.3" r="0.7">
+      <stop offset="0" stop-color="#b7d507" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#b7d507" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <!-- stage light beams -->
+  <polygon points="640,120 480,720 800,720" fill="url(#stage)"/>
+  <polygon points="420,90 300,720 560,720" fill="#b7d507" opacity="0.10"/>
+  <polygon points="860,90 720,720 980,720" fill="#b7d507" opacity="0.10"/>
+  <!-- crowd silhouette -->
+  <g fill="#0d0d0d">
+    <rect x="0" y="560" width="1280" height="160"/>
+    <circle cx="120" cy="560" r="34"/><circle cx="230" cy="575" r="30"/><circle cx="345" cy="560" r="36"/>
+    <circle cx="470" cy="580" r="30"/><circle cx="600" cy="558" r="34"/><circle cx="720" cy="578" r="32"/>
+    <circle cx="840" cy="560" r="36"/><circle cx="960" cy="576" r="30"/><circle cx="1080" cy="560" r="34"/><circle cx="1190" cy="576" r="32"/>
+  </g>
+  <!-- raised hands -->
+  <g stroke="#0d0d0d" stroke-width="10" stroke-linecap="round">
+    <line x1="180" y1="560" x2="172" y2="500"/><line x1="410" y1="575" x2="420" y2="512"/>
+    <line x1="660" y1="558" x2="652" y2="498"/><line x1="900" y1="560" x2="910" y2="505"/><line x1="1130" y1="572" x2="1122" y2="512"/>
+  </g>
+  <text x="640" y="410" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="34" font-weight="700" fill="#b7d507" opacity="0.85">LIME Event — demo reel</text>
+  <text x="640" y="452" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" font-size="20" fill="#e2e2e2" opacity="0.6">placeholder · swap with real footage</text>
+</svg>

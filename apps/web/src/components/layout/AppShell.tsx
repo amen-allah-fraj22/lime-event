@@ -1,28 +1,19 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserButton, useUser } from '@clerk/nextjs';
-import { Logo } from '@/components/Logo';
-import { RoleSwitcher } from '@/components/lime/RoleSwitcher';
-import { useRoleOptional } from '@/context/RoleContext';
-import { cn } from '@/lib/utils';
-import type { ActiveRole } from '@/lib/roles';
+import { MobileTopBar } from './MobileTopBar';
+import { MobileBottomNav } from './MobileBottomNav';
 
-const navLinks: { href: string; label: string; roles?: ActiveRole[] }[] = [
-  { href: '/artists', label: 'Browse' },
-  { href: '/events/new', label: 'Create event', roles: ['organizer', 'agency'] },
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/notifications', label: 'Alerts' },
-  { href: '/calendar', label: 'Calendar' },
-];
+/* Routes that render their own full-screen layout (no shell) */
+const SHELL_EXCLUDED = ['/', '/sign-in', '/sign-up', '/onboarding', '/login', '/signup'];
 
-const ROLE_LABELS: Record<ActiveRole, string> = {
-  artist: 'Artist',
-  organizer: 'Organizer',
-  agency: 'Agency',
-  admin: 'Admin',
-};
+function isExcluded(pathname: string): boolean {
+  if (SHELL_EXCLUDED.includes(pathname)) return true;
+  if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')) return true;
+  if (pathname.startsWith('/onboarding')) return true;
+  if (pathname.startsWith('/login') || pathname.startsWith('/signup')) return true;
+  return false;
+}
 
 export function AppShell({
   children,
@@ -32,61 +23,23 @@ export function AppShell({
   showNav?: boolean;
 }) {
   const pathname = usePathname();
-  const { isSignedIn, user } = useUser();
-  const roleCtx = useRoleOptional();
-  const activeRole = roleCtx?.activeRole;
+  const excluded = isExcluded(pathname);
 
-  if (!showNav) return <>{children}</>;
+  // For landing, auth, and onboarding pages — render children directly
+  if (!showNav || excluded) return <>{children}</>;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <nav className="sticky top-0 z-50 border-b border-surface-variant bg-white/90 shadow-sm backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-container-max items-center justify-between px-4 md:px-10">
-          <Logo className="h-9 w-auto" />
-          <div className="flex flex-wrap items-center gap-4 md:gap-6">
-            {navLinks.map((link) => {
-              if (link.roles && activeRole && !link.roles.includes(activeRole)) return null;
-              if (link.roles && !activeRole) return null;
-              const active = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    'font-body text-sm font-semibold transition',
-                    active
-                      ? 'border-b-2 border-lime pb-0.5 text-primary'
-                      : 'text-brand-accent hover:text-primary',
-                  )}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-3">
-            {roleCtx && <RoleSwitcher />}
-            {activeRole && isSignedIn && (
-              <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-secondary sm:inline">
-                {ROLE_LABELS[activeRole]}
-              </span>
-            )}
-            {!isSignedIn ? (
-              <>
-                <Link href="/sign-in" className="text-sm font-semibold text-brand-text">
-                  Log in
-                </Link>
-                <Link href="/sign-up" className="lime-btn-primary px-4 py-2 text-sm">
-                  Sign up
-                </Link>
-              </>
-            ) : (
-              <UserButton afterSignOutUrl="/" />
-            )}
-          </div>
-        </div>
-      </nav>
-      <main className="flex-1">{children}</main>
+    <div className="flex min-h-screen flex-col bg-surface">
+      {/* Top bar — slim header with logo + notifications + avatar */}
+      <MobileTopBar />
+
+      {/* Main content — padded at bottom on mobile to clear the bottom nav */}
+      <main className="flex-1 pb-24 md:pb-6">
+        {children}
+      </main>
+
+      {/* Bottom navigation — mobile only (hidden on md+) */}
+      <MobileBottomNav />
     </div>
   );
 }

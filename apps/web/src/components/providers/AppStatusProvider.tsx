@@ -4,7 +4,6 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import api, { setApiGlobalErrorHandler, type ApiGlobalError } from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
 import { ErrorAlert } from '@/components/feedback/ErrorAlert';
-import { DebugButton } from '@/components/debug/DebugButton';
 
 type AppStatus = {
   apiOk: boolean | null;
@@ -114,7 +113,6 @@ export function AppStatusProvider({
         </p>
       )}
       {children}
-      {showDevTools && <DebugButton />}
     </AppStatusContext.Provider>
   );
 }

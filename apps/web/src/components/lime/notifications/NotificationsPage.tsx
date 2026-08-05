@@ -62,7 +62,7 @@ function timeAgo(iso: string): string {
 function actionHref(type: string): string | null {
   if (BOOKING_TYPES.has(type) || type.includes('quote')) return '/dashboard/bookings';
   if (type.includes('contract')) return '/dashboard/bookings';
-  if (PAYMENT_TYPES.has(type)) return '/dashboard/earnings';
+  if (PAYMENT_TYPES.has(type)) return '/dashboard/bookings';
   return null;
 }
 

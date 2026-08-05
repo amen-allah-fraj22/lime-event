@@ -5,12 +5,10 @@ import { AppShell } from '@/components/layout/AppShell';
 import api from '@/lib/api';
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<'overview' | 'users' | 'bookings' | 'payments'>('overview');
+  const [tab, setTab] = useState<'overview' | 'users' | 'bookings'>('overview');
   const [stats, setStats] = useState<{
     total_users: number;
     active_bookings: number;
-    total_revenue_tnd: number;
-    pending_payouts: number;
   } | null>(null);
   const [users, setUsers] = useState<
     { id: string; email: string; roles: string[]; is_active: boolean; is_verified: boolean }[]
@@ -18,18 +16,26 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<
     { id: string; status: string; event: { title: string }; artist: { email: string } }[]
   >([]);
-  const [payments, setPayments] = useState<
-    { id: string; gross_amount: number; status: string; booking_request: { event: { title: string } } }[]
-  >([]);
 
   useEffect(() => {
-    api.get('/admin/dashboard').then((res) => setStats(res.data)).catch(() => setStats(null));
+    api
+      .get('/admin/dashboard')
+      .then((res) => {
+        const d = res.data as {
+          total_users: number;
+          active_bookings: number;
+        };
+        setStats({
+          total_users: d.total_users,
+          active_bookings: d.active_bookings,
+        });
+      })
+      .catch(() => setStats(null));
   }, []);
 
   useEffect(() => {
     if (tab === 'users') api.get('/admin/users').then((r) => setUsers(r.data)).catch(() => setUsers([]));
     if (tab === 'bookings') api.get('/admin/bookings').then((r) => setBookings(r.data)).catch(() => setBookings([]));
-    if (tab === 'payments') api.get('/admin/payments').then((r) => setPayments(r.data)).catch(() => setPayments([]));
   }, [tab]);
 
   async function toggleUser(id: string, field: 'is_active' | 'is_verified', value: boolean) {
@@ -37,14 +43,7 @@ export default function AdminPage() {
     setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, [field]: value } : u)));
   }
 
-  async function markPaid(id: string) {
-    await api.patch(`/admin/payments/${id}/paid`);
-    setPayments((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: 'held' } : p)),
-    );
-  }
-
-  const tabs = ['overview', 'users', 'bookings', 'payments'] as const;
+  const tabs = ['overview', 'users', 'bookings'] as const;
 
   return (
     <AppShell>
@@ -66,13 +65,11 @@ export default function AdminPage() {
         </div>
 
         {tab === 'overview' && (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {stats
               ? [
                   ['Total users', stats.total_users],
                   ['Active bookings', stats.active_bookings],
-                  ['Revenue (TND)', stats.total_revenue_tnd],
-                  ['Pending payouts', stats.pending_payouts],
                 ].map(([label, value]) => (
                   <div key={String(label)} className="lime-card p-6">
                     <p className="text-sm text-brand-accent">{label}</p>
@@ -130,23 +127,6 @@ export default function AdminPage() {
               <li key={b.id} className="flex justify-between py-3 text-sm">
                 <span>{b.event.title}</span>
                 <span className="capitalize text-brand-accent">{b.status}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {tab === 'payments' && (
-          <ul className="lime-card mt-8 divide-y p-4">
-            {payments.map((p) => (
-              <li key={p.id} className="flex items-center justify-between py-3 text-sm">
-                <span>
-                  {p.booking_request.event.title} — {p.gross_amount} TND ({p.status})
-                </span>
-                {p.status === 'pending' && (
-                  <button type="button" className="text-xs font-semibold text-primary" onClick={() => markPaid(p.id)}>
-                    Mark paid
-                  </button>
-                )}
               </li>
             ))}
           </ul>

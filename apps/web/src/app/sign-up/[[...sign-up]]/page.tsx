@@ -1,9 +1,9 @@
 'use client';
 
-import { SignUp } from '@clerk/nextjs';
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { StitchAuthLayout, clerkAppearance } from '@/components/lime/auth/StitchAuthLayout';
+import { StitchAuthLayout } from '@/components/lime/auth/StitchAuthLayout';
+import { CustomSignUpForm } from '@/components/lime/auth/CustomSignUpForm';
 import { type AuthRole } from '@/components/lime/auth/RoleTabs';
 import { LoadingBlock } from '@/components/feedback/LoadingBlock';
 
@@ -18,14 +18,7 @@ function SignUpContent() {
 
   return (
     <StitchAuthLayout mode="sign-up" role={role} onRoleChange={setRole}>
-      <SignUp
-        routing="path"
-        path="/sign-up"
-        signInUrl="/sign-in"
-        forceRedirectUrl="/onboarding/role"
-        unsafeMetadata={{ role }}
-        appearance={clerkAppearance}
-      />
+      <CustomSignUpForm role={role} />
     </StitchAuthLayout>
   );
 }

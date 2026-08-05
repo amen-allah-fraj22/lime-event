@@ -9,6 +9,9 @@ import { useRole } from '@/context/RoleContext';
 import { cn } from '@/lib/utils';
 import type { ActiveRole } from '@/lib/roles';
 
+import { MobileTopBar } from '@/components/layout/MobileTopBar';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+
 export type DashboardNavItem = {
   href: string;
   label: string;
@@ -34,12 +37,6 @@ const ARTIST_NAV: DashboardNavItem[] = [
   { href: '/artists/me', label: 'Profile', icon: 'person', roles: ['artist'] },
   { href: '/dashboard/bookings', label: 'Bookings', icon: 'event_seat' },
   { href: '/calendar', label: 'Calendar', icon: 'calendar_today' },
-  {
-    href: '/dashboard/earnings',
-    label: 'Earnings',
-    icon: 'payments',
-    roles: ['artist'],
-  },
   { href: '/notifications', label: 'Notifications', icon: 'notifications' },
 ];
 
@@ -74,8 +71,12 @@ export function DashboardShell({
     'User';
 
   return (
-    <div className="min-h-screen bg-surface font-body text-on-surface">
-      <aside className="dashboard-shadow fixed left-0 top-0 z-50 flex h-screen w-64 flex-col bg-surface-container-lowest py-2">
+    <div className="min-h-screen bg-surface font-body text-on-surface flex flex-col">
+      <div className="md:hidden">
+        <MobileTopBar />
+      </div>
+
+      <aside className="dashboard-shadow fixed left-0 top-0 z-50 hidden md:flex h-screen w-64 flex-col bg-surface-container-lowest py-2">
         <div className="px-6 py-8">
           <Link href="/dashboard" className="font-headline text-headline-md font-bold text-primary">
             LIME Event
@@ -115,7 +116,7 @@ export function DashboardShell({
         <div className="mt-auto space-y-1 px-4 pb-8">
           {showNewEvent && canCreateEvent && (
             <Link
-              href="/events/new"
+              href="/events/create"
               className="mb-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-container py-3 font-bold text-on-primary-fixed transition-all hover:opacity-90 active:scale-95"
             >
               <MaterialIcon name="add" size={20} />
@@ -141,8 +142,8 @@ export function DashboardShell({
         </div>
       </aside>
 
-      <main className="ml-64 min-h-screen pb-20">
-        <header className="dashboard-shadow sticky top-0 z-40 flex h-16 items-center justify-between bg-surface px-margin-mobile md:px-margin-desktop">
+      <main className="md:ml-64 flex-1 pb-24 md:pb-20">
+        <header className="dashboard-shadow sticky top-0 z-40 hidden md:flex h-16 items-center justify-between bg-surface px-margin-mobile md:px-margin-desktop">
           <div className="max-w-xl flex-1">
             <div className="relative flex items-center">
               <MaterialIcon
@@ -187,6 +188,10 @@ export function DashboardShell({
           {children}
         </div>
       </main>
+
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
     </div>
   );
 }

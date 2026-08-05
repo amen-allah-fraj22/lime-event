@@ -18,7 +18,12 @@ export function RoleSwitcher({ className }: { className?: string }) {
 
   const handleSwitch = (role: ContextSwitchRole) => {
     setActiveRole(role);
-    router.push('/dashboard');
+    const path = window.location.pathname;
+    if (path.startsWith('/explore')) {
+      router.push(role === 'artist' ? '/explore/events' : '/explore/artists');
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   return (

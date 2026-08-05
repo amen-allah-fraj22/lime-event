@@ -4,25 +4,26 @@ import { ArtistDashboard } from '@/components/lime/dashboard/ArtistDashboard';
 import { OrganizerDashboard } from '@/components/lime/dashboard/OrganizerDashboard';
 import { LoadingBlock } from '@/components/feedback/LoadingBlock';
 import { useRole } from '@/context/RoleContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function DashboardPage() {
   const { activeRole } = useRole();
 
-  if (!activeRole) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <LoadingBlock label="Loading dashboard…" />
-      </div>
-    );
-  }
+  const router = useRouter();
 
-  if (activeRole === 'artist') {
-    return <ArtistDashboard />;
-  }
+  useEffect(() => {
+    if (!activeRole) return;
+    if (activeRole === 'artist') {
+      router.replace('/agenda');
+    } else {
+      router.replace('/explore/artists');
+    }
+  }, [activeRole, router]);
 
-  if (activeRole === 'organizer' || activeRole === 'agency') {
-    return <OrganizerDashboard />;
-  }
-
-  return <OrganizerDashboard />;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-surface">
+      <LoadingBlock label="Redirecting…" />
+    </div>
+  );
 }

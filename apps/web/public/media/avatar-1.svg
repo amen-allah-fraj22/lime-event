@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Avatar placeholder SK">
+  <rect width="200" height="200" fill="#b7d507"/>
+  <circle cx="100" cy="78" r="38" fill="#2E2E2E"/>
+  <path d="M30 200 q0 -70 70 -70 q70 0 70 70 z" fill="#2E2E2E"/>
+  <text x="100" y="118" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="40" font-weight="800" fill="#b7d507" opacity="0">SK</text>
+</svg>

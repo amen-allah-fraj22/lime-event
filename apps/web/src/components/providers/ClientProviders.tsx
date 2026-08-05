@@ -9,6 +9,8 @@ import { UserSessionProvider } from './UserSessionProvider';
 function isMarketingRoute(pathname: string) {
   if (pathname === '/') return true;
   if (pathname === '/artists') return true;
+  if (pathname === '/explore/artists') return true;
+  if (pathname === '/explore/events') return true;
   if (/^\/artists\/[^/]+$/.test(pathname)) return true;
   if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')) return true;
   return false;

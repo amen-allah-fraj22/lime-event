@@ -59,11 +59,10 @@ export function ArtistDashboard() {
     const active = bookings.filter((b) =>
       ['quoted', 'accepted', 'contracted'].includes(b.status),
     ).length;
-    const earnings = bookings.reduce(
-      (sum, b) => sum + (b.payment?.net_amount ?? b.quote_amount ?? 0),
-      0,
-    );
-    return { pending, active, earnings };
+    const confirmed = bookings.filter((b) =>
+      ['accepted', 'contracted', 'completed'].includes(b.status),
+    ).length;
+    return { pending, active, confirmed };
   }, [bookings]);
 
   const pendingRequests = bookings.filter((b) => b.status === 'pending');
@@ -101,11 +100,7 @@ export function ArtistDashboard() {
           hint={stats.pending > 0 ? '+ new' : undefined}
         />
         <StatCard label="Active Bookings" value={stats.active} icon="confirmation_number" />
-        <StatCard
-          label="Earnings (TND)"
-          value={stats.earnings.toLocaleString()}
-          icon="payments"
-        />
+        <StatCard label="Confirmed" value={stats.confirmed} icon="check_circle" />
         <StatCard
           label="Profile"
           value={me?.artist_profile ? 'Live' : 'Setup'}

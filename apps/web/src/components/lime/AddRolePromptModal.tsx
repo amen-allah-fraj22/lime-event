@@ -6,6 +6,7 @@ import { useDbUser } from '@/components/providers/UserSessionProvider';
 import api from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
 import { invalidateMeCache } from '@/lib/me-session';
+import { ModalOverlay } from '@/components/ui/ModalOverlay';
 import { normalizeRoles, type ContextSwitchRole } from '@/lib/roles';
 
 interface Props {
@@ -46,8 +47,6 @@ export function AddRolePromptModal({
   const { refreshUser } = useDbUser();
   const copy = COPY[targetRole];
 
-  if (!isOpen) return null;
-
   async function handleAddRole() {
     setLoading(true);
     setError(null);
@@ -67,13 +66,8 @@ export function AddRolePromptModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/45 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="add-role-title"
-    >
-      <div className="lime-card w-full max-w-md p-8 text-center">
+    <ModalOverlay isOpen={isOpen} onClose={onClose} labelledBy="add-role-title">
+      <div className="overflow-y-auto p-6 text-center sm:p-8">
         <p className="text-4xl" aria-hidden>
           {copy.emoji}
         </p>
@@ -98,6 +92,6 @@ export function AddRolePromptModal({
           Maybe later
         </button>
       </div>
-    </div>
+    </ModalOverlay>
   );
 }

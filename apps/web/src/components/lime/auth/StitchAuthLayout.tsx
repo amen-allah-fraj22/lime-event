@@ -4,24 +4,6 @@ import Link from 'next/link';
 import { AuthBrandPanel } from './AuthBrandPanel';
 import { RoleTabs, type AuthRole } from './RoleTabs';
 
-const clerkAppearance = {
-  elements: {
-    rootBox: 'w-full max-w-md mx-auto',
-    card: 'shadow-none border-0 bg-transparent p-0 w-full',
-    headerTitle: 'hidden',
-    headerSubtitle: 'hidden',
-    socialButtonsBlockButton:
-      'border-2 border-surface-variant bg-surface-container-lowest rounded-lg',
-    formButtonPrimary:
-      'bg-primary-container text-custom-dark font-semibold rounded-lg hover:brightness-95',
-    formFieldInput:
-      'border-2 border-surface-variant rounded-lg focus:ring-[3px] focus:ring-primary-container/30',
-    footerActionLink: 'text-primary font-bold',
-  },
-};
-
-export { clerkAppearance };
-
 export function StitchAuthLayout({
   mode,
   role,

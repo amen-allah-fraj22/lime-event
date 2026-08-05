@@ -1,18 +1,12 @@
 'use client';
 
-import { SignIn } from '@clerk/nextjs';
-import { StitchAuthLayout, clerkAppearance } from '@/components/lime/auth/StitchAuthLayout';
+import { StitchAuthLayout } from '@/components/lime/auth/StitchAuthLayout';
+import { CustomSignInForm } from '@/components/lime/auth/CustomSignInForm';
 
 export default function SignInPage() {
   return (
     <StitchAuthLayout mode="sign-in">
-      <SignIn
-        routing="path"
-        path="/sign-in"
-        signUpUrl="/sign-up"
-        forceRedirectUrl="/dashboard"
-        appearance={clerkAppearance}
-      />
+      <CustomSignInForm />
     </StitchAuthLayout>
   );
 }

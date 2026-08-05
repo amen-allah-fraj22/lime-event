@@ -2,11 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
 import { useStatCounters } from '@/hooks/useStatCounters';
+
+// WebGL hero background — client-only, code-split so `three` stays out of SSR.
+const HeroScene3D = dynamic(
+  () => import('./HeroScene3D').then((m) => m.HeroScene3D),
+  { ssr: false },
+);
 
 function FadeSection({
   children,
@@ -78,9 +85,13 @@ export function LandingPage() {
 
       <main className="pt-20">
         {/* Hero */}
-        <section className="relative flex min-h-[640px] items-center overflow-hidden pb-12 pt-24 lg:min-h-[921px]">
+        <section className="relative flex min-h-[640px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-20 sm:pb-12 sm:pt-24 lg:min-h-[921px]">
           <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
-          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-12 px-margin-mobile md:px-margin-desktop lg:grid-cols-2">
+          <HeroScene3D />
+          {/* Dissolves the hero's gradient + 3D scene into the next section's
+              background instead of a hard cut at the section boundary. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
+          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop lg:grid-cols-2 lg:gap-12">
             <FadeSection className="z-10 flex flex-col gap-8">
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
@@ -116,21 +127,29 @@ export function LandingPage() {
             </FadeSection>
 
             <FadeSection className="relative flex w-full items-center justify-center lg:h-[600px]">
-              <div className="animate-float z-20 w-full max-w-md rounded-4xl border border-surface-variant/50 bg-surface-container-lowest p-6 shadow-float transition-transform hover:-translate-y-1">
-                <div className="mb-6 flex items-center justify-between">
+              <div className="animate-float z-20 w-full max-w-md rounded-4xl border border-surface-variant/50 bg-surface-container-lowest p-4 shadow-float transition-transform hover:-translate-y-1 sm:p-6">
+                <div className="mb-4 flex items-center justify-between sm:mb-6">
                   <h3 className="font-headline text-headline-md text-on-surface">Artist Matches</h3>
                   <MaterialIcon name="auto_awesome" filled className="text-primary-container" />
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-2 sm:space-y-4">
                   {[
-                    { name: 'DJ Amina', genres: 'Electronic • House', match: '98%' },
-                    { name: 'The Tunis Quintet', genres: 'Jazz • Ambient', match: '95%' },
+                    { name: 'DJ Amina', genres: 'Electronic • House', match: '98%', img: '/media/artist-dj.svg' },
+                    { name: 'The Tunis Quintet', genres: 'Jazz • Ambient', match: '95%', img: '/media/artist-band.svg' },
                   ].map((a) => (
                     <div
                       key={a.name}
-                      className="group flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-4 transition-colors hover:border-surface-variant hover:bg-surface-container-low"
+                      className="group flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-3 transition-colors hover:border-surface-variant hover:bg-surface-container-low sm:p-4"
                     >
-                      <div className="h-16 w-16 overflow-hidden rounded-lg bg-gradient-to-br from-lime/30 to-surface-container" />
+                      <div className="h-14 w-14 overflow-hidden rounded-lg bg-surface-container sm:h-16 sm:w-16">
+                        {/* Placeholder — swap for a real artist photo (same path). */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={a.img}
+                          alt={a.name}
+                          className="h-full w-full object-cover transition-transform group-hover:scale-110"
+                        />
+                      </div>
                       <div className="flex-1">
                         <h4 className="text-label-md font-semibold text-on-surface">{a.name}</h4>
                         <p className="text-label-sm text-on-surface-variant">{a.genres}</p>
@@ -146,7 +165,7 @@ export function LandingPage() {
                 </div>
                 <Link
                   href="/artists"
-                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-low py-3 text-label-md font-semibold text-on-surface transition-colors hover:bg-surface-variant"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-low py-3 text-label-md font-semibold text-on-surface transition-colors hover:bg-surface-variant sm:mt-6"
                 >
                   View All <MaterialIcon name="arrow_forward" size={18} />
                 </Link>
@@ -156,7 +175,7 @@ export function LandingPage() {
         </section>
 
         {/* Features */}
-        <section className="bg-surface-container-lowest py-24" id="features">
+        <section className="bg-surface-container-lowest py-16 sm:py-24" id="features">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="mb-4 font-headline text-headline-lg text-on-surface">
@@ -218,7 +237,7 @@ export function LandingPage() {
         </section>
 
         {/* How it works */}
-        <section className="bg-surface py-24" id="how-it-works">
+        <section className="bg-surface py-16 sm:py-24" id="how-it-works">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="mb-4 font-headline text-headline-lg">How it works</h2>
@@ -261,7 +280,7 @@ export function LandingPage() {
         </section>
 
         {/* Dual audience */}
-        <section className="bg-surface-container-lowest py-24" id="artists">
+        <section className="bg-surface-container-lowest py-16 sm:py-24" id="artists">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="font-headline text-headline-lg">Built for both sides of the stage.</h2>
@@ -308,13 +327,13 @@ export function LandingPage() {
         </section>
 
         {/* Stats */}
-        <section className="bg-surface py-24" id="testimonials">
+        <section className="bg-surface py-16 sm:py-24" id="testimonials">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
               {[
-                { quote: 'LIME Event completely changed how we book for our summer festivals.', who: 'Sarah K.', role: 'Festival Director' },
-                { quote: 'Knowing my payment is secure in escrow before I step on stage is invaluable.', who: 'Mehdi T.', role: 'Musician' },
-                { quote: 'The automated contracts mean I never worry about legal details again.', who: 'Youssef B.', role: 'Corporate Events' },
+                { quote: 'LIME Event completely changed how we book for our summer festivals.', who: 'Sarah K.', role: 'Festival Director', img: '/media/avatar-1.svg' },
+                { quote: 'Knowing my payment is secure in escrow before I step on stage is invaluable.', who: 'Mehdi T.', role: 'Musician', img: '/media/avatar-2.svg' },
+                { quote: 'The automated contracts mean I never worry about legal details again.', who: 'Youssef B.', role: 'Corporate Events', img: '/media/avatar-3.svg' },
               ].map((t, i) => (
                 <FadeSection
                   key={t.who}
@@ -327,8 +346,19 @@ export function LandingPage() {
                     ))}
                   </div>
                   <p className="mb-6 font-body text-body-md italic text-on-surface-variant">&ldquo;{t.quote}&rdquo;</p>
-                  <p className="text-label-md font-semibold">{t.who}</p>
-                  <p className="text-label-sm text-on-surface-variant">{t.role}</p>
+                  <div className="flex items-center gap-3">
+                    {/* Placeholder avatar — swap for a real photo (same path). */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={t.img}
+                      alt={t.who}
+                      className="h-11 w-11 rounded-full object-cover"
+                    />
+                    <div>
+                      <p className="text-label-md font-semibold">{t.who}</p>
+                      <p className="text-label-sm text-on-surface-variant">{t.role}</p>
+                    </div>
+                  </div>
                 </FadeSection>
               ))}
             </div>
@@ -356,7 +386,7 @@ export function LandingPage() {
         </section>
 
         {/* Pricing */}
-        <section className="bg-surface-container-lowest py-24" id="pricing">
+        <section className="bg-surface-container-lowest py-16 sm:py-24" id="pricing">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="font-headline text-headline-lg">Simple, transparent pricing.</h2>
@@ -396,7 +426,7 @@ export function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <FadeSection className="bg-primary-container py-24">
+        <FadeSection className="bg-primary-container py-16 sm:py-24">
           <div className="mx-auto max-w-container-max px-margin-mobile text-center md:px-margin-desktop">
             <h2 className="mb-8 font-headline text-[40px] font-black leading-tight text-on-primary-fixed md:text-[48px]">
               Your next event deserves the best talent.
