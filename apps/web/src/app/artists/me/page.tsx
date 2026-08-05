@@ -20,12 +20,19 @@ export default function ArtistMePage() {
 
     ensureDatabaseUser(user, getToken)
       .then((me) => {
-        const profileId = me.artist_profile?.id;
-        if (profileId) {
-          router.replace(`/artists/${profileId}/edit`);
-        } else {
-          router.replace('/onboarding/role');
+        const profile = me.artist_profile as
+          | { id: string; is_profile_complete?: boolean }
+          | null
+          | undefined;
+        if (profile?.id) {
+          if (profile.is_profile_complete) {
+            router.replace(`/artists/${profile.id}`);
+          } else {
+            router.replace(`/artists/${profile.id}/edit`);
+          }
+          return;
         }
+        router.replace('/onboarding/role');
       })
       .catch(() => router.replace('/onboarding/role'));
   }, [getToken, isLoaded, isSignedIn, router, user]);

@@ -2,9 +2,10 @@
 
 import { useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import api from '@/lib/api';
+import { rolesFromClerkUser } from '@/lib/auth-sync';
 import type { ActiveRole } from '@/lib/roles';
 import { cn } from '@/lib/utils';
 
@@ -19,8 +20,17 @@ export default function OnboardingRolePage() {
   const { getToken } = useAuth();
   const router = useRouter();
   const [selectedRoles, setSelectedRoles] = useState<ActiveRole[]>(['organizer']);
+  const [rolesInitialized, setRolesInitialized] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Pre-select whatever role the user actually chose at sign-up instead of
+  // always defaulting to Organizer.
+  useEffect(() => {
+    if (!isLoaded || !user || rolesInitialized) return;
+    setSelectedRoles(rolesFromClerkUser(user));
+    setRolesInitialized(true);
+  }, [isLoaded, user, rolesInitialized]);
 
   function toggleRole(role: ActiveRole) {
     setSelectedRoles((prev) => {

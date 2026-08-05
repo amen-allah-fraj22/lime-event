@@ -1,84 +1,83 @@
 'use client';
 
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
-import { SendBookingRequestButton } from '@/components/lime/SendBookingRequestButton';
+import {
+  ArtistPublicProfile,
+} from '@/components/lime/artist/ArtistPublicProfile';
+import type { ArtistProfileFull } from '@/lib/artist-profile-types';
+import { ArtistProfileSkeleton } from '@/components/lime/artist/ArtistProfileSkeleton';
 import api from '@/lib/api';
 import { ensureDatabaseUser } from '@/lib/auth-sync';
-import { useUser } from '@clerk/nextjs';
 
 export default function ArtistProfilePage() {
   const { id } = useParams<{ id: string }>();
   const { getToken, isSignedIn } = useAuth();
   const { user } = useUser();
   const [myProfileId, setMyProfileId] = useState<string | null>(null);
-  const [artist, setArtist] = useState<{
-    id: string;
-    display_name: string;
-    bio?: string;
-    city?: string;
-    genres: string[];
-    pricing_min?: number;
-    pricing_max?: number;
-    avg_rating: number;
-  } | null>(null);
+  const [artist, setArtist] = useState<ArtistProfileFull | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-    api.get(`/artists/${id}`).then((res) => setArtist(res.data)).catch(console.error);
+    let cancelled = false;
+    setLoading(true);
+    setNotFound(false);
+
+    api
+      .get(`/artists/${id}`)
+      .then((res) => {
+        if (!cancelled) setArtist(res.data);
+      })
+      .catch(() => {
+        if (!cancelled) setNotFound(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
     if (!isSignedIn || !user) {
       setMyProfileId(null);
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
+
     ensureDatabaseUser(user, getToken)
-      .then((me) => setMyProfileId(me.artist_profile?.id ?? null))
-      .catch(() => setMyProfileId(null));
+      .then((me) => {
+        if (!cancelled) setMyProfileId(me.artist_profile?.id ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setMyProfileId(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [getToken, id, isSignedIn, user]);
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        {!artist ? (
-          <p>Loading…</p>
-        ) : (
-          <div className="lime-card overflow-hidden">
-            <div className="h-40 bg-gradient-to-br from-lime/40 to-surface-container" />
-            <div className="space-y-4 p-6">
-              <h1 className="font-headline text-3xl font-bold">{artist.display_name}</h1>
-              <p className="text-brand-accent">{artist.city}</p>
-              <p>{artist.bio ?? 'No bio yet.'}</p>
-              <div className="flex flex-wrap gap-2">
-                {artist.genres.map((g) => (
-                  <span key={g} className="lime-chip">
-                    {g}
-                  </span>
-                ))}
-              </div>
-              <p className="font-medium">
-                {artist.pricing_min ?? '—'} – {artist.pricing_max ?? '—'} TND · ★{' '}
-                {artist.avg_rating.toFixed(1)}
-              </p>
-              {myProfileId === artist.id ? (
-                <Link href={`/artists/${id}/edit`} className="lime-btn-primary inline-block">
-                  Edit profile
-                </Link>
-              ) : isSignedIn ? (
-                <SendBookingRequestButton artistId={id} />
-              ) : (
-                <Link
-                  href={`/sign-in?redirect_url=${encodeURIComponent(`/artists/${id}`)}`}
-                  className="lime-btn-primary inline-block"
-                >
-                  Sign in to book
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <ArtistProfileSkeleton />
+      ) : notFound || !artist ? (
+        <div className="mx-auto max-w-container-max px-margin-mobile py-24 text-center md:px-margin-desktop">
+          <p className="font-headline text-headline-md text-on-surface">Artist not found</p>
+          <Link href="/artists" className="mt-4 inline-block text-primary hover:underline">
+            Browse artists
+          </Link>
+        </div>
+      ) : (
+        <ArtistPublicProfile
+          artist={artist}
+          isSignedIn={!!isSignedIn}
+          isOwner={myProfileId === artist.id}
+        />
+      )}
     </AppShell>
   );
 }
