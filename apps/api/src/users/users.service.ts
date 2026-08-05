@@ -106,8 +106,7 @@ export class UsersService {
     if (p.bio) score += 15;
     if (p.genres.length) score += 15;
     if (p.city) score += 15;
-    if (p.pricing_min != null && p.pricing_max != null) score += 20;
-    if (p.portfolio_links) score += 15;
+    if (p.portfolio_links) score += 35;
     return Math.min(100, score);
   }
 }

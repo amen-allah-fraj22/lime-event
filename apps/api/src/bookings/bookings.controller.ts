@@ -7,6 +7,7 @@ import {
   Post,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { BookingStatus } from '@prisma/client';
 import { Roles } from '../auth/roles.decorator';
@@ -17,6 +18,7 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 import { SendQuoteDto } from './dto/send-quote.dto';
+import { CreateOfferDto } from './dto/create-offer.dto';
 
 @Controller('booking-requests')
 @UseGuards(ClerkAuthGuard, DbUserGuard)
@@ -25,7 +27,7 @@ export class BookingsController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles('organizer', 'agency', 'admin')
+  @Roles('organizer', 'agency', 'admin', 'artist')
   create(@Body() dto: CreateBookingDto, @Req() req: { dbUser: { id: string } }) {
     return this.bookingsService.create(req.dbUser.id, dto);
   }
@@ -79,5 +81,39 @@ export class BookingsController {
     @Req() req: { dbUser: { id: string } },
   ) {
     return this.bookingsService.sendMessage(id, req.dbUser.id, dto);
+  }
+
+  @Get(':id/thread')
+  getThread(@Param('id') id: string, @Req() req: { dbUser: { id: string } }) {
+    return this.bookingsService.getThread(id, req.dbUser.id);
+  }
+
+  @Post(':id/offers')
+  sendOffer(
+    @Param('id') id: string,
+    @Body() dto: CreateOfferDto,
+    @Req() req: { dbUser: { id: string } },
+  ) {
+    return this.bookingsService.sendOffer(id, req.dbUser.id, dto);
+  }
+
+  @Post(':id/offers/:offerId/accept')
+  acceptOffer(
+    @Param('id') id: string,
+    @Param('offerId') offerId: string,
+    @Req() req: { dbUser: { id: string } },
+    @Query('closeEvent') closeEvent?: string,
+  ) {
+    const shouldClose = closeEvent === 'true';
+    return this.bookingsService.acceptOffer(offerId, id, req.dbUser.id, shouldClose);
+  }
+
+  @Post(':id/offers/:offerId/decline')
+  declineOffer(
+    @Param('id') id: string,
+    @Param('offerId') offerId: string,
+    @Req() req: { dbUser: { id: string } },
+  ) {
+    return this.bookingsService.declineOffer(offerId, id, req.dbUser.id);
   }
 }

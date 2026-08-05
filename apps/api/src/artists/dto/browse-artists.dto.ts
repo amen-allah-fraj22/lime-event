@@ -1,5 +1,4 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class BrowseArtistsDto {
   @IsOptional()
@@ -11,16 +10,22 @@ export class BrowseArtistsDto {
   city?: string;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  priceMin?: number;
+  @IsString()
+  search?: string;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  priceMax?: number;
+  @IsIn(['solo', 'band'])
+  artist_type?: string;
 
   @IsOptional()
   @IsString()
-  search?: string;
+  has_sound?: string;
+
+  @IsOptional()
+  @IsString()
+  has_lighting?: string;
+
+  @IsOptional()
+  @IsString()
+  has_mixing?: string;
 }

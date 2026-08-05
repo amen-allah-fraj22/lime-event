@@ -14,10 +14,7 @@ import { Response } from 'express';
 import { DbUserGuard } from '../auth/db-user.guard';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { ContractsService } from './contracts.service';
-
-class SignContractDto {
-  signature!: string;
-}
+import { SignContractDto } from './dto/sign-contract.dto';
 
 @Controller('contracts')
 @UseGuards(ClerkAuthGuard, DbUserGuard)

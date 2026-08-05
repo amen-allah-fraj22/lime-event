@@ -69,6 +69,38 @@ async function main() {
   }
 
   console.log('Seeded', artists.length, 'demo artists');
+
+  // Seed a demo organizer and a public event
+  const orgUser = await prisma.user.upsert({
+    where: { clerk_user_id: 'seed_org_ahmed' },
+    create: {
+      email: 'ahmed.org@lime-event.tn',
+      roles: ['organizer'],
+      active_role: 'organizer',
+      clerk_user_id: 'seed_org_ahmed',
+      is_verified: true,
+    },
+    update: {},
+  });
+
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+  await prisma.event.create({
+    data: {
+      organizer_id: orgUser.id,
+      title: 'Summer Beach Festival 2026',
+      event_type: 'festival',
+      city: 'Hammamet',
+      event_date: nextMonth,
+      budget_min: 500,
+      budget_max: 1500,
+      style_tags: ['Electronic', 'DJ', 'Live Band'],
+      status: 'open',
+    }
+  });
+
+  console.log('Seeded 1 demo organizer and 1 public event');
 }
 
 main()

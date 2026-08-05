@@ -110,12 +110,12 @@ export class ContractsService {
       });
 
       const eventDate = br.event.event_date;
-      await this.prisma.availabilityBlock.upsert({
+      await this.prisma.dayAvailabilityOverride.upsert({
         where: {
           artist_id_date: { artist_id: br.artist_id, date: eventDate },
         },
-        create: { artist_id: br.artist_id, date: eventDate, is_blocked: true },
-        update: { is_blocked: true },
+        create: { artist_id: br.artist_id, date: eventDate, status: 'BLOCKED' },
+        update: { status: 'BLOCKED' },
       });
 
       await this.notifications.notifyUser(

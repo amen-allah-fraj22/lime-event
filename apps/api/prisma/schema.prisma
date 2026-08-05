@@ -24,19 +24,91 @@ model User {
 }
 
 model ArtistProfile {
-  id              String   @id @default(uuid())
-  user_id         String   @unique
-  display_name    String
-  bio             String?
-  genres          String[]
-  city            String?
-  pricing_min     Int?
-  pricing_max     Int?
-  portfolio_links Json?
-  avg_rating      Float    @default(0)
-  total_bookings  Int      @default(0)
-  agency_id       String?
-  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id                   String   @id @default(uuid())
+  user_id              String   @unique
+  display_name         String
+  bio                  String?
+  city                 String?
+  languages            String[] @default([])
+  profile_photo_url    String?
+  cover_photo_url      String?
+
+  artist_type          String   @default("solo")
+
+  instruments          String[] @default([])
+  years_experience     Int?
+  performance_style    String?
+
+  band_name            String?
+  band_size            Int?
+  band_members         Json?
+  has_sound_system     Boolean  @default(false)
+  has_lighting         Boolean  @default(false)
+  setup_time_minutes   Int?
+
+  provides_sound_system   Boolean  @default(false)
+  provides_mixing_desk    Boolean  @default(false)
+  provides_lighting       Boolean  @default(false)
+  provides_microphones    Boolean  @default(false)
+  provides_instruments    Boolean  @default(false)
+  provides_stage_backdrop Boolean  @default(false)
+  provides_own_transport  Boolean  @default(false)
+  equipment_notes         String?
+
+  needs_transport         Boolean  @default(false)
+  needs_accommodation     Boolean  @default(false)
+  needs_meals             Boolean  @default(false)
+  needs_drinks            Boolean  @default(false)
+  needs_stage_crew        Boolean  @default(false)
+  needs_parking           Boolean  @default(false)
+  needs_dressing_room     Boolean  @default(false)
+  needs_sound_engineer    Boolean  @default(false)
+  requirements_notes      String?
+
+  min_event_duration_hrs  Float?
+  max_event_duration_hrs  Float?
+  max_events_per_month    Int?
+
+  genres               String[] @default([])
+  subgenres            String[] @default([])
+  performance_types    String[] @default([])
+  setlist_duration_min Int?
+  setlist_duration_max Int?
+
+  pricing_min          Int?
+  pricing_max          Int?
+  pricing_notes        String?
+
+  travel_options       String[] @default([])
+  travel_other         String?
+
+  technical_rider      String[] @default([])
+  technical_other      String?
+
+  hospitality_rider    String[] @default([])
+  hospitality_other    String?
+
+  travel_surcharge     Boolean  @default(false)
+  travel_radius_km     Int?
+
+  portfolio_links      Json?
+  demo_track_url       String?
+
+  avg_rating           Float    @default(0)
+  total_bookings       Int      @default(0)
+
+  agency_id            String?
+  is_profile_complete  Boolean  @default(false)
+  profile_completion   Int      @default(0)
+
+  google_calendar_access_token  String?
+  google_calendar_refresh_token String?
+  google_calendar_token_expiry  DateTime?
+
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  user                 User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Event {
@@ -53,6 +125,7 @@ model Event {
   budget_min       Int?
   budget_max       Int?
   style_tags       String[]
+  venue_photo_url  String?
   status           String           @default("draft")
   created_at       DateTime         @default(now())
   booking_requests BookingRequest[]
@@ -69,12 +142,15 @@ model BookingRequest {
   quote_amount     Int?
   quote_conditions Json?
   quote_expires_at DateTime?
+  agreed_fee       Int?
+  confirmed_at     DateTime?
   created_at       DateTime      @default(now())
   artist           User          @relation("artist", fields: [artist_id], references: [id], onDelete: Cascade)
   event            Event         @relation(fields: [event_id], references: [id], onDelete: Cascade)
   organizer        User          @relation("organizer", fields: [organizer_id], references: [id], onDelete: Cascade)
   contract         Contract?
   messages         Message[]
+  negotiation_offers NegotiationOffer[]
   payment          Payment?
 }
 
@@ -121,8 +197,24 @@ model Message {
   booking_request_id String
   sender_id          String
   content            String
+  message_type       String         @default("text")
   created_at         DateTime       @default(now())
   booking_request    BookingRequest @relation(fields: [booking_request_id], references: [id], onDelete: Cascade)
+}
+
+model NegotiationOffer {
+  id                     String         @id @default(uuid())
+  booking_request_id     String
+  proposed_by            String
+  fee                    Int
+  message                String?
+  includes_transport     Boolean        @default(false)
+  includes_meals         Boolean        @default(false)
+  includes_accommodation Boolean        @default(false)
+  other_conditions       String?
+  status                 String         @default("pending")
+  created_at             DateTime       @default(now())
+  booking_request        BookingRequest @relation(fields: [booking_request_id], references: [id], onDelete: Cascade)
 }
 
 model Rating {
@@ -138,13 +230,24 @@ model Rating {
   @@unique([booking_request_id, reviewer_id])
 }
 
-model AvailabilityBlock {
+model DayAvailabilityOverride {
+  id         String    @id @default(uuid())
+  artist_id  String
+  date       DateTime  @db.Date
+  status     DayStatus @default(OPEN)
+
+  @@unique([artist_id, date])
+}
+
+model ArtistManualEvent {
   id         String   @id @default(uuid())
   artist_id  String
   date       DateTime @db.Date
-  is_blocked Boolean  @default(true)
-
-  @@unique([artist_id, date])
+  start_time String?
+  end_time   String?
+  title      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 enum Role {
@@ -190,4 +293,10 @@ enum PaymentStatus {
   released
   refunded
   disputed
+}
+
+enum DayStatus {
+  OPEN
+  WARN
+  BLOCKED
 }
