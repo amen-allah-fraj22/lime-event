@@ -4,7 +4,14 @@ export type CalendarEntry = {
   date: string;
   status: string;
   city?: string | null;
-  kind: 'booking' | 'event' | 'blocked' | 'manual_event' | 'override_blocked' | 'override_warn';
+  kind:
+    | 'booking'
+    | 'event'
+    | 'blocked'
+    | 'manual_event'
+    | 'google_event'
+    | 'override_blocked'
+    | 'override_warn';
   is_confirmed?: boolean;
 };
 
