@@ -14,8 +14,11 @@ test.describe('Phase 3 - Organizer Experience', () => {
     // Check if the page loaded
     await expect(page.locator('h1')).toContainText('Browse artists', { ignoreCase: true });
 
-    // Check mobile filter toggle exists (hidden on desktop, but present in DOM)
-    const toggleButton = page.locator('text=Toggle Filters');
+    // Check mobile filter toggle exists (hidden on desktop, but present in DOM).
+    // Targeted by test id so the assertion survives copy changes — it was
+    // previously matched on the literal text "Toggle Filters", which the UI
+    // no longer uses.
+    const toggleButton = page.getByTestId('mobile-filter-toggle');
     await expect(toggleButton).toBeAttached();
 
     // Side filter panel should be present

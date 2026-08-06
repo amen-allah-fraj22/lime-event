@@ -168,7 +168,7 @@ export function FilterCombobox({
             </>
           )}
           {allowOther && (
-            <li role="option" className="border-t border-surface-variant">
+            <li role="option" aria-selected={false} className="border-t border-surface-variant">
               <button
                 type="button"
                 className="w-full px-3 py-2 text-left text-sm text-primary hover:bg-surface-container-low"

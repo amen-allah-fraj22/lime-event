@@ -296,6 +296,8 @@ export default function BrowseArtistsPage({
       <div className="md:hidden">
         <button
           type="button"
+          data-testid="mobile-filter-toggle"
+          aria-expanded={filtersOpen}
           onClick={() => setFiltersOpen(true)}
           className="lime-btn-outline flex w-full items-center justify-center gap-2 py-3 text-sm font-bold"
         >

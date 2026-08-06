@@ -62,3 +62,6 @@ prompt for agent .md
 # Competitor/market research and UI design mockups (kept local)
 deep-research-report.md
 stitch_lime_event/
+
+# Playwright run artifacts
+apps/web/test-results/

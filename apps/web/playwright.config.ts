@@ -7,7 +7,9 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
-  timeout: 30000,
+  // Auth-guarded routes bounce through Clerk, so a slow network round trip can
+  // push a plain navigation past 30s and make those specs flaky.
+  timeout: 60000,
   use: {
     baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
     trace: 'on-first-retry',

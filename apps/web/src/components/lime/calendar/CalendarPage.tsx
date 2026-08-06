@@ -58,6 +58,9 @@ export function CalendarPage() {
 
   useEffect(() => {
     fetchCalendar();
+    // Intentionally keyed on the user id alone. fetchCalendar is redefined on
+    // every render, so listing it here would refetch in a loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dbUser?.id]);
 
   const entries = useMemo((): CalendarEntry[] => {

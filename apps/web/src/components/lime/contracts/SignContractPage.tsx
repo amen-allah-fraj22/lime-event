@@ -86,6 +86,10 @@ export function SignContractPage({ contractId }: { contractId: string }) {
       window.clearTimeout(t);
       window.removeEventListener('resize', resize);
     };
+    // Keyed on contract.status rather than the contract object: only a status
+    // change alters the rendered layout, and the object identity changes on
+    // every poll.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageLoading, contract?.status]);
 
   function getPoint(e: React.MouseEvent | React.TouchEvent) {

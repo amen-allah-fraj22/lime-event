@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import api from '@/lib/api';
@@ -29,7 +30,9 @@ export function CalendarSyncButton({ userId, onSyncComplete }: { userId: string,
         disabled={loading}
         className="flex items-center justify-center gap-2 rounded-xl border border-surface-variant bg-white px-4 py-3 text-sm font-semibold text-brand-text shadow-sm transition-all hover:bg-surface-container-low"
       >
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg" alt="Google Calendar" className="h-5 w-5" />
+        {/* Local asset: the icon used to be hot-linked from Wikimedia, which
+            added a third-party request on every render and broke offline. */}
+        <Image src="/media/google-calendar.svg" alt="" width={20} height={20} className="h-5 w-5" />
         {loading ? 'Connecting...' : 'Connect Google Calendar'}
       </button>
       {error && <p className="text-xs text-error">{error}</p>}

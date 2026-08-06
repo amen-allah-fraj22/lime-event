@@ -112,6 +112,10 @@ export function UserSessionProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+    // Keyed on the Clerk user id rather than the clerkUser object: the object
+    // identity changes on every Clerk refresh, which would re-sync the session
+    // continuously.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isSignedIn, clerkUser?.id, getToken]);
 
   const sessionValue: UserSessionContextType = {
