@@ -53,12 +53,47 @@ Compiled from a codebase deep-analysis on 2026-08-03. Covers testing, bug fixes,
 
 **Current state: web typecheck 0 errors (was 7), API typecheck 0 errors, all 14 API tests pass.**
 
-## 3. Full regression pass (systematic, not incidental)
+## 3. Full regression pass (systematic, not incidental) — 🟡 AUTOMATED PART DONE (2026-08-05)
 
 Everything below should be run and the results recorded — not just "looked fine while I was doing something else."
 
-- [ ] Run the existing Playwright suite (`npm run test:e2e -w @lime/web`) and fix whatever's red
-- [ ] Run `next lint` on the web app and `tsc` typecheck on both apps — fix or consciously accept every warning
+- [x] Run the existing Playwright suite (`npm run test:e2e -w @lime/web`) and fix whatever's red — **now 39 passed / 0 failed**
+- [x] Run `next lint` on the web app and `tsc` typecheck on both apps — fix or consciously accept every warning — **lint 0 warnings, tsc 0 errors on both apps**
+
+### How to run the e2e suite (important)
+
+**Run it against a production build, not the dev server.** The suite had never been run since the initial commit; the first run was 26 failures out of 40, every one a `page.goto` timeout — all caused by Next dev compiling routes on demand and blowing past the timeout, not by product defects. Evidence:
+
+| Target | Result | Duration |
+|---|---|---|
+| Dev server, cold | 26 failed / 14 passed | 26.9 min |
+| Dev server, warm | 9 failed / 9 flaky / 22 passed | — |
+| **Production build** | **39 passed / 0 failed** | **~5 min** |
+
+```bash
+npm run build:web && npx playwright test --reporter=list
+```
+Start the production server first (a `web-prod` launch config now exists), keep the API on 3001, and set `CI=1` so Playwright reuses the running servers instead of starting its own.
+
+### Two genuine test defects found and fixed
+
+- **phase3-organizer** asserted on the literal text `"Toggle Filters"` for the mobile filter trigger. That control exists but is labelled "Filters" — the assertion had been stale for a while. Now targeted by `data-testid="mobile-filter-toggle"` (with `aria-expanded`), so it survives copy changes.
+- **marketplace-flow**'s empty-state regex included `/browse/`, which also matched the "Browse artists" heading and caused a strict-mode violation whenever artists existed. Tightened to `/no artists match/`.
+- Playwright timeout raised 30s → 60s: auth-guarded routes redirect through Clerk, and slow round trips there were the only remaining source of flakiness.
+
+### Lint was never configured
+
+`next lint` had no config and only offered to create one. Added `next/core-web-vitals`, then resolved all 5 warnings it surfaced:
+
+- **Real a11y defect**: `FilterCombobox` had an element with `role="option"` missing the required `aria-selected`.
+- **Real external dependency**: `CalendarSyncButton` hot-linked its Google Calendar icon from **Wikimedia Commons** — a third-party request on every render that breaks offline and on restricted networks. Replaced with a local asset (`/media/google-calendar.svg`).
+- Three `react-hooks/exhaustive-deps` warnings are the same deliberate pattern (depending on a stable primitive like `?.id` / `?.status` instead of an object whose identity changes every render). **Consciously accepted**, each documented inline with the reason rather than silently widening the dependency array.
+
+**Production build succeeds** (25/25 static pages) — a pre-launch gate in its own right.
+
+### ⚠️ Still outstanding — needs a human
+
+The manual click-throughs below **cannot be automated here**: they require signing in with real credentials, which the assistant must not do. These are yours to run.
 - [ ] Manual click-through as **organizer**: sign up → onboarding → post event (with venue photo) → view matches → message an artist → accept a quote → confirm booking → view calendar
 - [ ] Manual click-through as **artist**: sign up → onboarding → build profile → browse events → apply (one-tap + optional note) → negotiate → get confirmed → view calendar
 - [ ] Cross-role: does an organizer ever see artist pay/pricing anywhere they shouldn't (this was explicitly removed earlier — confirm it stayed removed)
