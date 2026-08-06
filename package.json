@@ -16,7 +16,9 @@
     "db:setup": "npm run db:setup -w @lime/api",
     "dev:web:clean": "npm run dev:clean -w @lime/web",
     "fix:web:styles": "npm run dev:clean -w @lime/web",
-    "test:e2e": "npm run test:e2e -w @lime/web"
+    "test:e2e": "npm run test:e2e -w @lime/web",
+    "typecheck": "npm run typecheck -w @lime/api && npm run typecheck -w @lime/web",
+    "lint:web": "npm run lint -w @lime/web"
   },
   "engines": {
     "node": ">=18"

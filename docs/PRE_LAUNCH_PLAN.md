@@ -75,6 +75,19 @@ npm run build:web && npx playwright test --reporter=list
 ```
 Start the production server first (a `web-prod` launch config now exists), keep the API on 3001, and set `CI=1` so Playwright reuses the running servers instead of starting its own.
 
+### CI had never run — the workflow was in the wrong directory
+
+`playwright.yml` lived at `apps/web/.github/workflows/`. GitHub only reads workflows from the **repository root** `.github/workflows/`, so this workflow had never executed a single time. It also would not have worked if it had: GitHub Actions sets `CI=true`, which makes `playwright.config.ts` skip its own `webServer` block, so no servers would have started at all.
+
+Replaced with a root `.github/workflows/ci.yml` containing two jobs:
+
+- **`checks`** — typecheck (api + web), lint, and API unit tests. Needs no secrets and no database, so it works on a fresh clone and on forks. All three steps verified locally before commit.
+- **`e2e`** — builds for production and runs Playwright against it. Needs a database and a real Clerk instance, so it **skips with a notice** unless `E2E_DATABASE_URL`, `E2E_CLERK_PUBLISHABLE_KEY` and `E2E_CLERK_SECRET_KEY` repository secrets are set, rather than failing red for a reason no pull request can fix.
+
+**➡️ Action for you:** add those three repository secrets in GitHub (Settings → Secrets and variables → Actions) to turn the e2e job on. Until then it is skipped by design.
+
+New scripts to support this, usable locally too: `npm run typecheck`, `npm run lint:web`.
+
 ### Two genuine test defects found and fixed
 
 - **phase3-organizer** asserted on the literal text `"Toggle Filters"` for the mobile filter trigger. That control exists but is labelled "Filters" — the assertion had been stale for a while. Now targeted by `data-testid="mobile-filter-toggle"` (with `aria-expanded`), so it survives copy changes.
