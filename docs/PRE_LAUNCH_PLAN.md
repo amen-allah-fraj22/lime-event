@@ -139,11 +139,32 @@ The product is built mobile-first (bottom nav, slim top bar), which is right for
 
 **Verification:** `npm run typecheck` (api+web) 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, full Playwright suite 40/40 — all re-run after these changes, no regressions.
 
-## 5. Desktop / tablet pass (the less-tested surface)
+## 5. Desktop / tablet pass — ⚠️ done except one thing verifiable from here (2026-08-11)
 
-- [ ] Confirm the 59 files without explicit breakpoint classes don't look broken or absurdly stretched above 768px
-- [ ] Confirm the multi-column grids (event cards, artist browse) reflow sensibly at 1024px, 1440px, ultra-wide
-- [ ] Confirm no mobile-only UI (bottom nav) leaves desktop users without an equivalent way to navigate
+- [x] Confirm the 59 (now 58 — one page removed in section 2) files without explicit breakpoint classes don't look broken or absurdly stretched above 768px — most are non-visual (providers, context) or intrinsically simple (logo, icons, loading states) and genuinely don't need breakpoints. The page-level ones render through components that do have breakpoints (`DashboardShell`, `BrowseArtistsPage`, `CalendarPage`, etc.), and those were the actual concern — covered by the other two items below.
+- [x] Confirm the multi-column grids (event cards, artist browse) reflow sensibly at 1024px, 1440px, ultra-wide — both grids are wrapped in a real `max-width` container (`max-w-[1600px]` for artists, `max-w-container-max` for events), confirmed live: at 2560px viewport, content correctly caps at 1280px and stays centered rather than stretching. **Caveat:** the seed database in this environment has no artists/events, so the actual card grid reflow (2→3 columns etc.) couldn't be watched with real content — only the container behavior was verified.
+- [x] Confirm no mobile-only UI (bottom nav) leaves desktop users without an equivalent way to navigate — **found and fixed a real, significant bug** (below).
+
+### Bug found: desktop users on several core routes had zero primary navigation
+
+`MobileTopBar` (rendered on every `AppShell`-only route, unconditionally, at every breakpoint) had a literally empty desktop nav slot:
+```
+{/* Center — Page title on desktop, hidden on mobile */}
+<div className="hidden md:flex items-center gap-6">
+  {/* Desktop nav links can go here later if needed */}
+</div>
+```
+Combined with `MobileBottomNav` correctly hiding itself at `md:` (by design — it's mobile-only), this meant that on desktop, a signed-in user on **`/explore/artists`, `/explore/events`, `/messages`, `/requests`, `/profile`, `/artists/[id]`, `/artists/[id]/edit`, `/admin`, or `/events/mine`** had no way to navigate the app at all — only a notification bell and an avatar link to `/profile`. Explore and Messages are core to the booking flow; this wasn't a cosmetic gap.
+
+A second, related gap: even `DashboardShell`'s desktop sidebar (used by Dashboard/Bookings/Calendar/Notifications/Events — the routes that *do* have a real desktop nav) was missing **Messages** and **Requests** entirely, despite both being in the mobile bottom nav. Only "Browse Artists" was present as a lone extra link, and it was hardcoded to `/explore/artists` regardless of role — wrong for artist users, who'd want `/explore/events`.
+
+**Fixed both, from one source of truth:**
+- `MobileTopBar` now renders a real, active-state-aware desktop nav (only when signed in) sourced from `NAV_TABS_BY_ROLE` — the exact same role-keyed tab list `MobileBottomNav` already uses, so mobile and desktop nav can no longer silently diverge.
+- `DashboardShell`'s `ORGANIZER_NAV` / `ARTIST_NAV` now include Explore, Requests and Messages; the redundant/role-wrong "Browse Artists" link was removed.
+
+**Verification:** signed-out state confirmed live (nav correctly absent, `Log in`/`Sign up` still render, no overflow, no console errors) at 1440px. The signed-in nav render **could not be visually confirmed** — this environment has no real Clerk credentials to log in with. Confirmed instead by: `tsc` 0 errors, `next lint` 0 warnings, no import cycle between `MobileTopBar`/`MobileBottomNav`, and the fact that `NAV_TABS_BY_ROLE` is the same data structure already exercised by the (working, tested) mobile bottom nav. **Worth a real logged-in click-through before launch**, same caveat as the mobile real-device testing in section 4.
+
+`npm run test:api` 14/14, Playwright 39 passed / 1 skipped (data-dependent, unrelated to this change) — re-run after these changes, no regressions.
 
 ## 6. UX/UI review
 

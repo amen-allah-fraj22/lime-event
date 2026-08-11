@@ -21,6 +21,7 @@ export type DashboardNavItem = {
 
 const ORGANIZER_NAV: DashboardNavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { href: '/explore/artists', label: 'Explore', icon: 'search' },
   {
     href: '/dashboard/events',
     label: 'My Events',
@@ -28,14 +29,19 @@ const ORGANIZER_NAV: DashboardNavItem[] = [
     roles: ['organizer', 'agency'],
   },
   { href: '/dashboard/bookings', label: 'Bookings', icon: 'book_online' },
+  { href: '/requests', label: 'Requests', icon: 'inbox' },
+  { href: '/messages', label: 'Messages', icon: 'chat' },
   { href: '/notifications', label: 'Notifications', icon: 'notifications' },
   { href: '/calendar', label: 'Calendar', icon: 'calendar_today' },
 ];
 
 const ARTIST_NAV: DashboardNavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { href: '/explore/events', label: 'Explore', icon: 'explore' },
   { href: '/artists/me', label: 'Profile', icon: 'person', roles: ['artist'] },
   { href: '/dashboard/bookings', label: 'Bookings', icon: 'event_seat' },
+  { href: '/requests', label: 'Requests', icon: 'inbox' },
+  { href: '/messages', label: 'Messages', icon: 'chat' },
   { href: '/calendar', label: 'Calendar', icon: 'calendar_today' },
   { href: '/notifications', label: 'Notifications', icon: 'notifications' },
 ];
@@ -123,13 +129,6 @@ export function DashboardShell({
               New Event
             </Link>
           )}
-          <Link
-            href="/explore/artists"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-secondary transition-all hover:bg-surface-container"
-          >
-            <MaterialIcon name="search" size={22} />
-            <span className="text-label-md">Browse Artists</span>
-          </Link>
           <SignOutButton redirectUrl="/">
             <button
               type="button"
