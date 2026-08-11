@@ -163,6 +163,7 @@ export function DashboardShell({
             <RoleSwitcher />
             <Link
               href="/notifications"
+              aria-label="Notifications"
               className="text-secondary transition-colors hover:text-primary"
             >
               <MaterialIcon name="notifications" />

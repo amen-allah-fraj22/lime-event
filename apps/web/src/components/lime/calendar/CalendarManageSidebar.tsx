@@ -25,6 +25,7 @@ export function CalendarManageSidebar({
   const [addingEvent, setAddingEvent] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
   const [showDayStatusModal, setShowDayStatusModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!selectedDate) {
     return (
@@ -78,6 +79,7 @@ export function CalendarManageSidebar({
   async function handleStatusChange(newStatus: string) {
     if (newStatus === currentStatus) return;
     setSavingStatus(true);
+    setError(null);
     try {
       await api.post(`/calendar/${userId}/day-overrides`, {
         date: dateStr,
@@ -85,7 +87,7 @@ export function CalendarManageSidebar({
       });
       onRefresh();
     } catch (err) {
-      alert(getApiErrorMessage(err).message);
+      setError(getApiErrorMessage(err).message);
     } finally {
       setSavingStatus(false);
     }
@@ -95,6 +97,7 @@ export function CalendarManageSidebar({
     e.preventDefault();
     if (!eventTitle.trim()) return;
     setSavingStatus(true);
+    setError(null);
     try {
       await api.post(`/calendar/${userId}/manual-events`, {
         date: dateStr,
@@ -106,7 +109,7 @@ export function CalendarManageSidebar({
       // Show the post-event action modal
       setShowDayStatusModal(true);
     } catch (err) {
-      alert(getApiErrorMessage(err).message);
+      setError(getApiErrorMessage(err).message);
     } finally {
       setSavingStatus(false);
     }
@@ -116,11 +119,12 @@ export function CalendarManageSidebar({
     if (!confirm('Delete this event?')) return;
     const realId = eventId.replace('manual-', '');
     setSavingStatus(true);
+    setError(null);
     try {
       await api.delete(`/calendar/${userId}/manual-events/${realId}`);
       onRefresh();
     } catch (err) {
-      alert(getApiErrorMessage(err).message);
+      setError(getApiErrorMessage(err).message);
     } finally {
       setSavingStatus(false);
     }
@@ -130,6 +134,12 @@ export function CalendarManageSidebar({
     <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-8">
       <h3 className="mb-2 font-headline text-headline-md">{formattedDate}</h3>
       <p className="mb-6 text-sm text-secondary">Manage your availability and events for this day.</p>
+
+      {error && (
+        <p role="alert" className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+          {error}
+        </p>
+      )}
 
       <div className="mb-6 space-y-2">
         <label className="block text-label-sm font-bold uppercase text-secondary">

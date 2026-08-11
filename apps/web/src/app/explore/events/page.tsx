@@ -29,6 +29,7 @@ export default function ExploreEventsRoute() {
   const [noteOpenFor, setNoteOpenFor] = useState<string | null>(null);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [submittingId, setSubmittingId] = useState<string | null>(null);
+  const [applyErrors, setApplyErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setLoading(true);
@@ -41,9 +42,14 @@ export default function ExploreEventsRoute() {
 
   async function handleApply(event: PublicEvent) {
     setSubmittingId(event.id);
+    setApplyErrors((prev) => {
+      const next = { ...prev };
+      delete next[event.id];
+      return next;
+    });
     try {
       // Fetch the currently logged-in user's artist profile ID
-      const meRes = await api.get('/auth/me');
+      const meRes = await api.get('/users/me');
       const artistId = meRes.data.artist_profile?.id;
       if (!artistId) throw new Error("You must complete your artist profile to apply.");
 
@@ -55,7 +61,8 @@ export default function ExploreEventsRoute() {
 
       router.push(`/bookings/${res.data.id}`);
     } catch (err) {
-      alert(err instanceof Error ? err.message : getApiErrorMessage(err).message);
+      const message = err instanceof Error ? err.message : getApiErrorMessage(err).message;
+      setApplyErrors((prev) => ({ ...prev, [event.id]: message }));
     } finally {
       setSubmittingId(null);
     }
@@ -76,7 +83,7 @@ export default function ExploreEventsRoute() {
         {loading ? (
           <div className="py-12 text-center text-secondary">Loading events…</div>
         ) : events.length === 0 ? (
-          <div className="py-12 text-center text-secondary">No public events currently available.</div>
+          <div className="py-12 text-center text-secondary">No public events yet — check back soon.</div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {events.map((ev) => (
@@ -90,7 +97,7 @@ export default function ExploreEventsRoute() {
                   />
                 )}
                 <div className="flex-1">
-                  <h3 className="font-headline text-xl font-bold">{ev.title}</h3>
+                  <h3 className="font-headline text-xl font-bold line-clamp-2">{ev.title}</h3>
                   <p className="text-sm text-brand-accent mb-2">
                     {new Date(ev.event_date).toLocaleDateString()} • {ev.city || 'Location TBD'}
                   </p>
@@ -122,6 +129,11 @@ export default function ExploreEventsRoute() {
                 )}
 
                 <div className="mt-auto flex flex-col gap-2">
+                  {applyErrors[ev.id] && (
+                    <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">
+                      {applyErrors[ev.id]}
+                    </p>
+                  )}
                   <button
                     onClick={() => handleApply(ev)}
                     disabled={submittingId === ev.id}

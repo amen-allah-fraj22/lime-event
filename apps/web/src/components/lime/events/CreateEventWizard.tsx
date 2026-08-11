@@ -306,6 +306,7 @@ export function CreateEventWizard() {
                     <button
                       type="button"
                       onClick={clearVenuePhoto}
+                      aria-label="Remove venue photo"
                       className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
                     >
                       <MaterialIcon name="close" size={18} />

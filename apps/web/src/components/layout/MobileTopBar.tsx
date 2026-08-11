@@ -102,6 +102,7 @@ export function MobileTopBar() {
           {isSignedIn && (
             <Link
               href="/notifications"
+              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
               className="relative flex h-9 w-9 items-center justify-center rounded-full bg-surface-container transition hover:bg-surface-container-high"
             >
               <span className="material-symbols-outlined text-[20px] text-brand-text">
@@ -128,6 +129,7 @@ export function MobileTopBar() {
           ) : (
             <Link
               href="/profile"
+              aria-label="Your profile"
               className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-lime/20 ring-1 ring-surface-variant transition hover:ring-lime"
             >
               {user?.imageUrl ? (

@@ -159,6 +159,7 @@ export function CalendarPage() {
                   <button
                     type="button"
                     onClick={prevMonth}
+                    aria-label="Previous month"
                     className="rounded-full p-2 transition-colors hover:bg-surface-container"
                   >
                     <MaterialIcon name="chevron_left" />
@@ -173,6 +174,7 @@ export function CalendarPage() {
                   <button
                     type="button"
                     onClick={nextMonth}
+                    aria-label="Next month"
                     className="rounded-full p-2 transition-colors hover:bg-surface-container"
                   >
                     <MaterialIcon name="chevron_right" />

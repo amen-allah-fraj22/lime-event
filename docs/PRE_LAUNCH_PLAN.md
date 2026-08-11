@@ -166,15 +166,50 @@ A second, related gap: even `DashboardShell`'s desktop sidebar (used by Dashboar
 
 `npm run test:api` 14/14, Playwright 39 passed / 1 skipped (data-dependent, unrelated to this change) — re-run after these changes, no regressions.
 
-## 6. UX/UI review
+## 6. UX/UI review — ✅ done (2026-08-11)
 
-- [ ] Resolve the `/artists` vs `/explore/artists` duplication — one canonical browse experience
-- [ ] Confirm the one-tap apply + optional note pattern (shipped today) reads well across every event card, not just the ones tested
-- [ ] Confirm loading states are consistent (some routes show `LoadingBlock`, others might not — audit for gaps)
-- [ ] Confirm error states are human-readable everywhere (not raw API error strings)
-- [ ] Review copy for tone consistency — "Fresh bookings, fresh talent" positioning should carry through every screen, not just the landing page
-- [ ] Accessibility pass: add `alt` text to remaining images, `aria-label`s to icon-only buttons (notification bell, avatar, nav icons)
-- [ ] Confirm color contrast on the lime-green primary buttons meets WCAG AA (light green + black text can be borderline)
+- [x] Resolve the `/artists` vs `/explore/artists` duplication — already done in section 2, confirmed still in place.
+- [x] Confirm the one-tap apply + optional note pattern reads well across every event card — **found and fixed a critical functional bug**, not a cosmetic one (below).
+- [x] Confirm loading states are consistent — audited every route; genuinely fine, no fix needed (below).
+- [x] Confirm error states are human-readable everywhere — found and fixed 4 real instances of the same anti-pattern (below).
+- [x] Review copy for tone consistency — sampled empty-state/CTA copy across the app; one flat outlier fixed, everything else already matches the established "No X yet" / warm terse voice.
+- [x] Accessibility pass — found and fixed 6 real gaps (below).
+- [x] Confirm color contrast on lime-green primary buttons — **measured programmatically (WCAG relative-luminance formula), not eyeballed**: every lime-on-dark and dark-on-lime pairing in the app passes AA with real margin (8.1:1 to 16.3:1), several exceed AAA (7:1). The plan's worry didn't hold up under actual measurement — no fix needed.
+
+### Critical bug found: "Apply to Perform" was completely broken for every user
+
+While verifying the apply flow reads well across cards, found that `handleApply` in `explore/events/page.tsx` called `GET /auth/me` to fetch the artist's profile ID before submitting — **that route does not exist**. The `/auth` controller only has `POST /auth/sync`; the real endpoint is `GET /users/me` (which already returns the exact `artist_profile.id` shape the code expected — the bug was purely the URL, not the logic around it). Every attempt to apply to an event, by any artist, at any time, hit a 404 and silently failed via a blocking native `alert()`. Fixed the URL, verified live end-to-end: before the fix, clicking apply produced `Cannot GET /auth/me`; after, it correctly produces `401 Unauthorized` for an anonymous session (the correct behavior) and would succeed for a signed-in artist. This is the most serious finding across sections 1-6 — it wasn't a UX polish item, it silently disabled a core feature.
+
+Also while in that file: added `line-clamp-2` to event titles (previously unbounded, real overflow risk with a long title in a 3-column grid — every sibling component with card titles already truncates, this one didn't) and softened one flat empty-state line ("No public events currently available." → "No public events yet — check back soon.").
+
+### Error states: same alert()-vs-inline anti-pattern found in 2 files, fixed in 4 places
+
+Every request/apply flow in the app (`SendBookingRequestModal`, `RequestBookingModal`, `BrowseArtistsPage`, `CalendarPage`, `ArtistDashboard`, etc.) surfaces failures via `setError(...)` + an inline styled banner (`ErrorAlert` or equivalent) — a real, consistent convention. Two files broke it with a blocking native `alert()`:
+- `explore/events/page.tsx` — apply failures (see above).
+- `CalendarManageSidebar.tsx` — day-status changes, adding a personal event, and deleting an event, 3 separate call sites.
+
+All 4 now use the same `setError` + inline-banner convention as everywhere else. (The `confirm('Delete this event?')` in the same file is a different category — a destructive-action guard, not an error display — and was left as-is; native `confirm()` for a simple "are you sure" is still an accepted, common pattern.)
+
+### Dead code removed
+
+`components/lime/events/ExploreEventsPage.tsx` — an orphaned, never-imported legacy version of the events-browse screen. Confirmed via full-codebase search that nothing referenced it. It fetched the wrong endpoint (`/events/mine`, an organizer's own events, not a public browse list) and its "apply" handler was a literal placeholder (`await new Promise(r => setTimeout(r, 800))`, no real API call, comment: *"Placeholder — will use POST /booking-requests... in Phase 2"*). Never reachable by a real user, but worth deleting before it confuses a future edit or gets accidentally wired up.
+
+### Loading states: audited, genuinely fine
+
+Traced every route with its own loading state. The pattern is healthier than the checklist worried: most list/grid pages (`BrowseArtistsPage`, `explore/events`, `explore/artists`'s underlying data, `messages`, `requests`) use purpose-built skeleton loaders (`animate-pulse` cards shaped like the real content, plus `aria-busy` and contextual text like "Updating results…" on `BrowseArtistsPage`) — a deliberately *better* pattern than a generic spinner, not a gap. `LoadingBlock` (the generic spinner) is used where that's the right call — simpler pages and modals. Button-level actions (`AddRolePromptModal`, `CalendarSyncButton`) correctly show a disabled+text-change state rather than a page-level spinner. No blank-during-fetch gaps found anywhere.
+
+### Accessibility: 6 real gaps found and fixed
+
+- `ArtistPhotoUpload`'s upload button had no accessible name when a photo was already set (the only content was a correctly-decorative `alt=""` thumbnail) — a screen reader would announce it as just "button". Added a dynamic `aria-label` ("Upload {label}" / "Change {label}").
+- Calendar prev/next-month buttons (`CalendarPage`) were icon-only with no label. Added "Previous month" / "Next month".
+- The venue-photo remove button (`CreateEventWizard`) was icon-only with no label. Added "Remove venue photo".
+- The notification bell — the exact element the checklist named — had no label, in **two independent places** (`MobileTopBar` and `DashboardShell`'s own desktop header). Both fixed; `MobileTopBar`'s also states the unread count when >0.
+- The avatar link — also named in the checklist — had no label in `MobileTopBar`. Fixed ("Your profile").
+- Nav icons — checked and already fine: both `MobileBottomNav` and the new desktop nav (section 5) render visible text labels next to every icon, so no accessible-name gap there.
+
+Scanned every `<img>`/`<Image>` in the app for missing `alt`: all had one already (a broad grep initially flagged 8 files, but all were false positives from a single-line pattern match — the `alt=` was present on the next line in every real case).
+
+**Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, Playwright 39 passed / 1 skipped (same data-dependent skip as before, unrelated) — re-run after every change in this section.
 
 ## 7. Payment & pricing honesty check
 
