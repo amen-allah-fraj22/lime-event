@@ -40,6 +40,19 @@ textarea {
   font: inherit;
 }
 
+/* iOS Safari zooms the whole viewport when a focused text field renders below
+   16px, and the app styles most fields at 14px (text-sm). Enforce 16px on
+   phone-sized screens so focusing a field never triggers that zoom; desktop
+   keeps its denser sizing. Non-text controls are excluded — they never
+   trigger the zoom and some rely on their own sizing. */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @layer components {
   .lime-input {
     @apply w-full rounded-lg border-2 border-surface-variant bg-white px-4 py-3 text-sm outline-none transition-all;

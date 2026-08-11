@@ -113,16 +113,31 @@ The manual click-throughs below **cannot be automated here**: they require signi
 - [ ] Every form: submit with empty required fields, oversized inputs, special characters (Arabic/French names, accents) — confirm validation messages are clear
 - [ ] Every list/empty state: what does a brand-new account see with zero events/bookings/messages? Confirm nothing renders broken or blank
 
-## 4. Mobile optimization
+## 4. Mobile optimization — ⚠️ done except real-device testing (2026-08-06)
 
 The product is built mobile-first (bottom nav, slim top bar), which is right for this audience — but "mobile-first" needs to mean "mobile-verified," not just "mobile-styled."
 
-- [ ] Test at real breakpoints: 375px (small phone), 390px (standard iPhone), 428px (large phone), 768px (tablet portrait)
-- [ ] Confirm touch targets are ≥44px (buttons, nav icons, form controls) — several buttons observed today were borderline small
-- [ ] Confirm the bottom nav never overlaps content (recall the "Apply to Perform" button being partially obscured by the nav bar in one screenshot this session)
-- [ ] Test on an actual iOS Safari and Android Chrome device, not just responsive-mode in devtools — Safari's viewport/safe-area handling differs
-- [ ] Confirm forms don't trigger unwanted zoom on input focus (iOS zooms if font-size < 16px on inputs)
-- [ ] Test image upload flow (artist photos, new venue photo) from an actual phone camera roll, not just desktop file picker
+- [x] Test at real breakpoints: 375px (small phone), 390px (standard iPhone), 428px (large phone), 768px (tablet portrait) — audited via emulated viewports on landing, `/explore/artists` (incl. the filter panel), `/explore/events`, `/sign-in`, `/sign-up`. **Zero horizontal overflow at any breakpoint.**
+- [x] Confirm touch targets are ≥44px — three real defects found and fixed (below); the "Popular genres" and "Artist type" filter chips were widened but deliberately kept under 44px (see note).
+- [x] Confirm the bottom nav never overlaps content — **found and fixed a real bug** (below), not the same one as the earlier screenshot.
+- [ ] Test on an actual iOS Safari and Android Chrome device — **not done, cannot be done from this environment.** Everything above was verified with emulated viewports and CSS math, not a physical device. Treat this checkbox as the one still open.
+- [x] Confirm forms don't trigger unwanted zoom on input focus (iOS zooms if font-size < 16px) — fixed globally.
+- [ ] Test image upload flow (artist photos, new venue photo) from an actual phone camera roll — not done, needs a physical device.
+
+### Bugs found and fixed
+
+**Bottom nav overlaps content on any device with a home indicator.** `MobileBottomNav` adds `env(safe-area-inset-bottom)` as *padding* on top of its own ~75px height, but both `AppShell` and `DashboardShell` reserved a flat `pb-24` (96px) for it — correct only when the inset is 0. On a notched/home-indicator phone (inset ≈34px) the nav becomes ~109px while content still stops 96px from the bottom, so **the last ~13px of every page sits behind the nav.** This reproduces only on real hardware, not in devtools responsive mode (which reports a 0px inset) — that's almost certainly why it wasn't caught before. Fixed by making both shells reserve `calc(6rem + env(safe-area-inset-bottom))` instead of a flat value.
+
+**iOS zoom-on-focus.** Most text inputs across the app render at 14px (`text-sm`), below the 16px Safari uses as its zoom threshold — every one of them would trigger an unwanted pinch-zoom on focus. Fixed once, globally, in `globals.css`: a `max-width: 767px` rule forces 16px on all text-entry inputs, selects and textareas (checkboxes/radios/range/color excluded, since they don't trigger the zoom and some rely on their own sizing). Desktop keeps its denser 14px.
+
+**Three genuinely small tap targets:**
+- Footer link list (`How it Works` / `Pricing` / `Learn more` ×6): 21px-tall hit areas from `space-y-2` with no padding on the links themselves. Fixed with `py-2.5` on each link → 44px.
+- Password show/hide toggle on both sign-in and sign-up: icon-only button with no padding, 20×27px. Fixed to a proper `h-11 w-11` (44×44) hit area; also had to add `shrink-0` because the sibling input's `w-full` inside the flex row was compressing the button via flex-shrink before that.
+- Equipment-filter checkboxes (`Sound system` / `Lighting` / `Mixing desk`) on `/explore/artists`: the `<label>` wrapping each — the real hit target, not the 13px checkbox itself — was only 20px tall. Fixed with `py-3` → 44px.
+
+**Deliberately not taken to 44px:** the "Popular in Tunisia" genre chips and the Solo/Band/All artist-type chips. These are secondary quick-picks (the primary genre control is the dropdown above them); at 8 wrapped chips, forcing each to 44px would meaningfully bloat the filter panel for a compact, common chip-filter pattern that Material and Apple both treat as an accepted exception to the 44px guideline. Nudged from 26px to 34px instead — closer to compliant, without the layout cost.
+
+**Verification:** `npm run typecheck` (api+web) 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, full Playwright suite 40/40 — all re-run after these changes, no regressions.
 
 ## 5. Desktop / tablet pass (the less-tested surface)
 

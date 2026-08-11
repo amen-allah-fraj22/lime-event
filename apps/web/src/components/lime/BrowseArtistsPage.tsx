@@ -225,7 +225,7 @@ export default function BrowseArtistsPage({
                   setDraftFilters((f) => ({ ...f, genre: f.genre === g ? '' : g }))
                 }
                 className={cn(
-                  'rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+                  'rounded-full border px-2.5 py-2 text-xs font-medium transition-colors',
                   draftFilters.genre === g
                     ? 'border-primary-container bg-primary-container'
                     : 'border-surface-variant bg-white hover:bg-surface-container-low',
@@ -250,7 +250,7 @@ export default function BrowseArtistsPage({
                 type="button"
                 onClick={() => setDraftFilters((f) => ({ ...f, artist_type: opt.value }))}
                 className={cn(
-                  'rounded-full border px-3 py-1 text-xs font-semibold',
+                  'rounded-full border px-3 py-2 text-xs font-semibold',
                   draftFilters.artist_type === opt.value
                     ? 'border-primary-container bg-primary-container'
                     : 'border-surface-variant bg-white',
@@ -272,7 +272,10 @@ export default function BrowseArtistsPage({
                 ['has_mixing', 'Mixing desk'],
               ] as const
             ).map(([key, label]) => (
-              <label key={key} className="flex cursor-pointer items-center gap-2 text-sm">
+              // py-3 brings the label's tap height to ~44px; the label wraps
+              // the input, so it — not the 13px checkbox itself — is the real
+              // hit target.
+              <label key={key} className="flex cursor-pointer items-center gap-2 py-3 text-sm">
                 <input
                   type="checkbox"
                   checked={draftFilters[key]}

@@ -316,7 +316,7 @@ export function CustomSignUpForm({ role }: { role: AuthRole }) {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="text-secondary transition hover:text-custom-dark"
+              className="-mr-2 flex h-11 w-11 shrink-0 items-center justify-center text-secondary transition hover:text-custom-dark"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               <MaterialIcon name={showPassword ? 'visibility_off' : 'visibility'} size={20} />

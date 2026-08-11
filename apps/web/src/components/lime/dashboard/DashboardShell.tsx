@@ -142,7 +142,9 @@ export function DashboardShell({
         </div>
       </aside>
 
-      <main className="md:ml-64 flex-1 pb-24 md:pb-20">
+      {/* pb includes the safe-area inset because MobileBottomNav adds that on
+          top of its own height — see the note in AppShell. */}
+      <main className="md:ml-64 flex-1 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-20">
         <header className="dashboard-shadow sticky top-0 z-40 hidden md:flex h-16 items-center justify-between bg-surface px-margin-mobile md:px-margin-desktop">
           <div className="max-w-xl flex-1">
             <div className="relative flex items-center">

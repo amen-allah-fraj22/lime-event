@@ -463,10 +463,16 @@ export function LandingPage() {
             ].map((col, idx) => (
               <div key={col.title}>
                 <h4 className="mb-4 font-bold">{col.title}</h4>
-                <ul className="space-y-2">
+                <ul>
                   {col.links.map((href, i) => (
                     <li key={i}>
-                      <Link href={href} className="font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime">
+                      {/* py-2.5 keeps the tappable area near 44px without changing
+                          the visible line height, since space-y-2 alone left each
+                          link at a ~21px hit target. */}
+                      <Link
+                        href={href}
+                        className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                      >
                         {idx === 0 && i === 0 ? 'How it Works' : idx === 0 && i === 1 ? 'Pricing' : 'Learn more'}
                       </Link>
                     </li>
