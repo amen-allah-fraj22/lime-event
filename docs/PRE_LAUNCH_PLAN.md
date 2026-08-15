@@ -211,11 +211,29 @@ Scanned every `<img>`/`<Image>` in the app for missing `alt`: all had one alread
 
 **Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, Playwright 39 passed / 1 skipped (same data-dependent skip as before, unrelated) — re-run after every change in this section.
 
-## 7. Payment & pricing honesty check
+## 7. Payment & pricing honesty check — ✅ done (2026-08-15)
 
-- [ ] Fix `COMMISSION_RATE` to match the plan (7% progressive, or at minimum the flat 7% base tier as the coded default)
-- [ ] Audit every screen that mentions money/fees/commission — does the UI ever imply automated payment exists when it doesn't yet?
-- [ ] If payment truly stays manual for the pilot's first 2 months (per the business plan), make sure booking confirmation screens say so explicitly, so artists and organizers aren't confused waiting for a payment that isn't automated yet
+- [x] Fix `COMMISSION_RATE` to match the plan — already done in section 2 (progressive 7%/5%/3% tiers). Confirmed still intact.
+- [x] Audit every screen mentioning money/fees/commission for false automation claims — **found and fixed a serious, repeated problem** (below), including one inside the actual signed contract text.
+- [x] Make booking confirmation screens explicit that payment is manual for now — added a payment-honesty note at the one place both roles see the agreed fee (`OfferSheet`), plus the organizer timeline.
+
+### The landing page — and the legal contract text — both claimed a payment feature that doesn't exist
+
+Grepped every screen mentioning money/fees/escrow/commission. The public marketing site and the contract-signing flow both repeatedly promised **"secure escrow payments"** and **"guaranteed payments via escrow"** — six separate claims across the hero copy, the "old way vs. LIME way" comparison, the "How it works" steps, and both the organizer and artist benefit lists. Per section 0's original finding, payments is a DB-state stub — nothing calls Flouci, and the business plan explicitly states payment stays manual for the pilot's first 2 months. None of that was reflected anywhere a user could see.
+
+**Worse: the contract-signing screen (`SignContractPage.tsx`) has a fallback clause that literally states "Payment terms follow the LIME escrow process"** in the terms a real artist and organizer digitally sign. Traced where that text comes from — the three real, server-generated contract templates (`private.html`, `wedding.html`, `corporate.html`) are actually fine; none of them mention escrow, they just say "Full fee payable via LIME platform." The false claim was isolated to the frontend's fallback text (shown if the real contract-preview API call is slow or fails), but since it's reachable by a real user reviewing what they're about to sign, it needed the same fix. Rewrote it to match what the real templates already say honestly.
+
+All 6 landing-page claims rewritten to describe what's actually true — verified contracts, transparent contract-backed pricing — without the word "escrow" or "guaranteed."
+
+### Also found while auditing: fabricated social proof, unrelated to payment but caught in the same pass
+
+The landing page had 3 fake testimonials attributed to named people ("Mehdi T., Musician," etc.) — two of which specifically praised the non-existent escrow feature — plus fabricated numbers ("Trusted by 500+ organizers," "hundreds of verified artists," animated counters claiming "200+ Verified Artists / 500+ Events Booked / 98% Satisfaction"). This is a different category of problem (fake people and fake stats, not specifically payment) so it was flagged and confirmed with you rather than removed unilaterally. **Decision: removed entirely** — the whole testimonials/stats section, the fake avatar-stack trust badge, and the "500+"/"hundreds of" claims, replaced with an honest "Now booking artists across the Grand Tunis area." The now-fully-unused `useStatCounters` hook was deleted too (confirmed via search — nothing else referenced it).
+
+### Booking-confirmation payment honesty
+
+Traced the confirmed-booking view (`OfferSheet`, the component both organizer and artist see once a booking is confirmed, showing the agreed fee) — there was no payment-timing guidance there at all, a real gap matching the checklist's exact worry. Added a note directly under the agreed-fee amount: *"LIME does not process payments automatically yet — arrange payment method and timing directly with the other party via the conversation below."* Also added an equivalent note to the organizer-side booking timeline, under the "Contract signed" step.
+
+**Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, Playwright run against a **production build** (per the section 3 procedure) 40 passed / 0 failed — re-run twice, after the payment-copy fixes and again after the testimonials removal.
 
 ## 8. Auth & production readiness
 

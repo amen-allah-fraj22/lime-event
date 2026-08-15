@@ -277,7 +277,18 @@ export function OrganizerBookingView({
                   )
                 }
                 muted={step < 4}
-              />
+              >
+                {step >= 4 && (
+                  <div className="mt-3 rounded-lg border border-outline-variant bg-surface p-4 text-sm text-secondary">
+                    <p className="font-semibold text-on-surface">About payment</p>
+                    <p className="mt-1">
+                      LIME does not process payments automatically yet. Use the chat to agree on
+                      payment method and timing with the artist directly — the fee is due as
+                      stated in the signed contract.
+                    </p>
+                  </div>
+                )}
+              </TimelineStep>
               <TimelineStep
                 done={step >= 5}
                 icon="celebration"

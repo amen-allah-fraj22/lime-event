@@ -73,11 +73,20 @@ export function OfferSheet({
         </div>
 
         {fee != null && (
-          <div className="flex items-center justify-between rounded-xl bg-surface-container-low px-5 py-4">
-            <span className="text-sm text-secondary">Agreed fee</span>
-            <span className="font-headline text-2xl font-bold text-primary">
-              {fee.toLocaleString()} TND
-            </span>
+          <div className="rounded-xl bg-surface-container-low px-5 py-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-secondary">Agreed fee</span>
+              <span className="font-headline text-2xl font-bold text-primary">
+                {fee.toLocaleString()} TND
+              </span>
+            </div>
+            {confirmed && (
+              <p className="mt-2 text-xs text-secondary">
+                LIME does not process payments automatically yet — arrange payment method and
+                timing directly with {/* keeps this true for both roles without picking a side */}
+                the other party via the conversation below.
+              </p>
+            )}
           </div>
         )}
 

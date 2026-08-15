@@ -251,8 +251,8 @@ export function SignContractPage({ contractId }: { contractId: string }) {
               <div className="space-y-4 text-on-surface-variant">
                 <h3 className="font-headline text-headline-md text-on-surface">Terms and Conditions</h3>
                 <p>
-                  The Artist agrees to provide performance services as agreed in the booking quote. Payment terms
-                  follow the LIME escrow process.
+                  The Artist agrees to provide performance services as agreed in the booking quote. The full fee
+                  is payable via the LIME platform, as agreed between the parties.
                 </p>
                 <p>This agreement is governed by the laws of the Republic of Tunisia.</p>
               </div>

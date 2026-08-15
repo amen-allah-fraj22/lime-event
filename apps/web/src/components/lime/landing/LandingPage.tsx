@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
-import { useStatCounters } from '@/hooks/useStatCounters';
 
 // WebGL hero background — client-only, code-split so `three` stays out of SSR.
 const HeroScene3D = dynamic(
@@ -40,7 +39,6 @@ function FadeSection({
 export function LandingPage() {
   const [navScrolled, setNavScrolled] = useState(false);
   useFadeInSections();
-  useStatCounters();
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 10);
@@ -100,7 +98,7 @@ export function LandingPage() {
               </h1>
               <p className="max-w-xl font-body text-body-lg text-on-surface-variant">
                 Say goodbye to endless WhatsApp chats, missed calls, and contract chaos. LIME Event
-                connects you with top Tunisian talent with verified contracts, escrow payments, and
+                connects you with top Tunisian talent with verified contracts, secure booking, and
                 real-time calendar sync.
               </p>
               <div className="flex flex-wrap gap-4">
@@ -111,17 +109,10 @@ export function LandingPage() {
                   Join as an Artist
                 </Link>
               </div>
-              <div className="mt-4 flex items-center gap-4 border-t border-surface-variant pt-4">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="h-10 w-10 rounded-full border-2 border-surface-container-lowest bg-gradient-to-br from-lime/40 to-surface-container"
-                    />
-                  ))}
-                </div>
+              <div className="mt-4 flex items-center gap-2 border-t border-surface-variant pt-4">
+                <MaterialIcon name="new_releases" size={18} className="text-primary" />
                 <p className="text-label-sm text-on-surface-variant">
-                  Trusted by 500+ organizers across Tunisia
+                  Now booking artists across the Grand Tunis area
                 </p>
               </div>
             </FadeSection>
@@ -220,7 +211,7 @@ export function LandingPage() {
                       'Centralized dashboard for all talent communications.',
                       'Automated, digital contracts generated instantly.',
                       'Transparent pricing upfront with no surprises.',
-                      'Secure escrow payments for peace of mind.',
+                      'Transparent, contract-backed payments for peace of mind.',
                       'Real-time calendar sync prevents double bookings.',
                       'Verified talent with authentic organizer reviews.',
                     ].map((t) => (
@@ -251,7 +242,7 @@ export function LandingPage() {
                 {[
                   { n: 1, icon: 'content_paste', title: 'Create Brief', desc: 'Detail your event needs, budget, and timeline.' },
                   { n: 2, icon: 'my_location', title: 'Find Talent', desc: 'Browse verified artists or get matched instantly.' },
-                  { n: 3, icon: 'draw', title: 'Sign & Pay', desc: 'Digital contracts and secure escrow payments.' },
+                  { n: 3, icon: 'draw', title: 'Sign & Pay', desc: 'Digital contracts and a clear, contract-backed payment process.' },
                   { n: 4, icon: 'music_note', title: 'Enjoy Event', desc: 'Sit back and watch the performance.' },
                 ].map((step, i) => (
                   <FadeSection
@@ -290,7 +281,7 @@ export function LandingPage() {
                 <MaterialIcon name="event_available" size={40} className="mb-6 text-primary" />
                 <h3 className="mb-6 font-headline text-headline-lg">For Organizers</h3>
                 <ul className="mb-8 space-y-4">
-                  {['Access to hundreds of verified artists', 'Instant availability checking', 'Secure escrow payments'].map((t) => (
+                  {['Access to verified artists', 'Instant availability checking', 'Transparent, contract-backed pricing'].map((t) => (
                     <li key={t} className="flex items-center gap-3">
                       <MaterialIcon name="check_circle" className="text-custom-lime" />
                       <span className="font-body text-body-md">{t}</span>
@@ -311,7 +302,7 @@ export function LandingPage() {
                 <MaterialIcon name="mic" size={40} className="mb-6 text-custom-lime" />
                 <h3 className="mb-6 font-headline text-headline-lg text-white">For Artists</h3>
                 <ul className="mb-8 space-y-4">
-                  {['Guaranteed payments via escrow', 'Professional digital contracts', 'Manage all bookings in one calendar'].map((t) => (
+                  {['Payment terms locked in by contract', 'Professional digital contracts', 'Manage all bookings in one calendar'].map((t) => (
                     <li key={t} className="flex items-center gap-3">
                       <MaterialIcon name="check_circle" className="text-custom-lime" />
                       <span className="font-body text-body-md text-surface-variant">{t}</span>
@@ -323,65 +314,6 @@ export function LandingPage() {
                 </Link>
               </FadeSection>
             </div>
-          </div>
-        </section>
-
-        {/* Stats */}
-        <section className="bg-surface py-16 sm:py-24" id="testimonials">
-          <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
-            <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-              {[
-                { quote: 'LIME Event completely changed how we book for our summer festivals.', who: 'Sarah K.', role: 'Festival Director', img: '/media/avatar-1.svg' },
-                { quote: 'Knowing my payment is secure in escrow before I step on stage is invaluable.', who: 'Mehdi T.', role: 'Musician', img: '/media/avatar-2.svg' },
-                { quote: 'The automated contracts mean I never worry about legal details again.', who: 'Youssef B.', role: 'Corporate Events', img: '/media/avatar-3.svg' },
-              ].map((t, i) => (
-                <FadeSection
-                  key={t.who}
-                  delay={i * 100}
-                  className="rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-transform hover:-translate-y-1"
-                >
-                  <div className="mb-4 flex text-custom-lime">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <MaterialIcon key={j} name="star" filled size={20} />
-                    ))}
-                  </div>
-                  <p className="mb-6 font-body text-body-md italic text-on-surface-variant">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="flex items-center gap-3">
-                    {/* Placeholder avatar — swap for a real photo (same path). */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={t.img}
-                      alt={t.who}
-                      className="h-11 w-11 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="text-label-md font-semibold">{t.who}</p>
-                      <p className="text-label-sm text-on-surface-variant">{t.role}</p>
-                    </div>
-                  </div>
-                </FadeSection>
-              ))}
-            </div>
-            <FadeSection
-              id="stats-section"
-              className="rounded-4xl bg-primary-container p-8 md:p-12"
-            >
-              <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
-                {[
-                  { target: 200, label: 'Verified Artists', suffix: '+' },
-                  { target: 500, label: 'Events Booked', suffix: '+' },
-                  { target: 98, label: 'Satisfaction', suffix: '%' },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <div className="mb-2 font-headline text-[48px] font-black text-on-primary-fixed">
-                      <span data-target={s.target}>0</span>
-                      {s.suffix}
-                    </div>
-                    <div className="text-label-md text-on-primary-container">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </FadeSection>
           </div>
         </section>
 
