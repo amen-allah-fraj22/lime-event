@@ -235,12 +235,35 @@ Traced the confirmed-booking view (`OfferSheet`, the component both organizer an
 
 **Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, Playwright run against a **production build** (per the section 3 procedure) 40 passed / 0 failed — re-run twice, after the payment-copy fixes and again after the testimonials removal.
 
-## 8. Auth & production readiness
+## 8. Auth & production readiness — 🟡 code-side done (2026-08-16), rest needs you
 
-- [ ] Move off Clerk test keys to a real (or dedicated staging) instance before any real artist creates an account with a real email
-- [ ] Confirm Clerk redirect URLs / allowed origins are configured for the actual deployment domain, not just localhost
-- [ ] Decide and document: where does this actually get hosted for the pilot? (Vercel for web, Railway/similar for API — per the business plan's cost assumptions)
-- [ ] Confirm environment variables are fully set for that real deployment target (`.env.example` vs what's actually needed — diff them)
+- [ ] Move off Clerk test keys — **cannot be done from here**, requires creating/accessing a real Clerk account. Yours to do.
+- [x] Confirm Clerk redirect URLs / allowed origins — audited the code: `ClerkProvider` and `middleware.ts` only use env vars and relative paths, no hardcoded localhost. The one genuinely broken piece of "allowed origins" was the **API's CORS config**, not Clerk itself — **found and fixed** (below). The Clerk-dashboard side of this (which domains are allowed in Clerk's own settings) is a config-panel task only doable with your real account.
+- [x] Decide and document hosting — can't make the business decision, but **completed the documentation** for the already-referenced Vercel+Railway setup (below) so it's ready the moment you have accounts.
+- [x] Diff `.env.example` against what's actually read in code — **found 4 real gaps, all fixed** (below).
+
+### CORS was wide open: `origin: true` accepted requests from any website
+
+`main.ts` had `enableCors({ origin: true, credentials: true })` — reflects back whatever `Origin` header a request sends, so any website's JavaScript could call the API. Auth here uses Bearer tokens attached by app code, not browser-managed cookies, so this wasn't classic cookie-based CSRF — but it's still real over-permissiveness for a production API, and `.env.example` already *documented* a `CORS_ORIGIN` variable for exactly this ("set on Railway to your Vercel URL") that the code never actually read. Wired it up: `CORS_ORIGIN` is now a comma-separated allowlist, defaulting to `http://localhost:3000` alone when unset — so a deployment that forgets to set it **fails closed** (blocks the real frontend, loudly) instead of failing open (silently accepting any origin).
+
+**Verified live, not just by reading the code**: direct `curl` OPTIONS requests against a running instance — `http://localhost:3000` origin got `Access-Control-Allow-Origin` echoed back (allowed), a fake `http://evil-attacker.example` origin got nothing (blocked). Multi-origin parsing (`CORS_ORIGIN=a,b`) verified separately since a background server couldn't be kept alive across tool calls in this environment — confirmed the split/trim logic produces the exact right allowlist.
+
+**➡️ Action for you**: set `CORS_ORIGIN` on Railway to your real Vercel URL once you have one, or the deployed frontend will get CORS-blocked from the API.
+
+### `.env.example` was missing 4 variables the code actually reads
+
+Grepped every `process.env.X` in both apps and diffed against `.env.example`. Found:
+- **`RESEND_API_KEY`** — gates the email-notification service (`email.service.ts`). This one is on me: I removed it from `.env.example` in section 1, believing it was unused; it genuinely is used, just guarded so it no-ops silently if unset. Restored, with a note explaining what breaks without it (in-app notifications still work, email ones don't).
+- **`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`** — power the Google Calendar sync feature (`calendar.service.ts`), completely undocumented before this. `GOOGLE_REDIRECT_URI` specifically needs to exactly match a URI registered on the Google OAuth client *and* point at the frontend's `/agenda/callback` on whichever domain is live — documented that explicitly since it's the same "only works for localhost" trap the checklist worried about, just for Google's OAuth instead of Clerk's.
+- **`NEXT_PUBLIC_APP_URL`** — used for `metadataBase` (Open Graph / canonical URLs). Undocumented; without it, social share previews use relative/incorrect URLs.
+
+Also updated `SETUP.md`'s deployment section, which was equally stale (missing all 4 of the above, plus no mention that `CORS_ORIGIN` is now required for the real Vercel domain to work at all).
+
+### Found while verifying: a live database connectivity issue, unrelated to any of this
+
+Running the e2e suite to confirm the CORS change caused no regressions, one test failed consistently (`browse artists shows listing or empty state`) even after ruling out CORS as the cause (verified live: the request *was* correctly allowed). Investigated directly in the browser — the page showed **"Database unreachable,"** and `GET /health/db` confirmed it: `{"status":"error","database":"disconnected"}`. This is a live Supabase connectivity problem, not caused by anything in this section — confirmed by checking twice a few seconds apart (not transient) and by the fact that the full suite passed 40/40 against a working database earlier in section 7. Outside what's fixable from here (no Supabase dashboard access), but **worth checking now** — if the pilot's Supabase project is paused, rate-limited, or its connection string has changed, that blocks local testing generally, not just this audit.
+
+**Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14 (all DB-independent, unaffected by the connectivity issue above). CORS behavior verified live via direct HTTP requests rather than relying on the e2e suite, given the unrelated DB outage.
 
 ## 9. Content & data readiness
 

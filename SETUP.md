@@ -187,5 +187,22 @@ Logo: `apps/web/public/logo.jpeg`
 
 Staging only until you send **APPROVED** for production (`IMPLEMENTATION_PLAN_PHASE1.md` §B3).
 
-**Railway (API):** `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SECRET`, `DATABASE_URL`  
-**Vercel (web):** `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_API_URL`
+**Railway (API):**
+- Required: `CLERK_SECRET_KEY`, `DATABASE_URL`
+- Required before the real frontend can reach the API: `CORS_ORIGIN` — comma-separated
+  allowlist (e.g. `https://your-app.vercel.app`). Without it the API only accepts requests
+  from `http://localhost:3000` and will reject the deployed frontend entirely — this is a
+  fail-closed default, not a bug, but it's easy to forget on first deploy.
+- Optional: `CLERK_WEBHOOK_SECRET` (Clerk user-sync webhook), `RESEND_API_KEY` (email
+  notifications — without it, only in-app notifications are sent), `GOOGLE_CLIENT_ID` /
+  `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` (Google Calendar sync — the redirect URI
+  must be registered on the Google OAuth client and point at the *frontend's*
+  `/agenda/callback` route on whichever domain is live), `UPLOAD_PUBLIC_BASE_URL`
+
+**Vercel (web):**
+- Required: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (Next.js middleware runs
+  server-side and needs this too, not just the API), `NEXT_PUBLIC_API_URL` (the Railway URL)
+- Optional: `NEXT_PUBLIC_APP_URL` (used for canonical/Open Graph URLs — set it or social
+  share previews will use relative/incorrect URLs)
+
+See `.env.example` for the full list with descriptions.
