@@ -265,11 +265,54 @@ Running the e2e suite to confirm the CORS change caused no regressions, one test
 
 **Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14 (all DB-independent, unaffected by the connectivity issue above). CORS behavior verified live via direct HTTP requests rather than relying on the e2e suite, given the unrelated DB outage.
 
-## 9. Content & data readiness
+## 9. Content & data readiness — 🟡 code-side done (2026-08-16/17), 3 decisions need you
 
-- [ ] Replace/remove seed/demo data (`yasmine.demo@...`, `djkarim.demo@...`, etc.) so real artists don't see fake accounts
-- [ ] Prepare the actual onboarding copy/instructions to send artists (what they need to have ready: photos, bio, pricing expectations, availability)
-- [ ] Decide the actual invite mechanism — direct link? Waitlist? Manual approval for the first cohort?
+- [x] Replace/remove seed/demo data — **made safe to avoid, deletion script prepared for your review** (below). Not run — deleting live data isn't something I do without your explicit go-ahead.
+- [x] Prepare the actual onboarding copy/instructions to send artists — **written**: [`docs/ARTIST_ONBOARDING_INSTRUCTIONS.md`](../docs/ARTIST_ONBOARDING_INSTRUCTIONS.md).
+- [ ] Decide the actual invite mechanism — direct link? Waitlist? Manual approval? **Your call** (tradeoffs below).
+- [x] Bonus find while auditing this section: artist photo upload was built but never wired into signup — **fixed** (below).
+
+### The seed-data landmine: `db:setup` was silently re-seedable against a real database
+
+`SETUP.md` documented `npm run db:setup` as the routine "apply the schema" command, and both it and `scripts/setup-db.ps1` unconditionally chained the demo-data seed (`prisma/seed.ts`) onto every run. That script upserts 3 fake artists (`yasmine.demo@lime-event.tn`, `djkarim.demo@lime-event.tn`, `mezwed.demo@lime-event.tn`, all `is_verified: true` with fabricated ratings/reviews) and 1 fake organizer + event. Nothing wrong with that for local dev — the problem is there's no separate staging database for a project this size, so the *same* command someone runs months from now to apply a new migration against the real pilot database would silently reintroduce fake verified accounts into it, indistinguishable from real ones to anyone browsing the site.
+
+Fixed with two independent layers, so it's safe regardless of how the script gets invoked:
+1. **`prisma/seed.ts` now refuses to run without `SEED_CONFIRM=yes`** set explicitly — checked inside the script itself, not just at the npm-script level, so it's covered whether it's triggered directly (`ts-node`), via `npm run db:seed`, via Prisma's auto-seed hook, or via the PowerShell wrapper. Verified live: ran it with no flag (refused, exit 1, explained why), then with the flag (proceeded, printed the expected "Seeded 3 demo artists" / "Seeded 1 demo organizer and 1 public event").
+2. **`db:setup` no longer chains the seed at all.** It's now migration-only (`prisma migrate deploy && prisma generate`) and safe to re-run against a database with real users. A separate opt-in `db:setup:with-demo-data` script (and `-WithDemoData` switch on `scripts/setup-db.ps1`) exists for anyone who actually wants demo data on a fresh dev database.
+
+`SETUP.md` rewritten to match: the default "Apply schema" instructions no longer mention seeding at all, and the demo-data path is a clearly separate, explicitly-opt-in section with a ⚠️ warning not to run it against the pilot's real database.
+
+### Removing the demo accounts already in the database — needs your go-ahead
+
+The 3 demo artists / 1 demo organizer / 1 demo event described above already exist in whatever database `DATABASE_URL` currently points at (they were created before this audit, and I re-affirmed their existence while testing the guard above — upserts don't duplicate, so that test didn't add anything new). I'm not deleting them without you saying so — that's a real, permanent delete against a shared database, not a local edit.
+
+Prepared for your review, **not wired into any script and not run**: [`apps/api/prisma/remove-seed-data.ts`](../apps/api/prisma/remove-seed-data.ts). It targets exactly the 4 seed accounts by their unique `clerk_user_id` (`seed_artist_yasmine`, `seed_artist_karim`, `seed_artist_mezwed`, `seed_org_ahmed`) plus the event they created — no heuristic matching on name/email that could catch a real user. Refuses to run without `REMOVE_CONFIRM=yes`, same pattern as the seed guard. Read it, then when you're ready:
+
+```powershell
+cd apps\api
+$env:REMOVE_CONFIRM = "yes"
+npx ts-node prisma/remove-seed-data.ts
+```
+
+Do this once you're ready to stop seeing fake accounts (e.g. right before inviting the first real artists) — no rush before then, and no reason to do it earlier than that since demo data doesn't hurt anything while you're the only one looking at the app.
+
+### Found while auditing this section: artist photo upload was built but disconnected
+
+`ArtistPhotoUpload.tsx` and its backend (`POST /artists/:id/photos`) were both fully implemented — but nothing in the actual sign-up wizard rendered the component. An artist going through the real 4-step onboarding flow had no way to add a profile or cover photo at all, despite the feature existing end-to-end in the codebase. Given the onboarding instructions (above) tell artists to have photos ready, this would have been a broken promise on day one.
+
+**Fixed**: wired `ArtistPhotoUpload` into `SimplifiedStep1Identity` (`apps/web/src/components/lime/wizard/ArtistSimplifiedSteps.tsx`) — both profile and cover photo pickers now render at the top of step 1, alongside name/city/bio. The component saves photos to their own endpoint immediately on selection (independent of the step's "Next" button), matching how it was already built.
+
+### Invite mechanism — your decision, here's what the code currently does
+
+No pre-access gate exists today: anyone who completes Clerk sign-up gets `is_active: true` by default and can use the app immediately. The admin panel (`/admin`) can flip `is_active`/`is_verified` per-user after the fact, but there's no built-in "approve before they can do anything" step. Three real options, given what's actually built:
+
+- **Direct link, no gate** (least work): send the link in [`docs/ARTIST_ONBOARDING_INSTRUCTIONS.md`](../docs/ARTIST_ONBOARDING_INSTRUCTIONS.md) to whoever you're inviting. Anyone with the link can sign up immediately. Fine for a small, hand-picked pilot cohort where you already trust everyone you're sending it to.
+- **Manual post-hoc moderation** (no new code): let people sign up freely, use the existing admin panel to flip `is_active: false` on anyone you don't want live. Reactive rather than preventive — they're technically live for a few minutes/hours until you check.
+- **True pre-approval gate** (needs new code): flip `is_active`'s default to `false` at signup, so new accounts are invisible/blocked until you manually approve them in `/admin`. I can build this if you want it, but it's a real behavior change worth deciding deliberately, not something to flip silently.
+
+For a first pilot cohort of a handful of hand-picked artists, direct link is probably enough — but this is a product call, not a code one.
+
+**Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, `npm run build -w @lime/web` succeeds. Seed guard verified live both ways (refuses without flag, proceeds with it). CORS/live-server check re-confirmed working correctly on a matched origin. Could not do a full authenticated click-through of the photo-upload wizard step itself — blocked by two things outside this environment: no real Clerk credentials to sign in as, and the Supabase database was disconnected again during this session (`GET /health/db` → 503, same intermittent issue flagged in section 8) even after having briefly recovered earlier. Wiring is confirmed correct at the code level (props/types match, component already proven to work standalone) and via a clean production build; a real click-through once you have working DB connectivity is worth doing before inviting anyone.
 
 ## 10. Go/no-go checklist (final gate before sending invites)
 

@@ -79,7 +79,7 @@ Clerk handles the OAuth flow. Your `.env` only needs Clerk keys (`pk_` / `sk_` /
 
 You do **not** need `NEXT_PUBLIC_SUPABASE_URL`, anon key, or JWT secret for Phase 1.
 
-### Apply schema + seed (one command)
+### Apply schema
 
 From the repo root (PowerShell):
 
@@ -87,6 +87,23 @@ From the repo root (PowerShell):
 .\scripts\setup-db.ps1
 # or: npm run db:setup
 ```
+
+This applies migrations only — it does **not** seed demo data, and is safe
+to re-run at any point, including against a database that already has real
+users in it.
+
+**Only for a fresh dev database with no real users**, to also add 3 demo
+artists / 1 demo organizer / 1 demo event for local testing:
+
+```powershell
+.\scripts\setup-db.ps1 -WithDemoData
+# or: npm run db:setup:with-demo-data
+```
+
+⚠️ Do not run the demo-data variant (or a bare `npm run db:seed`) against
+the pilot's real database once real artists/organizers have signed up — it
+upserts fake accounts marked `is_verified: true` with fabricated ratings
+into whatever `DATABASE_URL` currently points at.
 
 Verify database connectivity (start API first: `npm run dev:api`):
 

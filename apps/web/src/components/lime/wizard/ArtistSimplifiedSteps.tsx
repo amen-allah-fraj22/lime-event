@@ -5,6 +5,7 @@ import type { ArtistProfileFull } from '@/lib/artist-profile-types';
 import { MultiSelectChip } from './MultiSelectChip';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { WIZARD_GENRES, WIZARD_INSTRUMENTS, PERFORMANCE_TYPES } from '@/lib/artist-wizard-options';
+import { ArtistPhotoUpload } from './ArtistPhotoUpload';
 
 export interface StepProps {
   profile: ArtistProfileFull;
@@ -20,6 +21,11 @@ export function SimplifiedStep1Identity({ profile, onNext, saving }: StepProps) 
     city: profile.city || '',
     bio: profile.bio || '',
   });
+  // Photos upload and save themselves immediately (their own endpoint), so they're
+  // tracked locally just to update the preview shown here — not part of the form
+  // payload sent on "Next".
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState(profile.profile_photo_url ?? '');
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState(profile.cover_photo_url ?? '');
 
   return (
     <form
@@ -29,6 +35,24 @@ export function SimplifiedStep1Identity({ profile, onNext, saving }: StepProps) 
         onNext(data);
       }}
     >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ArtistPhotoUpload
+          profileId={profile.id}
+          kind="profile"
+          label="Profile photo"
+          hint="Shown on your public profile"
+          value={profilePhotoUrl}
+          onChange={setProfilePhotoUrl}
+        />
+        <ArtistPhotoUpload
+          profileId={profile.id}
+          kind="cover"
+          label="Cover photo"
+          hint="Shown on the artist browse page — this is what gets you noticed"
+          value={coverPhotoUrl}
+          onChange={setCoverPhotoUrl}
+        />
+      </div>
       <div>
         <label className="mb-2 block font-label-md font-bold text-on-surface">Artist / Band Name *</label>
         <input
