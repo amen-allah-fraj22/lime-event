@@ -314,16 +314,36 @@ For a first pilot cohort of a handful of hand-picked artists, direct link is pro
 
 **Verification:** `npm run typecheck` 0 errors, `npm run lint:web` 0 warnings, `npm run test:api` 14/14, `npm run build -w @lime/web` succeeds. Seed guard verified live both ways (refuses without flag, proceeds with it). CORS/live-server check re-confirmed working correctly on a matched origin. Could not do a full authenticated click-through of the photo-upload wizard step itself — blocked by two things outside this environment: no real Clerk credentials to sign in as, and the Supabase database was disconnected again during this session (`GET /health/db` → 503, same intermittent issue flagged in section 8) even after having briefly recovered earlier. Wiring is confirmed correct at the code level (props/types match, component already proven to work standalone) and via a clean production build; a real click-through once you have working DB connectivity is worth doing before inviting anyone.
 
-## 10. Go/no-go checklist (final gate before sending invites)
+## 10. Go/no-go checklist (final gate before sending invites) — 🟡 code-side green, 5 human gates remain (2026-08-17)
 
-- [ ] All of section 1 (safety) done
-- [ ] All bugs in section 2 fixed and re-verified live (not just pattern-matched)
-- [ ] Full regression pass (section 3) green
-- [ ] Mobile pass (section 4) done on a real device
-- [ ] Commission rate matches the plan
-- [ ] Auth is on non-test keys
-- [ ] Hosting target decided and environment variables set for it
-- [ ] Someone who isn't you has clicked through the full artist sign-up flow once, cold, and reported confusion points
+Everything the codebase can be responsible for is done and verified. What's left is not code — it's things that by definition can't be done from inside this environment: real accounts, real hardware, and a second human's eyes. Each open item below says exactly what it needs and who has to do it.
+
+| Gate | Status | What's left |
+|---|---|---|
+| All of section 1 (safety) done | ✅ **Cleared** | Committed, pushed, secrets audited clean, `staging` branch in use. One known limitation (git *history* still holds two files) documented in section 1 — decide if it matters, but it doesn't block a pilot. |
+| All bugs in section 2 fixed & re-verified live | 🟡 **Code-cleared, one visual pass owed** | All 4 fixed; `/artists`→`/explore/artists` redirect and the landing-page 7% both verified live. The `/messages/[bookingId]` double-header fix is confirmed structurally but never seen through a real login — folds into the manual click-through gate below. |
+| Full regression pass (section 3) green | 🟡 **Automated green, manual owed** | Playwright 39/0, lint 0, typecheck 0, API tests 14/14 — all repeatable and green. The five manual click-through items in section 3 (empty states, form validation with Arabic/French input, cross-role pricing leak check) need a real login and can't be automated here. **Yours.** |
+| Mobile pass (section 4) done on a real device | 🔴 **Needs a physical phone** | All CSS/breakpoint/tap-target work done and verified in emulation; the safe-area nav bug was fixed blind. iOS Safari + Android Chrome on real hardware, and the camera-roll photo upload, cannot be done from here. **Yours.** |
+| Commission rate matches the plan | ✅ **Cleared** | Progressive 7%/5%/3% in code (7 unit tests) and on the landing page. Confirmed intact through section 9. |
+| Auth is on non-test keys | 🔴 **Needs your Clerk account** | Still `pk_test_…`. Swapping to live keys requires a real Clerk account and dashboard access — impossible from here, and a hard blocker: a real artist signing up against test keys is a real problem. **Yours.** |
+| Hosting target decided & env vars set | 🟡 **Docs ready, accounts/env yours** | Vercel+Railway env lists fully documented (`SETUP.md`, `.env.example`), including the now-required `CORS_ORIGIN`. Actually creating the accounts and setting the vars needs those accounts. **Yours.** |
+| A second person has done a cold artist sign-up | 🔴 **Needs another human** | By definition can't be me. Hand someone [`docs/ARTIST_ONBOARDING_INSTRUCTIONS.md`](../docs/ARTIST_ONBOARDING_INSTRUCTIONS.md) and the sign-up link, watch where they get stuck. Do this after the DB and Clerk gates are cleared, or they'll hit a broken flow that isn't their confusion. **Yours.** |
+
+### The five things standing between you and sending invites
+
+Ordered by dependency — clear them roughly in this order:
+
+1. **Fix Supabase connectivity.** The database has been intermittently unreachable (`GET /health/db` → 503) across sections 8 and 9 — right now, still down. Nothing else on this list can be truly verified end-to-end until the pilot database is reliably up (check if the project is paused, rate-limited, or its connection string rotated). This is the top blocker because it silently invalidates every other test.
+2. **Move Clerk to live keys** (needs your Clerk account) and set the Clerk-dashboard allowed origins/redirects for your real domain.
+3. **Decide + provision hosting** (Vercel + Railway accounts), set every env var from `SETUP.md`'s deployment section — critically `CORS_ORIGIN` (fails closed without it) and live `DATABASE_URL`/Clerk keys.
+4. **Run the manual + real-device passes** (sections 3 & 4): full organizer and artist click-throughs on a real phone, once the above are live.
+5. **Run [`prisma/remove-seed-data.ts`](../apps/api/prisma/remove-seed-data.ts)** (reviewed, `REMOVE_CONFIRM=yes`) to clear demo accounts, then have a second person do a cold sign-up — as the very last step, right before real invites go out.
+
+### What this environment can and can't sign off
+
+**Signed off from here:** all code correctness (typecheck, lint, unit + e2e suites), payment/pricing honesty, commission math, CORS/auth hardening, seed-data safety, nav/mobile/desktop CSS, and every documentation gap. If a defect is fixable from source, it's fixed.
+
+**Cannot be signed off from here, by nature:** anything requiring real Clerk credentials, a live hosting account, physical mobile hardware, a working DB connection at test time, or a second human's cold read. These aren't skipped work — they're the irreducible human gates of launching. The plan is as green as a codebase can make it; the remaining checkboxes are yours to clear.
 
 ---
 
