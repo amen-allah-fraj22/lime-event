@@ -25,12 +25,18 @@ Clerk (like most auth providers) actively resists scripted logins — bot detect
 - **Test emails** of the form `anything+clerk_test@example.com` with the fixed verification code **`424242`** — Clerk treats these as real accounts on a **development instance** without sending real email.
 - Requires the **dev-instance** publishable + secret keys available to the test runner as env vars. The CI workflow already reserves the secret names — `E2E_CLERK_PUBLISHABLE_KEY`, `E2E_CLERK_SECRET_KEY`, `E2E_DATABASE_URL` — the e2e job just skips until they're set.
 
-### What I need from you to build this (pick one)
+### What I need from you to build this
 
-- **Preferred:** give me a **Clerk *development* instance's** publishable key (`pk_test_…`) and secret key (`sk_test_…`) — either paste them for a local `apps/web/.env.test` (dev keys, not production, so lower stakes), or add them as the three `E2E_*` GitHub secrets and I'll wire CI. I do **not** need and won't touch your production keys.
-- These are the same dev keys you already run locally today — nothing new to create, most likely.
+**Decided (2026-08-17):** local `apps/web/.env.test`. Paste your existing **Clerk *development* instance** keys there — the same `pk_test_…` / `sk_test_…` you already run locally, nothing new to create. Template:
 
-Once I have those, I install `@clerk/testing`, write the global-setup sign-in, and none of the rest of this plan needs you again until review.
+```
+# apps/web/.env.test  (gitignored — never commit real keys)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_DEV_KEY
+CLERK_SECRET_KEY=sk_test_YOUR_DEV_KEY
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+I do **not** need and won't touch production keys. Once this file exists, I install `@clerk/testing`, write the global-setup sign-in, and none of the rest of this plan needs you again until review.
 
 > No MCP connector helps here — this is a package + a dev key, not an integration. That's the whole ask.
 
@@ -73,10 +79,12 @@ Each persona is a `+clerk_test` email; the setup project verifies with `424242`,
 7. Browse events → apply to perform (one-tap + note)
 8. Receive/negotiate an offer → get confirmed → booking on calendar
 
-### Artist journey — band (happy path) — **see findings; this flow is currently incomplete**
-Same as solo, but the band-specific data (band name, size, per-member lineup) **cannot currently be entered in the live wizard** (details below). Two options for this row:
-- **(a)** Test the *current* truthful behavior — a band can only set `artist_type: band` + a flat instrument list; assert the public profile degrades gracefully (no empty "Band members" section, subtitle reads "Band" with no member count).
-- **(b)** First wire band-member entry into the live wizard (I can do this), then test the full lineup round-trips from wizard → API → public profile.
+### Artist journey — band (happy path)
+**Decided (2026-08-17): option (b), and the wizard wiring is already done** — `SimplifiedStep2Sound` now collects member count + a name/role/instrument line-up when "Band / Group" is selected (see pre-launch plan §9). So this persona tests the full round-trip:
+1. Same steps 1–4 as solo, but in step 2 pick "Band / Group", set member count, add ≥2 line-up rows (name/role/instrument)
+2. Publish → assert `band_size` and `band_members` persisted via the API
+3. Open the public `/artists/[id]` → assert the "Band members" section renders every member (name · role · instrument) and the subtitle reads "Band · N members"
+4. Edit → switch to "Solo" → publish → assert the line-up is cleared and the "Band members" section disappears
 
 ### Edge / validation / empty-state pass
 - Every form: empty required fields, oversized input, Arabic/French/accented names — clear validation messages
@@ -88,7 +96,7 @@ Same as solo, but the band-specific data (band name, size, per-member lineup) **
 ## Test-data strategy
 
 - **Seed via the API/Prisma before a run, tear down after** — not the demo `seed.ts` (that's for dev display). A dedicated `e2e/fixtures/seed-e2e.ts` creates a known organizer, a known solo artist, and a known band artist with a fixed lineup, all prefixed `e2e_` in `clerk_user_id`, and a matching `remove` step — same guarded pattern as `prisma/remove-seed-data.ts`.
-- Runs against `E2E_DATABASE_URL` — ideally a **separate throwaway database**, not the pilot one, so a failed run never pollutes real data. If there's only one DB, the `e2e_`-prefix + teardown keeps it clean, but a separate DB is the right call before there are real users.
+- **Decided (2026-08-17): reuse the pilot DB**, guarded by the `e2e_` prefix + teardown after each run — no separate DB for now. The fixture only ever creates/deletes `e2e_`-prefixed rows, so a run can't touch real accounts. ⚠️ Revisit before real users exist — a separate `E2E_DATABASE_URL` is the safer long-term call, and the suite is built DB-agnostic so switching later is just an env var.
 
 ---
 
@@ -107,8 +115,8 @@ Each phase keeps the "run against a production build, not dev server" rule alrea
 
 ## What I need from you — checklist
 
-- [ ] A **Clerk dev instance** publishable + secret key for the test runner (local `.env.test` or the three `E2E_*` GitHub secrets). **This is the only hard blocker.**
-- [ ] Decide the **band** row: test current limited behavior (a), or let me wire band-member entry into the live wizard first, then test it (b).
-- [ ] Confirm whether e2e can have its **own database** (`E2E_DATABASE_URL` ≠ pilot DB) — strongly recommended before real users exist.
+- [ ] **The only thing left blocking me:** create `apps/web/.env.test` with your Clerk **dev** keys (template above). The moment that file exists, I build Phase A onward.
+- [x] ~~Band row decision~~ → option (b), and the wizard wiring is **already done** (pre-launch §9).
+- [x] ~~Test DB decision~~ → reuse pilot DB with `e2e_` prefix + teardown.
 
-Everything else — packages, setup code, specs, fixtures, CI wiring — is mine once the key is available.
+Everything else — packages, setup code, specs, fixtures, CI wiring — is mine once the key file is in place.

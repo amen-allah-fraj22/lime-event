@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { ArtistProfileFull } from '@/lib/artist-profile-types';
+import type { ArtistProfileFull, BandMember } from '@/lib/artist-profile-types';
+import { parseBandMembers } from '@/lib/artist-profile-types';
 import { MultiSelectChip } from './MultiSelectChip';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { WIZARD_GENRES, WIZARD_INSTRUMENTS, PERFORMANCE_TYPES } from '@/lib/artist-wizard-options';
@@ -97,19 +98,39 @@ export function SimplifiedStep2Sound({ profile, onNext, onBack, saving }: StepPr
   const [type, setType] = useState(profile.artist_type || 'solo');
   const [genres, setGenres] = useState<string[]>(profile.genres || []);
   const [instruments, setInstruments] = useState<string[]>(profile.instruments || []);
+  const [bandSize, setBandSize] = useState(
+    profile.band_size != null ? String(profile.band_size) : '',
+  );
+  const [bandMembers, setBandMembers] = useState<BandMember[]>(
+    parseBandMembers(profile.band_members),
+  );
 
   const toggleGenre = (g: string) =>
     setGenres((prev) => (prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]));
-  
+
   const toggleInstrument = (i: string) =>
     setInstruments((prev) => (prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]));
+
+  const updateMember = (idx: number, field: keyof BandMember, value: string) =>
+    setBandMembers((prev) =>
+      prev.map((m, i) => (i === idx ? { ...m, [field]: value } : m)),
+    );
+
+  const isBand = type === 'band';
 
   return (
     <form
       className="flex flex-col gap-8"
       onSubmit={(e) => {
         e.preventDefault();
-        onNext({ artist_type: type, genres, instruments });
+        // When solo, clear any previously-entered lineup so a band→solo switch
+        // doesn't leave orphaned members showing on the public profile (which
+        // gates the "Band members" section on artist_type === 'band').
+        onNext(
+          isBand
+            ? { artist_type: type, genres, instruments, band_size: bandSize, band_members: bandMembers }
+            : { artist_type: type, genres, instruments, band_members: [] },
+        );
       }}
     >
       <div>
@@ -127,6 +148,83 @@ export function SimplifiedStep2Sound({ profile, onNext, onBack, saving }: StepPr
           </label>
         </div>
       </div>
+
+      {isBand && (
+        <div className="flex flex-col gap-4 rounded-2xl border-2 border-outline-variant bg-surface-container-lowest p-4">
+          <div>
+            <label className="mb-2 block font-label-md font-bold text-on-surface">
+              Number of members
+            </label>
+            <input
+              type="number"
+              min={2}
+              max={50}
+              inputMode="numeric"
+              placeholder="e.g. 5"
+              className="w-32 rounded-xl border-2 border-outline-variant bg-surface-container-lowest p-3 transition-colors focus:border-primary focus:outline-none"
+              value={bandSize}
+              onChange={(e) => setBandSize(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="font-label-md font-bold text-on-surface">Line-up</label>
+              <span className="text-sm text-on-surface-variant">Who plays what</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {bandMembers.map((member, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-1 gap-2 rounded-xl bg-surface-container-low p-3 sm:grid-cols-[1fr_1fr_1fr_auto]"
+                >
+                  <input
+                    className="rounded-lg border-2 border-outline-variant bg-surface-container-lowest p-2 transition-colors focus:border-primary focus:outline-none"
+                    placeholder="Name"
+                    value={member.name}
+                    onChange={(e) => updateMember(i, 'name', e.target.value)}
+                  />
+                  <input
+                    className="rounded-lg border-2 border-outline-variant bg-surface-container-lowest p-2 transition-colors focus:border-primary focus:outline-none"
+                    placeholder="Role (e.g. lead singer)"
+                    value={member.role}
+                    onChange={(e) => updateMember(i, 'role', e.target.value)}
+                  />
+                  <input
+                    className="rounded-lg border-2 border-outline-variant bg-surface-container-lowest p-2 transition-colors focus:border-primary focus:outline-none"
+                    placeholder="Instrument"
+                    value={member.instrument}
+                    onChange={(e) => updateMember(i, 'instrument', e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    aria-label={`Remove member ${i + 1}`}
+                    className="flex items-center justify-center rounded-lg px-3 py-2 text-error hover:bg-error/10"
+                    onClick={() =>
+                      setBandMembers((prev) => prev.filter((_, idx) => idx !== i))
+                    }
+                  >
+                    <MaterialIcon name="close" size={20} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                className="w-full rounded-xl border-2 border-dashed border-primary py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/5"
+                onClick={() =>
+                  setBandMembers((prev) => [...prev, { name: '', role: '', instrument: '' }])
+                }
+              >
+                + Add member
+              </button>
+            </div>
+            <p className="mt-2 text-sm text-on-surface-variant">
+              Optional, but a listed line-up shows on your public profile and helps organizers
+              picture the group.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div>
         <label className="mb-4 block font-label-md font-bold text-on-surface">Main Genres</label>

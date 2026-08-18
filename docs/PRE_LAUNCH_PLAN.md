@@ -304,6 +304,12 @@ Do this once you're ready to stop seeing fake accounts (e.g. right before inviti
 
 **Fixed**: wired `ArtistPhotoUpload` into `SimplifiedStep1Identity` (`apps/web/src/components/lime/wizard/ArtistSimplifiedSteps.tsx`) — both profile and cover photo pickers now render at the top of step 1, alongside name/city/bio. The component saves photos to their own endpoint immediately on selection (independent of the step's "Next" button), matching how it was already built.
 
+### Same pattern again: bands couldn't enter their line-up (2026-08-17)
+
+Prompted by "I only ever tested as a solo artist — what about a band?", audited band support end-to-end. Same disconnection as the photo upload: the **DB** (`band_size`, `band_members` JSON of name/role/instrument), the **API** (`update-artist.dto.ts` accepts them, the service persists them), and the **public profile** (renders a "Band members" section and a "Band · N members" subtitle) all fully support bands — but the **live Simplified wizard never collected any of it.** A band could tick the "Band / Group" radio and pick a flat, shared instrument list, but could never say *how many* members or *who plays what*. A complete member editor existed in `ArtistWizardSteps.tsx`, but that's part of the **old 5-step wizard** (`Step4Equipment`/`Step5Pricing`/`ArtistWizardSteps`), which is imported by nobody — dead code left behind when the flow moved to the Simplified wizard.
+
+**Fixed**: added a band section to `SimplifiedStep2Sound`, shown only when "Band / Group" is selected — a member-count field plus a repeatable name/role/instrument line-up editor (add/remove rows). Switching back to solo clears the line-up so no orphaned members show on the profile. The `band_size`/`band_members` payload is already handled by the existing `normalizeWizardPayload` and the API DTO, so no backend change was needed. Typecheck/lint/build clean; the full signed-in round-trip (wizard → API → public profile) is covered by the band persona in the e2e plan below, once Clerk test auth is set up. See [`docs/E2E_TESTING_PLAN.md`](../docs/E2E_TESTING_PLAN.md).
+
 ### Invite mechanism — your decision, here's what the code currently does
 
 No pre-access gate exists today: anyone who completes Clerk sign-up gets `is_active: true` by default and can use the app immediately. The admin panel (`/admin`) can flip `is_active`/`is_verified` per-user after the fact, but there's no built-in "approve before they can do anything" step. Three real options, given what's actually built:
