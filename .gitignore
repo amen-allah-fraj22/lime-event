@@ -70,3 +70,6 @@ stitch_lime_event/
 
 # Playwright run artifacts
 apps/web/test-results/
+
+# Playwright authenticated sessions (live tokens — never commit)
+apps/web/e2e/.auth/

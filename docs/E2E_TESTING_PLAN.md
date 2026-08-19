@@ -2,6 +2,21 @@
 
 Compiled 2026-08-17. Goal: real e2e coverage of the two actual user journeys (organizer and artist), signed in, all the way through — not the current situation, which only tests public pages and "redirects to sign-in."
 
+> **Status update (2026-08-19): the authenticated harness is BUILT and passing.** The keys were already in the local env files (no `.env.test` needed). Phase A (auth infra) and the band round-trip are green against the dev instance. What actually works now:
+> - `@clerk/testing` installed; `clerkSetup` + Testing Token wired via `e2e/clerk.global.ts`.
+> - Sign-in uses an **admin-minted sign-in token (`ticket` strategy)**, not password — the dev instance requires a second factor, so headless password sign-in returns `needs_second_factor` and can't complete. The ticket bypasses that cleanly. See `e2e/support/provision.ts`.
+> - Three personas provisioned via the Clerk Backend API and driven through the **real onboarding UI** (sets role + creates the Postgres row via `/auth/sync`), sessions saved as `storageState` — `e2e/auth.setup.ts`.
+> - Per-persona projects in `playwright.config.ts`: `organizer`, `artist-solo`, `artist-band`.
+> - **Teardown built** (`apps/api/prisma/e2e-cleanup.ts`, `npm run e2e:cleanup -w @lime/api`): deletes only `+clerk_test` accounts. Runs automatically as a pre-clean in global setup so every run starts fresh.
+> - **Green specs:** organizer reaches `/dashboard`; solo artist resolves its own profile; **band enters member count + full line-up in the wizard, publishes, and the line-up round-trips to the public profile** (the journey manual testing never covered).
+> - **Real bug surfaced by this:** `/auth/sync` looks up by `clerk_user_id` but `email` is unique — the same email arriving under a new clerk id (a real case: delete account in Clerk, sign up again) 500s instead of reconciling. Noted for a follow-up fix.
+>
+> How to run locally (servers on :3000/:3001, dev keys in `apps/web/.env.local`):
+> ```bash
+> npm run test:e2e:auth -w @lime/web
+> ```
+> The remaining phases (B/E organizer booking→contract, deeper artist journeys, validation/empty-state) are still to write on top of this harness.
+
 ---
 
 ## The core gap this plan closes

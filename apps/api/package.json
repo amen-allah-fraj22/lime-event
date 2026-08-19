@@ -16,6 +16,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:setup": "prisma migrate deploy && prisma generate",
     "db:setup:with-demo-data": "prisma migrate deploy && prisma generate && SEED_CONFIRM=yes npm run db:seed",
+    "e2e:cleanup": "ts-node prisma/e2e-cleanup.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "prisma": {
