@@ -17,10 +17,10 @@ export function AuthBrandPanel() {
       <div className="absolute inset-0 z-0 flex items-center justify-center opacity-30">
         <div className="h-full w-full bg-gradient-to-br from-primary-container via-lime-light to-primary/20" />
         <Image
-          src="/logo.jpeg"
+          src="/logo.png"
           alt=""
-          width={400}
-          height={400}
+          width={366}
+          height={160}
           className="absolute max-h-[70%] max-w-[70%] object-contain opacity-40 mix-blend-multiply"
           priority
         />

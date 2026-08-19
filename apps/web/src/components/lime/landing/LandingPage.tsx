@@ -392,7 +392,7 @@ export function LandingPage() {
         <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
           <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-4">
             <div>
-              <Image src="/logo.jpeg" alt="LIME" width={120} height={40} className="mb-6 h-10 w-auto brightness-0 invert" />
+              <Image src="/logo.png" alt="LIME" width={366} height={160} className="mb-6 h-10 w-auto brightness-0 invert" />
               <p className="font-body text-body-md text-surface-variant">Zesty Professionalism.</p>
             </div>
             {[
