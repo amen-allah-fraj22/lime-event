@@ -78,18 +78,21 @@ export function LandingPage() {
       </nav>
 
       <main>
-        {/* Hero — full-bleed to the top so the silk sits behind the (transparent)
-            nav instead of leaving a white strip above it. */}
-        <section className="relative flex min-h-[720px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-28 sm:pb-12 sm:pt-32 lg:min-h-[921px]">
-          <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
-          {/* Hero photo background — whole image shown (subjects small, on the
-              right), blurred fill behind it, scrim lifting the left for copy. */}
-          <HeroPhoto src="/media/hero-band.jpg" />
+        {/* Hero — responsive. Desktop: full-bleed photo behind a left-aligned
+            headline. Mobile: green wash behind the headline, with the photo as a
+            full-width banner below (a wide landscape can't be a background on a
+            tall phone screen without swallowing the text). */}
+        <section className="relative flex flex-col overflow-hidden bg-gradient-to-b from-[#b9d97f] via-[#cfe4a3] to-[#eaf3d6] lg:min-h-[921px] lg:justify-center">
+          {/* Desktop-only photo background — whole image, subjects small on the
+              right, blurred fill behind it, scrim lifting the left for copy. */}
+          <div className="hidden lg:block">
+            <HeroPhoto src="/media/hero-band.jpg" />
+          </div>
           {/* Dissolves the hero into the next section's background instead of a
               hard cut at the section boundary. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
-          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop">
-            <FadeSection className="z-10 flex max-w-2xl flex-col gap-8">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] hidden h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:block lg:h-56" />
+          <div className="relative z-10 mx-auto w-full max-w-container-max px-margin-mobile pb-8 pt-28 sm:pt-32 md:px-margin-desktop lg:pb-12">
+            <FadeSection className="flex max-w-2xl flex-col gap-6 sm:gap-8">
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
                 <br />
@@ -115,6 +118,19 @@ export function LandingPage() {
                 </p>
               </div>
             </FadeSection>
+          </div>
+          {/* Mobile-only photo banner — the whole image at natural proportions,
+              so nobody gets zoomed or clipped on a phone. */}
+          <div className="relative w-full lg:hidden">
+            <Image
+              src="/media/hero-band.jpg"
+              alt="LIME artists performing"
+              width={2752}
+              height={1536}
+              priority
+              sizes="100vw"
+              className="h-auto w-full object-cover"
+            />
           </div>
         </section>
 
