@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
+import { ParallaxSilk } from './ParallaxSilk';
 
 function FadeSection({
   children,
@@ -74,10 +75,20 @@ export function LandingPage() {
         </div>
       </nav>
 
-      <main className="pt-20">
-        {/* Hero */}
-        <section className="relative flex min-h-[640px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-20 sm:pb-12 sm:pt-24 lg:min-h-[921px]">
+      <main>
+        {/* Hero — full-bleed to the top so the silk sits behind the (transparent)
+            nav instead of leaving a white strip above it. */}
+        <section className="relative flex min-h-[720px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-28 sm:pb-12 sm:pt-32 lg:min-h-[921px]">
           <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
+          {/* Flowing-silk background with scroll parallax. The image's calm sage
+              area sits under the left-side headline; the busy flow sits right,
+              behind the Artist Matches card. */}
+          <ParallaxSilk
+            priority
+            opacity={0.6}
+            speed={0.25}
+            scrimClassName="bg-gradient-to-r from-surface/85 via-surface/35 to-transparent"
+          />
           {/* Dissolves the hero's gradient into the next section's background
               instead of a hard cut at the section boundary. */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
@@ -86,7 +97,7 @@ export function LandingPage() {
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
                 <br />
-                <span className="text-primary-container">In minutes, not days.</span>
+                <span className="text-primary">In minutes, not days.</span>
               </h1>
               <p className="max-w-xl font-body text-body-lg text-on-surface-variant">
                 Say goodbye to endless WhatsApp chats, missed calls, and contract chaos. LIME Event
@@ -350,8 +361,16 @@ export function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <FadeSection className="bg-primary-container py-16 sm:py-24">
-          <div className="mx-auto max-w-container-max px-margin-mobile text-center md:px-margin-desktop">
+        <FadeSection className="relative overflow-hidden bg-primary-container py-16 sm:py-24">
+          {/* Subtle reprise of the hero silk, tinted back into the lime band so
+              the centered text stays legible. */}
+          <ParallaxSilk
+            opacity={0.28}
+            speed={0.18}
+            objectPosition="center center"
+            scrimClassName="bg-primary-container/50"
+          />
+          <div className="relative z-10 mx-auto max-w-container-max px-margin-mobile text-center md:px-margin-desktop">
             <h2 className="mb-8 font-headline text-[40px] font-black leading-tight text-on-primary-fixed md:text-[48px]">
               Your next event deserves the best talent.
             </h2>
