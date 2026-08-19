@@ -2,17 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
-
-// WebGL hero background — client-only, code-split so `three` stays out of SSR.
-const HeroScene3D = dynamic(
-  () => import('./HeroScene3D').then((m) => m.HeroScene3D),
-  { ssr: false },
-);
 
 function FadeSection({
   children,
@@ -85,9 +78,8 @@ export function LandingPage() {
         {/* Hero */}
         <section className="relative flex min-h-[640px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-20 sm:pb-12 sm:pt-24 lg:min-h-[921px]">
           <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
-          <HeroScene3D />
-          {/* Dissolves the hero's gradient + 3D scene into the next section's
-              background instead of a hard cut at the section boundary. */}
+          {/* Dissolves the hero's gradient into the next section's background
+              instead of a hard cut at the section boundary. */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
           <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop lg:grid-cols-2 lg:gap-12">
             <FadeSection className="z-10 flex flex-col gap-8">
