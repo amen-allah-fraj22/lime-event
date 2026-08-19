@@ -7,7 +7,8 @@ import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
 import { ParallaxSilk } from './ParallaxSilk';
-import { HeroVideo } from './HeroVideo';
+import { HeroPhoto } from './HeroPhoto';
+import { PinnedVideoBackground } from './PinnedVideoBackground';
 
 function FadeSection({
   children,
@@ -81,15 +82,14 @@ export function LandingPage() {
             nav instead of leaving a white strip above it. */}
         <section className="relative flex min-h-[720px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-28 sm:pb-12 sm:pt-32 lg:min-h-[921px]">
           <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
-          {/* Looping video background. Strong left scrim keeps the headline
-              readable over the busy footage; poster + reduced-motion fall back
-              to a still. */}
-          <HeroVideo />
-          {/* Dissolves the hero's gradient into the next section's background
-              instead of a hard cut at the section boundary. */}
+          {/* Hero photo background — whole image shown (subjects small, on the
+              right), blurred fill behind it, scrim lifting the left for copy. */}
+          <HeroPhoto src="/media/hero-band.jpg" />
+          {/* Dissolves the hero into the next section's background instead of a
+              hard cut at the section boundary. */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
-          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop lg:grid-cols-2 lg:gap-12">
-            <FadeSection className="z-10 flex flex-col gap-8">
+          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop">
+            <FadeSection className="z-10 flex max-w-2xl flex-col gap-8">
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
                 <br />
@@ -113,52 +113,6 @@ export function LandingPage() {
                 <p className="text-label-sm text-on-surface-variant">
                   Now booking artists across the Grand Tunis area
                 </p>
-              </div>
-            </FadeSection>
-
-            <FadeSection className="relative flex w-full items-center justify-center lg:h-[600px]">
-              <div className="animate-float z-20 w-full max-w-md rounded-4xl border border-surface-variant/50 bg-surface-container-lowest p-4 shadow-float transition-transform hover:-translate-y-1 sm:p-6">
-                <div className="mb-4 flex items-center justify-between sm:mb-6">
-                  <h3 className="font-headline text-headline-md text-on-surface">Artist Matches</h3>
-                  <MaterialIcon name="auto_awesome" filled className="text-primary-container" />
-                </div>
-                <div className="space-y-2 sm:space-y-4">
-                  {[
-                    { name: 'DJ Amina', genres: 'Electronic • House', match: '98%', img: '/media/artist-dj.svg' },
-                    { name: 'The Tunis Quintet', genres: 'Jazz • Ambient', match: '95%', img: '/media/artist-band.svg' },
-                  ].map((a) => (
-                    <div
-                      key={a.name}
-                      className="group flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-3 transition-colors hover:border-surface-variant hover:bg-surface-container-low sm:p-4"
-                    >
-                      <div className="h-14 w-14 overflow-hidden rounded-lg bg-surface-container sm:h-16 sm:w-16">
-                        {/* Placeholder — swap for a real artist photo (same path). */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={a.img}
-                          alt={a.name}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-label-md font-semibold text-on-surface">{a.name}</h4>
-                        <p className="text-label-sm text-on-surface-variant">{a.genres}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="block text-label-md font-semibold text-primary-container">
-                          {a.match} Match
-                        </span>
-                        <span className="text-label-sm text-on-surface-variant">Available</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Link
-                  href="/explore/artists"
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-low py-3 text-label-md font-semibold text-on-surface transition-colors hover:bg-surface-variant sm:mt-6"
-                >
-                  View All <MaterialIcon name="arrow_forward" size={18} />
-                </Link>
               </div>
             </FadeSection>
           </div>
@@ -226,8 +180,10 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* How it works + Dual audience scroll over a pinned video background */}
+        <PinnedVideoBackground>
         {/* How it works */}
-        <section className="bg-surface py-16 sm:py-24" id="how-it-works">
+        <section className="py-16 sm:py-24" id="how-it-works">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="mb-4 font-headline text-headline-lg">How it works</h2>
@@ -270,7 +226,7 @@ export function LandingPage() {
         </section>
 
         {/* Dual audience */}
-        <section className="bg-surface-container-lowest py-16 sm:py-24" id="artists">
+        <section className="py-16 sm:py-24" id="artists">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="font-headline text-headline-lg">Built for both sides of the stage.</h2>
@@ -315,6 +271,7 @@ export function LandingPage() {
             </div>
           </div>
         </section>
+        </PinnedVideoBackground>
 
         {/* Pricing */}
         <section className="bg-surface-container-lowest py-16 sm:py-24" id="pricing">

@@ -73,3 +73,9 @@ apps/web/test-results/
 
 # Playwright authenticated sessions (live tokens — never commit)
 apps/web/e2e/.auth/
+
+# User source media dropped at repo root (scratch) — never commit
+/*.jpeg
+/*.jpg
+/*.png
+/*.mp4

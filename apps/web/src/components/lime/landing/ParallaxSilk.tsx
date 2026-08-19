@@ -4,11 +4,13 @@ import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
 interface ParallaxSilkProps {
+  /** Background image source. */
+  src?: string;
   /** 0 = static, higher = drifts more as the section scrolls through view. */
   speed?: number;
   /** Image opacity — kept low for the "atmospheric" look. */
   opacity?: number;
-  /** Which part of the silk to favour (the busy flow sits on the right). */
+  /** Which part of the image to favour. */
   objectPosition?: string;
   /** Load eagerly (use for the above-the-fold hero only). */
   priority?: boolean;
@@ -24,6 +26,7 @@ interface ParallaxSilkProps {
  * `relative overflow-hidden` section.
  */
 export function ParallaxSilk({
+  src = '/media/hero-silk.jpg',
   speed = 0.22,
   opacity = 0.6,
   objectPosition = 'right center',
@@ -74,7 +77,7 @@ export function ParallaxSilk({
     >
       <div ref={layerRef} className="absolute inset-x-0 -inset-y-[20%] will-change-transform">
         <Image
-          src="/media/hero-silk.jpg"
+          src={src}
           alt=""
           fill
           priority={priority}
