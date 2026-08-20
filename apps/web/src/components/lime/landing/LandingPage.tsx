@@ -9,6 +9,16 @@ import { useFadeInSections } from '@/hooks/useFadeInSections';
 import { ParallaxSilk } from './ParallaxSilk';
 import { HeroPhoto } from './HeroPhoto';
 import { PinnedVideoBackground } from './PinnedVideoBackground';
+import { FacebookIcon, InstagramIcon } from './SocialIcons';
+
+const CONTACT_EMAIL = 'contact@lime.tn';
+const CONTACT_PHONE_DISPLAY = '+216 21 563 012';
+const CONTACT_PHONE_TEL = '+21621563012';
+// Placeholders — swap for the real profile URLs once they exist.
+const SOCIAL_LINKS = {
+  instagram: 'https://instagram.com/lime.tn',
+  facebook: 'https://facebook.com/lime.tn',
+};
 
 function FadeSection({
   children,
@@ -32,8 +42,13 @@ function FadeSection({
   );
 }
 
+const NAV_LINKS = ['features', 'how-it-works', 'artists', 'pricing'] as const;
+const navLabel = (id: string) =>
+  id === 'how-it-works' ? 'How it Works' : id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ');
+
 export function LandingPage() {
   const [navScrolled, setNavScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useFadeInSections();
 
   useEffect(() => {
@@ -46,24 +61,26 @@ export function LandingPage() {
   return (
     <div className="bg-background font-body text-on-surface antialiased">
       <nav
-        className={`fixed top-0 z-50 w-full backdrop-blur-md transition-all duration-300 ${
-          navScrolled ? 'nav-scrolled' : 'nav-transparent'
+        className={`fixed top-0 z-50 w-full backdrop-blur-md transition-colors duration-300 ${
+          navScrolled
+            ? 'bg-surface/80 shadow-sm'
+            : 'bg-surface/90 lg:bg-transparent lg:shadow-none'
         }`}
       >
         <div className="mx-auto flex h-20 max-w-container-max items-center justify-between px-margin-mobile md:px-margin-desktop">
           <Logo className="h-10 w-auto" />
           <div className="hidden items-center gap-8 md:flex">
-            {['features', 'how-it-works', 'artists', 'pricing'].map((id) => (
+            {NAV_LINKS.map((id) => (
               <a
                 key={id}
                 href={`#${id}`}
                 className="text-label-md font-medium text-on-surface-variant transition-colors hover:text-primary"
               >
-                {id === 'how-it-works' ? 'How it Works' : id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ')}
+                {navLabel(id)}
               </a>
             ))}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/sign-in"
               className="hidden text-label-md font-medium text-on-surface transition-colors hover:text-primary md:inline-block"
@@ -73,26 +90,78 @@ export function LandingPage() {
             <Link href="/sign-up" className="lime-btn-pill px-6 py-3 text-sm">
               Join Now
             </Link>
+            <button
+              type="button"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-container text-on-primary-fixed transition-transform active:scale-95 md:hidden"
+            >
+              <MaterialIcon name={mobileMenuOpen ? 'close' : 'menu'} size={24} />
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <div className="border-t border-surface-variant bg-surface px-margin-mobile py-3 shadow-lg md:hidden">
+            <div className="flex flex-col">
+              {NAV_LINKS.map((id) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-xl px-3 py-3 text-label-lg font-medium text-on-surface transition-colors hover:bg-surface-container"
+                >
+                  {navLabel(id)}
+                </a>
+              ))}
+              <Link
+                href="/sign-in"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-3 text-label-lg font-medium text-on-surface transition-colors hover:bg-surface-container"
+              >
+                Login
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       <main>
-        {/* Hero — responsive. Desktop: full-bleed photo behind a left-aligned
-            headline. Mobile: green wash behind the headline, with the photo as a
-            full-width banner below (a wide landscape can't be a background on a
-            tall phone screen without swallowing the text). */}
-        <section className="relative flex flex-col overflow-hidden bg-gradient-to-b from-[#b9d97f] via-[#cfe4a3] to-[#eaf3d6] lg:min-h-[921px] lg:justify-center">
-          {/* Desktop-only photo background — whole image, subjects small on the
-              right, blurred fill behind it, scrim lifting the left for copy. */}
+        {/* Hero — responsive. The photo is a true background on both
+            breakpoints — content sits ON TOP of it, not stacked below it.
+            Desktop: full-bleed photo, band on the right, headline on the left.
+            Mobile: a dedicated portrait photo fills the whole hero edge to edge
+            (object-cover — no color-matched fallback strip to seam against),
+            with a bottom-weighted scrim so the overlaid headline/copy/buttons
+            stay legible against the photo. */}
+        <section className="relative flex min-h-[100svh] flex-col overflow-hidden pt-20 lg:min-h-[921px] lg:justify-center lg:pt-0">
+          {/* Desktop photo background — fills the hero, band on the right,
+              calm green under the headline. */}
           <div className="hidden lg:block">
             <HeroPhoto src="/media/hero-band.jpg" />
           </div>
+          {/* Mobile photo background — fills the entire hero section. */}
+          <div className="absolute inset-0 lg:hidden">
+            <Image
+              src="/media/hero-band-mobile.jpg"
+              alt="LIME artists performing"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: '50% 22%' }}
+            />
+            {/* Scrim: light near the top (nav + headline sit over the photo's
+                own clear green there), strengthening toward the bottom where
+                the paragraph and buttons need solid contrast. */}
+            <div className="absolute inset-0 bg-gradient-to-b from-surface/25 via-surface/55 to-surface/92" />
+          </div>
           {/* Dissolves the hero into the next section's background instead of a
-              hard cut at the section boundary. */}
+              hard cut at the section boundary (desktop only). */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] hidden h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:block lg:h-56" />
-          <div className="relative z-10 mx-auto w-full max-w-container-max px-margin-mobile pb-8 pt-28 sm:pt-32 md:px-margin-desktop lg:pb-12">
-            <FadeSection className="flex max-w-2xl flex-col gap-6 sm:gap-8">
+
+          <div className="relative z-10 mx-auto flex w-full max-w-container-max flex-1 flex-col justify-end px-margin-mobile pb-8 pt-6 md:px-margin-desktop lg:justify-center lg:pb-12 lg:pt-32">
+            <FadeSection className="flex max-w-2xl flex-col gap-5 sm:gap-8">
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
                 <br />
@@ -103,11 +172,14 @@ export function LandingPage() {
                 connects you with top Tunisian talent with verified contracts, secure booking, and
                 real-time calendar sync.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/explore/artists" className="lime-btn-pill text-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+                <Link href="/explore/artists" className="lime-btn-pill w-full text-center sm:w-auto">
                   Find Artists Now
                 </Link>
-                <Link href="/sign-up?role=artist" className="lime-btn-pill-outline text-center">
+                <Link
+                  href="/sign-up?role=artist"
+                  className="lime-btn-pill-outline w-full text-center sm:w-auto"
+                >
                   Join as an Artist
                 </Link>
               </div>
@@ -118,19 +190,6 @@ export function LandingPage() {
                 </p>
               </div>
             </FadeSection>
-          </div>
-          {/* Mobile-only photo banner — the whole image at natural proportions,
-              so nobody gets zoomed or clipped on a phone. */}
-          <div className="relative w-full lg:hidden">
-            <Image
-              src="/media/hero-band.jpg"
-              alt="LIME artists performing"
-              width={2752}
-              height={1536}
-              priority
-              sizes="100vw"
-              className="h-auto w-full object-cover"
-            />
           </div>
         </section>
 
@@ -363,35 +422,118 @@ export function LandingPage() {
 
       <footer className="w-full bg-custom-dark pb-8 pt-16 text-white">
         <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
-          <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-4">
-            <div>
+          <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+            <div className="col-span-2 lg:col-span-1">
               <Image src="/logo.png" alt="LIME" width={366} height={160} className="mb-6 h-10 w-auto brightness-0 invert" />
-              <p className="font-body text-body-md text-surface-variant">Zesty Professionalism.</p>
+              <p className="font-body text-body-md text-surface-variant" dir="rtl">
+                استمرارية السعي
+              </p>
             </div>
-            {[
-              { title: 'Platform', links: ['#how-it-works', '#pricing', '#'] },
-              { title: 'For Artists', links: ['/sign-up?role=artist', '#'] },
-              { title: 'Company', links: ['#', '#', '#'] },
-            ].map((col, idx) => (
-              <div key={col.title}>
-                <h4 className="mb-4 font-bold">{col.title}</h4>
-                <ul>
-                  {col.links.map((href, i) => (
-                    <li key={i}>
-                      {/* py-2.5 keeps the tappable area near 44px without changing
-                          the visible line height, since space-y-2 alone left each
-                          link at a ~21px hit target. */}
-                      <Link
-                        href={href}
-                        className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
-                      >
-                        {idx === 0 && i === 0 ? 'How it Works' : idx === 0 && i === 1 ? 'Pricing' : 'Learn more'}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+
+            <div>
+              <h4 className="mb-4 font-bold">Platform</h4>
+              <ul>
+                {[
+                  { href: '#how-it-works', label: 'How it Works' },
+                  { href: '#pricing', label: 'Pricing' },
+                  { href: '#features', label: 'Features' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    {/* py-2.5 keeps the tappable area near 44px without changing
+                        the visible line height, since space-y-2 alone left each
+                        link at a ~21px hit target. */}
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-bold">For Artists</h4>
+              <ul>
+                {[
+                  { href: '/sign-up?role=artist', label: 'Join as an Artist' },
+                  { href: '#artists', label: 'Why LIME' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-bold">Company</h4>
+              <ul>
+                {[
+                  { href: '/terms', label: 'Terms of Service' },
+                  { href: '/privacy', label: 'Privacy Policy' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="col-span-2 lg:col-span-1">
+              <h4 className="mb-4 font-bold">Contact</h4>
+              <ul className="mb-4">
+                <li>
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}`}
+                    className="inline-flex items-center gap-2 py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                  >
+                    <MaterialIcon name="mail" size={18} className="shrink-0" />
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`tel:${CONTACT_PHONE_TEL}`}
+                    className="inline-flex items-center gap-2 py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                  >
+                    <MaterialIcon name="call" size={18} className="shrink-0" />
+                    {CONTACT_PHONE_DISPLAY}
+                  </a>
+                </li>
+              </ul>
+              <div className="flex items-center gap-3">
+                <a
+                  href={SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LIME on Instagram"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-custom-lime hover:text-custom-dark"
+                >
+                  <InstagramIcon size={20} />
+                </a>
+                <a
+                  href={SOCIAL_LINKS.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LIME on Facebook"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-custom-lime hover:text-custom-dark"
+                >
+                  <FacebookIcon size={20} />
+                </a>
               </div>
-            ))}
+            </div>
           </div>
           <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
             <p className="font-body text-body-md text-surface-variant">© 2024 LIME Event. All rights reserved.</p>
