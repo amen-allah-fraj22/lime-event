@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSignUp } from '@clerk/nextjs';
+import { useAuth, useSignUp } from '@clerk/nextjs';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { cn } from '@/lib/utils';
 import { GoogleLogo } from './GoogleLogo';
@@ -33,7 +33,17 @@ function extractError(err: unknown, fallback: string): string {
 
 export function CustomSignUpForm({ role }: { role: AuthRole }) {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
   const router = useRouter();
+
+  // Clerk refuses to start a new sign-up while a session already exists — it
+  // used to surface as a raw "You're already signed in" error only after
+  // filling out the whole form and submitting. Redirect immediately instead.
+  useEffect(() => {
+    if (authLoaded && isSignedIn) {
+      router.replace('/dashboard');
+    }
+  }, [authLoaded, isSignedIn, router]);
 
   const [step, setStep] = useState<'form' | 'verify'>('form');
   const [firstName, setFirstName] = useState('');
@@ -194,6 +204,10 @@ export function CustomSignUpForm({ role }: { role: AuthRole }) {
         </form>
       </div>
     );
+  }
+
+  if (!authLoaded || isSignedIn) {
+    return null;
   }
 
   return (

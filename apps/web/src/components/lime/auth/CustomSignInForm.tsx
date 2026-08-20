@@ -1,15 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSignIn } from '@clerk/nextjs';
+import { useAuth, useSignIn } from '@clerk/nextjs';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { cn } from '@/lib/utils';
 import { GoogleLogo } from './GoogleLogo';
 
 export function CustomSignInForm() {
   const { isLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
   const router = useRouter();
+
+  // Same fix as sign-up: Clerk blocks starting a new sign-in with an active
+  // session, which used to only surface after submitting the form.
+  useEffect(() => {
+    if (authLoaded && isSignedIn) {
+      router.replace('/dashboard');
+    }
+  }, [authLoaded, isSignedIn, router]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,6 +76,10 @@ export function CustomSignInForm() {
     'flex items-center gap-2 rounded-lg border-2 border-surface-variant bg-surface-container-lowest px-3 transition-colors focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary-container/30';
   const inputBase =
     'h-11 w-full bg-transparent text-body-md text-custom-dark placeholder:text-secondary focus:outline-none';
+
+  if (!authLoaded || isSignedIn) {
+    return null;
+  }
 
   return (
     <div className="w-full">
