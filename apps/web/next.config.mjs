@@ -20,6 +20,14 @@ const nextConfig = {
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
       },
+      // Artist/event photos uploaded to Supabase Storage (public buckets:
+      // artist-photos, event-photos) in production. next/image blocks any
+      // image host that isn't explicitly allowed here.
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
   async redirects() {

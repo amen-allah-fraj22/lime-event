@@ -1,18 +1,24 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { StorageService } from '../storage/storage.service';
 import {
   calculateProfileCompletion,
   isProfileComplete,
   toPublicArtistProfile,
 } from './artist-profile.utils';
-import { buildArtistPhotoUrl } from './artist-photo.multer';
+import { buildArtistPhotoFilename, buildArtistPhotoUrl } from './artist-photo.multer';
 import { BrowseArtistsDto } from './dto/browse-artists.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
+const ARTIST_PHOTOS_BUCKET = 'artist-photos';
+
 @Injectable()
 export class ArtistsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storage: StorageService,
+  ) {}
 
   async browse(query: BrowseArtistsDto) {
     const where: Prisma.ArtistProfileWhereInput = {};
@@ -137,7 +143,14 @@ export class ArtistsService {
     if (!profile) throw new NotFoundException();
     if (profile.user_id !== userId) throw new ForbiddenException();
 
-    const url = buildArtistPhotoUrl(profileId, file.filename);
+    const url = this.storage.enabled
+      ? await this.storage.upload(
+          ARTIST_PHOTOS_BUCKET,
+          `${profileId}/${buildArtistPhotoFilename(kind, file.originalname)}`,
+          file.buffer,
+          file.mimetype,
+        )
+      : buildArtistPhotoUrl(profileId, file.filename);
     const field = kind === 'cover' ? 'cover_photo_url' : 'profile_photo_url';
 
     const updated = await this.prisma.artistProfile.update({
