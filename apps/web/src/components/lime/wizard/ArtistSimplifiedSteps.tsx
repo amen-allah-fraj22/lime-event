@@ -6,6 +6,7 @@ import { parseBandMembers } from '@/lib/artist-profile-types';
 import { MultiSelectChip } from './MultiSelectChip';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { WIZARD_GENRES, WIZARD_INSTRUMENTS, PERFORMANCE_TYPES } from '@/lib/artist-wizard-options';
+import { NEEDS_OPTIONS, PROVIDES_OPTIONS } from '@/lib/artist-equipment-options';
 import { ArtistPhotoUpload } from './ArtistPhotoUpload';
 
 export interface StepProps {
@@ -286,32 +287,143 @@ export function SimplifiedStep3Portfolio({ profile, onNext, onBack, saving }: St
   );
 }
 
+function ChecklistGroup({
+  options,
+  checked,
+  onToggle,
+  activeClassName,
+}: {
+  options: readonly { key: string; icon: string; label: string }[];
+  checked: Record<string, boolean>;
+  onToggle: (key: string) => void;
+  activeClassName: string;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      {options.map((opt) => {
+        const isChecked = !!checked[opt.key];
+        return (
+          <label
+            key={opt.key}
+            className={`flex cursor-pointer items-center gap-3 rounded-xl border-2 px-3 py-2.5 transition-colors ${
+              isChecked ? activeClassName : 'border-outline-variant bg-surface-container-lowest'
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => onToggle(opt.key)}
+              className="h-4 w-4 shrink-0 accent-primary"
+            />
+            <MaterialIcon name={opt.icon} size={20} className="shrink-0 text-on-surface-variant" />
+            <span className="text-sm font-medium text-on-surface">{opt.label}</span>
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
 export function SimplifiedStep4Requirements({ profile, onPublish, onBack, saving }: StepProps) {
-  const [reqs, setReqs] = useState(profile.requirements_notes || '');
+  const [provides, setProvides] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(PROVIDES_OPTIONS.map((o) => [o.key, !!profile[o.key as keyof typeof profile]])),
+  );
+  const [equipmentNotes, setEquipmentNotes] = useState(profile.equipment_notes || '');
+
+  const [needs, setNeeds] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(NEEDS_OPTIONS.map((o) => [o.key, !!profile[o.key as keyof typeof profile]])),
+  );
+  const [requirementsNotes, setRequirementsNotes] = useState(profile.requirements_notes || '');
+  // Defaults to showing the checklist rather than pre-collapsing it, even for
+  // a brand-new profile — an artist should actively opt into "skip this" the
+  // first time, not have it hidden before they've seen what it offers.
+  const [dependsOnEvent, setDependsOnEvent] = useState(false);
+
+  const toggleProvides = (key: string) => setProvides((p) => ({ ...p, [key]: !p[key] }));
+  const toggleNeeds = (key: string) => setNeeds((p) => ({ ...p, [key]: !p[key] }));
 
   return (
     <form
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-8"
       onSubmit={(e) => {
         e.preventDefault();
         if (onPublish) {
-          onPublish({ requirements_notes: reqs });
+          onPublish({
+            ...provides,
+            equipment_notes: equipmentNotes,
+            ...(dependsOnEvent
+              ? {
+                  ...Object.fromEntries(NEEDS_OPTIONS.map((o) => [o.key, false])),
+                  requirements_notes: '',
+                }
+              : { ...needs, requirements_notes: requirementsNotes }),
+          });
         }
       }}
     >
       <div>
-        <label className="mb-2 block font-label-md font-bold text-on-surface">Technical & Hospitality Requirements</label>
-        <p className="mb-2 text-sm text-on-surface-variant">
-          Your fee isn&apos;t shown here — organizers reach out first, and you decide the price
-          and whether to accept each booking request individually.
+        <label className="mb-1 block font-label-md font-bold text-on-surface">
+          What you bring to the event
+        </label>
+        <p className="mb-3 text-sm text-on-surface-variant">
+          Check everything you show up with — organizers see this before they reach out.
         </p>
-        <textarea
-          rows={4}
-          placeholder="e.g. I need 2 mics, a mixer, and vegan meals..."
-          className="w-full rounded-xl border-2 border-outline-variant bg-surface-container-lowest p-3 transition-colors focus:border-primary focus:outline-none"
-          value={reqs}
-          onChange={(e) => setReqs(e.target.value)}
+        <ChecklistGroup
+          options={PROVIDES_OPTIONS}
+          checked={provides}
+          onToggle={toggleProvides}
+          activeClassName="border-primary bg-primary/5"
         />
+        <textarea
+          rows={2}
+          placeholder="Anything else you bring…"
+          className="mt-3 w-full rounded-xl border-2 border-outline-variant bg-surface-container-lowest p-3 transition-colors focus:border-primary focus:outline-none"
+          value={equipmentNotes}
+          onChange={(e) => setEquipmentNotes(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <div className="mb-1 flex items-center justify-between gap-3">
+          <label className="block font-label-md font-bold text-on-surface">
+            Technical & hospitality requirements
+          </label>
+        </div>
+        <p className="mb-3 text-sm text-on-surface-variant">
+          What you need from the organizer to perform. Your fee isn&apos;t shown here —
+          organizers reach out first, and you decide the price and whether to accept each
+          booking request individually.
+        </p>
+
+        <label className="mb-3 flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-outline-variant px-3 py-2.5 transition-colors hover:border-outline">
+          <input
+            type="checkbox"
+            checked={dependsOnEvent}
+            onChange={(e) => setDependsOnEvent(e.target.checked)}
+            className="h-4 w-4 shrink-0 accent-primary"
+          />
+          <span className="text-sm font-medium text-on-surface">
+            I&apos;d rather not say — it depends on the event
+          </span>
+        </label>
+
+        {!dependsOnEvent && (
+          <>
+            <ChecklistGroup
+              options={NEEDS_OPTIONS}
+              checked={needs}
+              onToggle={toggleNeeds}
+              activeClassName="border-primary bg-primary/5"
+            />
+            <textarea
+              rows={2}
+              placeholder="e.g. vegan meals, a specific mic brand…"
+              className="mt-3 w-full rounded-xl border-2 border-outline-variant bg-surface-container-lowest p-3 transition-colors focus:border-primary focus:outline-none"
+              value={requirementsNotes}
+              onChange={(e) => setRequirementsNotes(e.target.value)}
+            />
+          </>
+        )}
       </div>
 
       <div className="flex items-center justify-between pt-4">
