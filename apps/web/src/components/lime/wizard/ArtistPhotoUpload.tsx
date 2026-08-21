@@ -83,6 +83,7 @@ export function ArtistPhotoUpload({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
+          aria-label={displayUrl ? `Change ${label}` : `Upload ${label}`}
           className={cn(
             'group relative overflow-hidden border-2 border-dashed border-surface-variant bg-surface-container-lowest transition hover:border-primary-container/60 disabled:opacity-60',
             isProfile ? 'h-32 w-32 rounded-full' : 'h-36 w-full rounded-xl md:h-44',

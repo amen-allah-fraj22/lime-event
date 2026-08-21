@@ -1,4 +1,13 @@
-# Apply migrations, generate Prisma client, seed demo artists
+# Apply migrations and generate the Prisma client. Does NOT seed demo data —
+# see -WithDemoData below. This script is safe to re-run against a database
+# that already has real users in it.
+param(
+  # Also seed fake demo accounts (yasmine.demo@..., djkarim.demo@..., etc.).
+  # Only use this against a fresh database with no real users — see the
+  # warning in prisma/seed.ts.
+  [switch]$WithDemoData
+)
+
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location (Join-Path $root "apps\api")
@@ -15,6 +24,11 @@ if (-not (Test-Path ".env")) {
 Write-Host "Running Prisma migrate deploy..."
 npx prisma migrate deploy
 npx prisma generate
-Write-Host "Seeding demo artists..."
-npm run db:seed
+
+if ($WithDemoData) {
+  Write-Host "Seeding demo artists..."
+  $env:SEED_CONFIRM = "yes"
+  npm run db:seed
+}
+
 Write-Host "Done. Test: curl http://localhost:3001/health/db"

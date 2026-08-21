@@ -86,6 +86,10 @@ export function SignContractPage({ contractId }: { contractId: string }) {
       window.clearTimeout(t);
       window.removeEventListener('resize', resize);
     };
+    // Keyed on contract.status rather than the contract object: only a status
+    // change alters the rendered layout, and the object identity changes on
+    // every poll.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageLoading, contract?.status]);
 
   function getPoint(e: React.MouseEvent | React.TouchEvent) {
@@ -247,8 +251,8 @@ export function SignContractPage({ contractId }: { contractId: string }) {
               <div className="space-y-4 text-on-surface-variant">
                 <h3 className="font-headline text-headline-md text-on-surface">Terms and Conditions</h3>
                 <p>
-                  The Artist agrees to provide performance services as agreed in the booking quote. Payment terms
-                  follow the LIME escrow process.
+                  The Artist agrees to provide performance services as agreed in the booking quote. The full fee
+                  is payable via the LIME platform, as agreed between the parties.
                 </p>
                 <p>This agreement is governed by the laws of the Republic of Tunisia.</p>
               </div>

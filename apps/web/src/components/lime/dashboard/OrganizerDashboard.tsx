@@ -239,7 +239,7 @@ export function OrganizerDashboard() {
             <h3 className="mb-6 font-headline text-headline-md">Quick Actions</h3>
             <div className="grid grid-cols-2 gap-4">
               <Link
-                href="/artists"
+                href="/explore/artists"
                 className="group flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-transparent bg-surface-container-low p-4 text-secondary transition-all hover:border-primary-container/30 hover:bg-primary-container/10 hover:text-primary"
               >
                 <MaterialIcon name="search" size={32} className="transition-transform group-hover:scale-110" />

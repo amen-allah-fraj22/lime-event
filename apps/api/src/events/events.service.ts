@@ -1,13 +1,19 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { BookingStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { StorageService } from '../storage/storage.service';
 import { toPublicArtistProfile } from '../artists/artist-profile.utils';
 import { CreateEventDto } from './dto/create-event.dto';
-import { buildEventPhotoUrl } from './event-photo.multer';
+import { buildEventPhotoFilename, buildEventPhotoUrl } from './event-photo.multer';
+
+const EVENT_PHOTOS_BUCKET = 'event-photos';
 
 @Injectable()
 export class EventsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storage: StorageService,
+  ) {}
 
   async create(organizerId: string, dto: CreateEventDto) {
     return this.prisma.event.create({
@@ -34,7 +40,14 @@ export class EventsService {
     if (!event) throw new NotFoundException();
     if (event.organizer_id !== organizerId) throw new ForbiddenException();
 
-    const url = buildEventPhotoUrl(eventId, file.filename);
+    const url = this.storage.enabled
+      ? await this.storage.upload(
+          EVENT_PHOTOS_BUCKET,
+          `${eventId}/${buildEventPhotoFilename(file.originalname)}`,
+          file.buffer,
+          file.mimetype,
+        )
+      : buildEventPhotoUrl(eventId, file.filename);
     return this.prisma.event.update({
       where: { id: eventId },
       data: { venue_photo_url: url },

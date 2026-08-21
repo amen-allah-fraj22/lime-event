@@ -481,7 +481,7 @@ export function ArtistPublicProfile({
           <Link href="/" className="transition-colors hover:text-primary hover:underline">
             Home
           </Link>
-          <Link href="/artists" className="transition-colors hover:text-primary hover:underline">
+          <Link href="/explore/artists" className="transition-colors hover:text-primary hover:underline">
             Browse artists
           </Link>
           <Link

@@ -25,6 +25,8 @@ export type ArtistProfileFull = {
   performance_types?: string[];
   setlist_duration_min?: number | null;
   setlist_duration_max?: number | null;
+  pricing_min?: number | null;
+  pricing_max?: number | null;
   pricing_notes?: string | null;
   travel_options?: string[];
   travel_other?: string | null;

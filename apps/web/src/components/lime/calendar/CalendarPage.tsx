@@ -58,6 +58,9 @@ export function CalendarPage() {
 
   useEffect(() => {
     fetchCalendar();
+    // Intentionally keyed on the user id alone. fetchCalendar is redefined on
+    // every render, so listing it here would refetch in a loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dbUser?.id]);
 
   const entries = useMemo((): CalendarEntry[] => {
@@ -156,6 +159,7 @@ export function CalendarPage() {
                   <button
                     type="button"
                     onClick={prevMonth}
+                    aria-label="Previous month"
                     className="rounded-full p-2 transition-colors hover:bg-surface-container"
                   >
                     <MaterialIcon name="chevron_left" />
@@ -170,6 +174,7 @@ export function CalendarPage() {
                   <button
                     type="button"
                     onClick={nextMonth}
+                    aria-label="Next month"
                     className="rounded-full p-2 transition-colors hover:bg-surface-container"
                   >
                     <MaterialIcon name="chevron_right" />

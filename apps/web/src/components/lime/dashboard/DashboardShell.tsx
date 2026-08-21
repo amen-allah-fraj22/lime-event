@@ -21,6 +21,7 @@ export type DashboardNavItem = {
 
 const ORGANIZER_NAV: DashboardNavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { href: '/explore/artists', label: 'Explore', icon: 'search' },
   {
     href: '/dashboard/events',
     label: 'My Events',
@@ -28,14 +29,19 @@ const ORGANIZER_NAV: DashboardNavItem[] = [
     roles: ['organizer', 'agency'],
   },
   { href: '/dashboard/bookings', label: 'Bookings', icon: 'book_online' },
+  { href: '/requests', label: 'Requests', icon: 'inbox' },
+  { href: '/messages', label: 'Messages', icon: 'chat' },
   { href: '/notifications', label: 'Notifications', icon: 'notifications' },
   { href: '/calendar', label: 'Calendar', icon: 'calendar_today' },
 ];
 
 const ARTIST_NAV: DashboardNavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
+  { href: '/explore/events', label: 'Explore', icon: 'explore' },
   { href: '/artists/me', label: 'Profile', icon: 'person', roles: ['artist'] },
   { href: '/dashboard/bookings', label: 'Bookings', icon: 'event_seat' },
+  { href: '/requests', label: 'Requests', icon: 'inbox' },
+  { href: '/messages', label: 'Messages', icon: 'chat' },
   { href: '/calendar', label: 'Calendar', icon: 'calendar_today' },
   { href: '/notifications', label: 'Notifications', icon: 'notifications' },
 ];
@@ -123,13 +129,6 @@ export function DashboardShell({
               New Event
             </Link>
           )}
-          <Link
-            href="/artists"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 text-secondary transition-all hover:bg-surface-container"
-          >
-            <MaterialIcon name="search" size={22} />
-            <span className="text-label-md">Browse Artists</span>
-          </Link>
           <SignOutButton redirectUrl="/">
             <button
               type="button"
@@ -142,7 +141,9 @@ export function DashboardShell({
         </div>
       </aside>
 
-      <main className="md:ml-64 flex-1 pb-24 md:pb-20">
+      {/* pb includes the safe-area inset because MobileBottomNav adds that on
+          top of its own height — see the note in AppShell. */}
+      <main className="md:ml-64 flex-1 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-20">
         <header className="dashboard-shadow sticky top-0 z-40 hidden md:flex h-16 items-center justify-between bg-surface px-margin-mobile md:px-margin-desktop">
           <div className="max-w-xl flex-1">
             <div className="relative flex items-center">
@@ -162,6 +163,7 @@ export function DashboardShell({
             <RoleSwitcher />
             <Link
               href="/notifications"
+              aria-label="Notifications"
               className="text-secondary transition-colors hover:text-primary"
             >
               <MaterialIcon name="notifications" />

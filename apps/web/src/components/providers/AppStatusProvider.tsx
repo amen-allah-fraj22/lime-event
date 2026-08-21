@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import api, { setApiGlobalErrorHandler, type ApiGlobalError } from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
 import { ErrorAlert } from '@/components/feedback/ErrorAlert';
@@ -36,10 +36,13 @@ export function AppStatusProvider({
   const [apiMessage, setApiMessage] = useState<string | null>(null);
   const [lastError, setLastError] = useState<ApiGlobalError | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const isCheckingRef = useRef(false);
 
   const clearError = useCallback(() => setLastError(null), []);
 
   const checkApi = useCallback(async () => {
+    if (isCheckingRef.current) return;
+    isCheckingRef.current = true;
     setIsChecking(true);
     try {
       const health = await api.get('/health', { skipGlobalError: true });
@@ -61,6 +64,7 @@ export function AppStatusProvider({
       setDbConnected(null);
       setApiMessage(info.message);
     } finally {
+      isCheckingRef.current = false;
       setIsChecking(false);
     }
   }, []);
@@ -76,6 +80,19 @@ export function AppStatusProvider({
       setApiGlobalErrorHandler(() => {});
     };
   }, [checkApi, deferHealthCheck]);
+
+  // The very first check can lose a race with a backend that's still booting
+  // (e.g. the page loaded a beat before `npm run dev:api` finished starting).
+  // Without this, that one-time failure sticks forever — the banner never
+  // re-checks itself, so starting the API afterwards doesn't clear it.
+  // Keep retrying quietly in the background until it actually connects.
+  useEffect(() => {
+    if (apiOk !== false) return;
+    const interval = window.setInterval(() => {
+      void checkApi();
+    }, 3000);
+    return () => window.clearInterval(interval);
+  }, [apiOk, checkApi]);
 
   const showDevTools = process.env.NODE_ENV === 'development';
 

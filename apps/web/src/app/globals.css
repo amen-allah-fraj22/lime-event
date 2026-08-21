@@ -40,6 +40,19 @@ textarea {
   font: inherit;
 }
 
+/* iOS Safari zooms the whole viewport when a focused text field renders below
+   16px, and the app styles most fields at 14px (text-sm). Enforce 16px on
+   phone-sized screens so focusing a field never triggers that zoom; desktop
+   keeps its denser sizing. Non-text controls are excluded — they never
+   trigger the zoom and some rely on their own sizing. */
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @layer components {
   .lime-input {
     @apply w-full rounded-lg border-2 border-surface-variant bg-white px-4 py-3 text-sm outline-none transition-all;
@@ -94,8 +107,10 @@ textarea {
   }
 
   .nav-scrolled {
-    background-color: rgba(249, 249, 249, 0.7);
-    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+    /* Light glass: mostly the backdrop-blur showing through, only a faint tint
+       so it reads as frosted rather than a solid white bar. */
+    background-color: rgba(249, 249, 249, 0.35);
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.04);
   }
 
   .nav-transparent {

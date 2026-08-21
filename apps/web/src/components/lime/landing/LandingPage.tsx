@@ -2,18 +2,23 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Logo } from '@/components/Logo';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
 import { useFadeInSections } from '@/hooks/useFadeInSections';
-import { useStatCounters } from '@/hooks/useStatCounters';
+import { ParallaxSilk } from './ParallaxSilk';
+import { HeroPhoto } from './HeroPhoto';
+import { PinnedVideoBackground } from './PinnedVideoBackground';
+import { FacebookIcon, InstagramIcon } from './SocialIcons';
 
-// WebGL hero background — client-only, code-split so `three` stays out of SSR.
-const HeroScene3D = dynamic(
-  () => import('./HeroScene3D').then((m) => m.HeroScene3D),
-  { ssr: false },
-);
+const CONTACT_EMAIL = 'contact@lime.tn';
+const CONTACT_PHONE_DISPLAY = '+216 21 563 012';
+const CONTACT_PHONE_TEL = '+21621563012';
+// Placeholders — swap for the real profile URLs once they exist.
+const SOCIAL_LINKS = {
+  instagram: 'https://instagram.com/lime.tn',
+  facebook: 'https://facebook.com/lime.tn',
+};
 
 function FadeSection({
   children,
@@ -37,10 +42,14 @@ function FadeSection({
   );
 }
 
+const NAV_LINKS = ['features', 'how-it-works', 'artists', 'pricing'] as const;
+const navLabel = (id: string) =>
+  id === 'how-it-works' ? 'How it Works' : id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ');
+
 export function LandingPage() {
   const [navScrolled, setNavScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useFadeInSections();
-  useStatCounters();
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 10);
@@ -52,24 +61,26 @@ export function LandingPage() {
   return (
     <div className="bg-background font-body text-on-surface antialiased">
       <nav
-        className={`fixed top-0 z-50 w-full backdrop-blur-md transition-all duration-300 ${
-          navScrolled ? 'nav-scrolled' : 'nav-transparent'
+        className={`fixed top-0 z-50 w-full backdrop-blur-md transition-colors duration-300 ${
+          navScrolled
+            ? 'bg-surface/80 shadow-sm'
+            : 'bg-surface/90 lg:bg-transparent lg:shadow-none'
         }`}
       >
         <div className="mx-auto flex h-20 max-w-container-max items-center justify-between px-margin-mobile md:px-margin-desktop">
           <Logo className="h-10 w-auto" />
           <div className="hidden items-center gap-8 md:flex">
-            {['features', 'how-it-works', 'artists', 'pricing'].map((id) => (
+            {NAV_LINKS.map((id) => (
               <a
                 key={id}
                 href={`#${id}`}
                 className="text-label-md font-medium text-on-surface-variant transition-colors hover:text-primary"
               >
-                {id === 'how-it-works' ? 'How it Works' : id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ')}
+                {navLabel(id)}
               </a>
             ))}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/sign-in"
               className="hidden text-label-md font-medium text-on-surface transition-colors hover:text-primary md:inline-block"
@@ -79,96 +90,104 @@ export function LandingPage() {
             <Link href="/sign-up" className="lime-btn-pill px-6 py-3 text-sm">
               Join Now
             </Link>
+            <button
+              type="button"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-container text-on-primary-fixed transition-transform active:scale-95 md:hidden"
+            >
+              <MaterialIcon name={mobileMenuOpen ? 'close' : 'menu'} size={24} />
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <div className="border-t border-surface-variant bg-surface px-margin-mobile py-3 shadow-lg md:hidden">
+            <div className="flex flex-col">
+              {NAV_LINKS.map((id) => (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-xl px-3 py-3 text-label-lg font-medium text-on-surface transition-colors hover:bg-surface-container"
+                >
+                  {navLabel(id)}
+                </a>
+              ))}
+              <Link
+                href="/sign-in"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-3 text-label-lg font-medium text-on-surface transition-colors hover:bg-surface-container"
+              >
+                Login
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
-      <main className="pt-20">
-        {/* Hero */}
-        <section className="relative flex min-h-[640px] items-center overflow-hidden bg-[radial-gradient(circle_at_center,_#F9F9F9_40%,_#F4FBCC_100%)] pb-10 pt-20 sm:pb-12 sm:pt-24 lg:min-h-[921px]">
-          <div className="absolute right-0 top-0 -z-10 h-[800px] w-[800px] -translate-y-1/2 translate-x-1/3 rounded-full bg-primary-container/20 blur-3xl" />
-          <HeroScene3D />
-          {/* Dissolves the hero's gradient + 3D scene into the next section's
-              background instead of a hard cut at the section boundary. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:h-56" />
-          <div className="mx-auto grid w-full max-w-container-max grid-cols-1 items-center gap-8 px-margin-mobile md:px-margin-desktop lg:grid-cols-2 lg:gap-12">
-            <FadeSection className="z-10 flex flex-col gap-8">
+      <main>
+        {/* Hero — responsive. The photo is a true background on both
+            breakpoints — content sits ON TOP of it, not stacked below it.
+            Desktop: full-bleed photo, band on the right, headline on the left.
+            Mobile: a dedicated portrait photo fills the whole hero edge to edge
+            (object-cover — no color-matched fallback strip to seam against),
+            with a bottom-weighted scrim so the overlaid headline/copy/buttons
+            stay legible against the photo. */}
+        <section className="relative flex min-h-[100svh] flex-col overflow-hidden pt-20 lg:min-h-[921px] lg:justify-center lg:pt-0">
+          {/* Desktop photo background — fills the hero, band on the right,
+              calm green under the headline. */}
+          <div className="hidden lg:block">
+            <HeroPhoto src="/media/hero-band.jpg" />
+          </div>
+          {/* Mobile photo background — fills the entire hero section. */}
+          <div className="absolute inset-0 lg:hidden">
+            <Image
+              src="/media/hero-band-mobile.jpg"
+              alt="LIME artists performing"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: '50% 22%' }}
+            />
+            {/* Scrim: light near the top (nav + headline sit over the photo's
+                own clear green there), strengthening toward the bottom where
+                the paragraph and buttons need solid contrast. */}
+            <div className="absolute inset-0 bg-gradient-to-b from-surface/25 via-surface/55 to-surface/92" />
+          </div>
+          {/* Dissolves the hero into the next section's background instead of a
+              hard cut at the section boundary (desktop only). */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] hidden h-32 bg-gradient-to-b from-transparent to-surface-container-lowest sm:h-40 lg:block lg:h-56" />
+
+          <div className="relative z-10 mx-auto flex w-full max-w-container-max flex-1 flex-col justify-end px-margin-mobile pb-8 pt-6 md:px-margin-desktop lg:justify-center lg:pb-12 lg:pt-32">
+            <FadeSection className="flex max-w-2xl flex-col gap-5 sm:gap-8">
               <h1 className="font-headline text-headline-xl text-on-surface lg:text-[40px] lg:leading-[48px]">
                 Book the perfect artist.
                 <br />
-                <span className="text-primary-container">In minutes, not days.</span>
+                <span className="text-primary">In minutes, not days.</span>
               </h1>
               <p className="max-w-xl font-body text-body-lg text-on-surface-variant">
                 Say goodbye to endless WhatsApp chats, missed calls, and contract chaos. LIME Event
-                connects you with top Tunisian talent with verified contracts, escrow payments, and
+                connects you with top Tunisian talent with verified contracts, secure booking, and
                 real-time calendar sync.
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/artists" className="lime-btn-pill text-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+                <Link href="/explore/artists" className="lime-btn-pill w-full text-center sm:w-auto">
                   Find Artists Now
                 </Link>
-                <Link href="/sign-up?role=artist" className="lime-btn-pill-outline text-center">
+                <Link
+                  href="/sign-up?role=artist"
+                  className="lime-btn-pill-outline w-full text-center sm:w-auto"
+                >
                   Join as an Artist
                 </Link>
               </div>
-              <div className="mt-4 flex items-center gap-4 border-t border-surface-variant pt-4">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div
-                      key={i}
-                      className="h-10 w-10 rounded-full border-2 border-surface-container-lowest bg-gradient-to-br from-lime/40 to-surface-container"
-                    />
-                  ))}
-                </div>
+              <div className="mt-4 flex items-center gap-2 border-t border-surface-variant pt-4">
+                <MaterialIcon name="new_releases" size={18} className="text-primary" />
                 <p className="text-label-sm text-on-surface-variant">
-                  Trusted by 500+ organizers across Tunisia
+                  Now booking artists across the Grand Tunis area
                 </p>
-              </div>
-            </FadeSection>
-
-            <FadeSection className="relative flex w-full items-center justify-center lg:h-[600px]">
-              <div className="animate-float z-20 w-full max-w-md rounded-4xl border border-surface-variant/50 bg-surface-container-lowest p-4 shadow-float transition-transform hover:-translate-y-1 sm:p-6">
-                <div className="mb-4 flex items-center justify-between sm:mb-6">
-                  <h3 className="font-headline text-headline-md text-on-surface">Artist Matches</h3>
-                  <MaterialIcon name="auto_awesome" filled className="text-primary-container" />
-                </div>
-                <div className="space-y-2 sm:space-y-4">
-                  {[
-                    { name: 'DJ Amina', genres: 'Electronic • House', match: '98%', img: '/media/artist-dj.svg' },
-                    { name: 'The Tunis Quintet', genres: 'Jazz • Ambient', match: '95%', img: '/media/artist-band.svg' },
-                  ].map((a) => (
-                    <div
-                      key={a.name}
-                      className="group flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-3 transition-colors hover:border-surface-variant hover:bg-surface-container-low sm:p-4"
-                    >
-                      <div className="h-14 w-14 overflow-hidden rounded-lg bg-surface-container sm:h-16 sm:w-16">
-                        {/* Placeholder — swap for a real artist photo (same path). */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={a.img}
-                          alt={a.name}
-                          className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-label-md font-semibold text-on-surface">{a.name}</h4>
-                        <p className="text-label-sm text-on-surface-variant">{a.genres}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="block text-label-md font-semibold text-primary-container">
-                          {a.match} Match
-                        </span>
-                        <span className="text-label-sm text-on-surface-variant">Available</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Link
-                  href="/artists"
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-low py-3 text-label-md font-semibold text-on-surface transition-colors hover:bg-surface-variant sm:mt-6"
-                >
-                  View All <MaterialIcon name="arrow_forward" size={18} />
-                </Link>
               </div>
             </FadeSection>
           </div>
@@ -220,7 +239,7 @@ export function LandingPage() {
                       'Centralized dashboard for all talent communications.',
                       'Automated, digital contracts generated instantly.',
                       'Transparent pricing upfront with no surprises.',
-                      'Secure escrow payments for peace of mind.',
+                      'Transparent, contract-backed payments for peace of mind.',
                       'Real-time calendar sync prevents double bookings.',
                       'Verified talent with authentic organizer reviews.',
                     ].map((t) => (
@@ -236,8 +255,10 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* How it works + Dual audience scroll over a pinned video background */}
+        <PinnedVideoBackground>
         {/* How it works */}
-        <section className="bg-surface py-16 sm:py-24" id="how-it-works">
+        <section className="py-16 sm:py-24" id="how-it-works">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="mb-4 font-headline text-headline-lg">How it works</h2>
@@ -251,7 +272,7 @@ export function LandingPage() {
                 {[
                   { n: 1, icon: 'content_paste', title: 'Create Brief', desc: 'Detail your event needs, budget, and timeline.' },
                   { n: 2, icon: 'my_location', title: 'Find Talent', desc: 'Browse verified artists or get matched instantly.' },
-                  { n: 3, icon: 'draw', title: 'Sign & Pay', desc: 'Digital contracts and secure escrow payments.' },
+                  { n: 3, icon: 'draw', title: 'Sign & Pay', desc: 'Digital contracts and a clear, contract-backed payment process.' },
                   { n: 4, icon: 'music_note', title: 'Enjoy Event', desc: 'Sit back and watch the performance.' },
                 ].map((step, i) => (
                   <FadeSection
@@ -280,7 +301,7 @@ export function LandingPage() {
         </section>
 
         {/* Dual audience */}
-        <section className="bg-surface-container-lowest py-16 sm:py-24" id="artists">
+        <section className="py-16 sm:py-24" id="artists">
           <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
             <FadeSection className="mx-auto mb-16 max-w-2xl text-center">
               <h2 className="font-headline text-headline-lg">Built for both sides of the stage.</h2>
@@ -290,7 +311,7 @@ export function LandingPage() {
                 <MaterialIcon name="event_available" size={40} className="mb-6 text-primary" />
                 <h3 className="mb-6 font-headline text-headline-lg">For Organizers</h3>
                 <ul className="mb-8 space-y-4">
-                  {['Access to hundreds of verified artists', 'Instant availability checking', 'Secure escrow payments'].map((t) => (
+                  {['Access to verified artists', 'Instant availability checking', 'Transparent, contract-backed pricing'].map((t) => (
                     <li key={t} className="flex items-center gap-3">
                       <MaterialIcon name="check_circle" className="text-custom-lime" />
                       <span className="font-body text-body-md">{t}</span>
@@ -311,7 +332,7 @@ export function LandingPage() {
                 <MaterialIcon name="mic" size={40} className="mb-6 text-custom-lime" />
                 <h3 className="mb-6 font-headline text-headline-lg text-white">For Artists</h3>
                 <ul className="mb-8 space-y-4">
-                  {['Guaranteed payments via escrow', 'Professional digital contracts', 'Manage all bookings in one calendar'].map((t) => (
+                  {['Payment terms locked in by contract', 'Professional digital contracts', 'Manage all bookings in one calendar'].map((t) => (
                     <li key={t} className="flex items-center gap-3">
                       <MaterialIcon name="check_circle" className="text-custom-lime" />
                       <span className="font-body text-body-md text-surface-variant">{t}</span>
@@ -325,65 +346,7 @@ export function LandingPage() {
             </div>
           </div>
         </section>
-
-        {/* Stats */}
-        <section className="bg-surface py-16 sm:py-24" id="testimonials">
-          <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
-            <div className="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-              {[
-                { quote: 'LIME Event completely changed how we book for our summer festivals.', who: 'Sarah K.', role: 'Festival Director', img: '/media/avatar-1.svg' },
-                { quote: 'Knowing my payment is secure in escrow before I step on stage is invaluable.', who: 'Mehdi T.', role: 'Musician', img: '/media/avatar-2.svg' },
-                { quote: 'The automated contracts mean I never worry about legal details again.', who: 'Youssef B.', role: 'Corporate Events', img: '/media/avatar-3.svg' },
-              ].map((t, i) => (
-                <FadeSection
-                  key={t.who}
-                  delay={i * 100}
-                  className="rounded-2xl bg-surface-container-lowest p-8 shadow-sm transition-transform hover:-translate-y-1"
-                >
-                  <div className="mb-4 flex text-custom-lime">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <MaterialIcon key={j} name="star" filled size={20} />
-                    ))}
-                  </div>
-                  <p className="mb-6 font-body text-body-md italic text-on-surface-variant">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="flex items-center gap-3">
-                    {/* Placeholder avatar — swap for a real photo (same path). */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={t.img}
-                      alt={t.who}
-                      className="h-11 w-11 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="text-label-md font-semibold">{t.who}</p>
-                      <p className="text-label-sm text-on-surface-variant">{t.role}</p>
-                    </div>
-                  </div>
-                </FadeSection>
-              ))}
-            </div>
-            <FadeSection
-              id="stats-section"
-              className="rounded-4xl bg-primary-container p-8 md:p-12"
-            >
-              <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
-                {[
-                  { target: 200, label: 'Verified Artists', suffix: '+' },
-                  { target: 500, label: 'Events Booked', suffix: '+' },
-                  { target: 98, label: 'Satisfaction', suffix: '%' },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <div className="mb-2 font-headline text-[48px] font-black text-on-primary-fixed">
-                      <span data-target={s.target}>0</span>
-                      {s.suffix}
-                    </div>
-                    <div className="text-label-md text-on-primary-container">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </FadeSection>
-          </div>
-        </section>
+        </PinnedVideoBackground>
 
         {/* Pricing */}
         <section className="bg-surface-container-lowest py-16 sm:py-24" id="pricing">
@@ -408,7 +371,7 @@ export function LandingPage() {
                 </div>
                 <h3 className="mb-2 font-headline text-headline-md text-white">Organizer</h3>
                 <div className="mb-6 font-headline text-headline-xl text-primary-container">
-                  12.5% <span className="text-body-md font-normal text-surface-variant">fee</span>
+                  7% <span className="text-body-md font-normal text-surface-variant">fee</span>
                 </div>
                 <Link href="/sign-up?role=organizer" className="lime-btn-pill block w-full text-center">
                   Start Booking
@@ -426,14 +389,22 @@ export function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <FadeSection className="bg-primary-container py-16 sm:py-24">
-          <div className="mx-auto max-w-container-max px-margin-mobile text-center md:px-margin-desktop">
+        <FadeSection className="relative overflow-hidden bg-primary-container py-16 sm:py-24">
+          {/* Subtle reprise of the hero silk, tinted back into the lime band so
+              the centered text stays legible. */}
+          <ParallaxSilk
+            opacity={0.28}
+            speed={0.18}
+            objectPosition="center center"
+            scrimClassName="bg-primary-container/50"
+          />
+          <div className="relative z-10 mx-auto max-w-container-max px-margin-mobile text-center md:px-margin-desktop">
             <h2 className="mb-8 font-headline text-[40px] font-black leading-tight text-on-primary-fixed md:text-[48px]">
               Your next event deserves the best talent.
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
-                href="/artists"
+                href="/explore/artists"
                 className="rounded-full bg-on-primary-fixed px-8 py-4 text-label-md font-semibold text-white transition-all hover:scale-[1.03] hover:shadow-lg"
               >
                 Find Artists Now
@@ -451,29 +422,118 @@ export function LandingPage() {
 
       <footer className="w-full bg-custom-dark pb-8 pt-16 text-white">
         <div className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
-          <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-4">
-            <div>
-              <Image src="/logo.jpeg" alt="LIME" width={120} height={40} className="mb-6 h-10 w-auto brightness-0 invert" />
-              <p className="font-body text-body-md text-surface-variant">Zesty Professionalism.</p>
+          <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5">
+            <div className="col-span-2 lg:col-span-1">
+              <Image src="/logo.png" alt="LIME" width={366} height={160} className="mb-6 h-10 w-auto brightness-0 invert" />
+              <p className="font-body text-body-md text-surface-variant" dir="rtl">
+                استمرارية السعي
+              </p>
             </div>
-            {[
-              { title: 'Platform', links: ['#how-it-works', '#pricing', '#'] },
-              { title: 'For Artists', links: ['/sign-up?role=artist', '#'] },
-              { title: 'Company', links: ['#', '#', '#'] },
-            ].map((col, idx) => (
-              <div key={col.title}>
-                <h4 className="mb-4 font-bold">{col.title}</h4>
-                <ul className="space-y-2">
-                  {col.links.map((href, i) => (
-                    <li key={i}>
-                      <Link href={href} className="font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime">
-                        {idx === 0 && i === 0 ? 'How it Works' : idx === 0 && i === 1 ? 'Pricing' : 'Learn more'}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+
+            <div>
+              <h4 className="mb-4 font-bold">Platform</h4>
+              <ul>
+                {[
+                  { href: '#how-it-works', label: 'How it Works' },
+                  { href: '#pricing', label: 'Pricing' },
+                  { href: '#features', label: 'Features' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    {/* py-2.5 keeps the tappable area near 44px without changing
+                        the visible line height, since space-y-2 alone left each
+                        link at a ~21px hit target. */}
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-bold">For Artists</h4>
+              <ul>
+                {[
+                  { href: '/sign-up?role=artist', label: 'Join as an Artist' },
+                  { href: '#artists', label: 'Why LIME' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4 font-bold">Company</h4>
+              <ul>
+                {[
+                  { href: '/terms', label: 'Terms of Service' },
+                  { href: '/privacy', label: 'Privacy Policy' },
+                ].map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      className="inline-block py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="col-span-2 lg:col-span-1">
+              <h4 className="mb-4 font-bold">Contact</h4>
+              <ul className="mb-4">
+                <li>
+                  <a
+                    href={`mailto:${CONTACT_EMAIL}`}
+                    className="inline-flex items-center gap-2 py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                  >
+                    <MaterialIcon name="mail" size={18} className="shrink-0" />
+                    {CONTACT_EMAIL}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`tel:${CONTACT_PHONE_TEL}`}
+                    className="inline-flex items-center gap-2 py-2.5 font-body text-body-md text-surface-variant transition-colors hover:text-custom-lime"
+                  >
+                    <MaterialIcon name="call" size={18} className="shrink-0" />
+                    {CONTACT_PHONE_DISPLAY}
+                  </a>
+                </li>
+              </ul>
+              <div className="flex items-center gap-3">
+                <a
+                  href={SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LIME on Instagram"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-custom-lime hover:text-custom-dark"
+                >
+                  <InstagramIcon size={20} />
+                </a>
+                <a
+                  href={SOCIAL_LINKS.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LIME on Facebook"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white transition-colors hover:bg-custom-lime hover:text-custom-dark"
+                >
+                  <FacebookIcon size={20} />
+                </a>
               </div>
-            ))}
+            </div>
           </div>
           <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 md:flex-row">
             <p className="font-body text-body-md text-surface-variant">© 2024 LIME Event. All rights reserved.</p>

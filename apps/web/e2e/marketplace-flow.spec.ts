@@ -10,7 +10,9 @@ test.describe('Marketplace discovery (public)', () => {
     await page.goto('/artists');
     await expect(page).not.toHaveURL(/sign-in/);
     const cards = page.locator('[data-testid="artist-card"]');
-    const empty = page.getByText(/no artists|no results|browse/i);
+    // Must not match the "Browse artists" heading, which is always present and
+    // would make this resolve to two elements (strict mode violation).
+    const empty = page.getByText(/no artists match|no results/i);
     await expect(cards.first().or(empty.first())).toBeVisible({ timeout: 15000 });
   });
 

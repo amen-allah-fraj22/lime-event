@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { Logo } from '@/components/Logo';
 import { RoleSwitcher } from '@/components/lime/RoleSwitcher';
+import { NAV_TABS_BY_ROLE } from '@/components/layout/MobileBottomNav';
 import { useRoleOptional } from '@/context/RoleContext';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
@@ -21,10 +22,19 @@ function shouldHideTopBar(pathname: string): boolean {
 
 /* ─── Component ─── */
 
+function isNavActive(pathname: string, href: string): boolean {
+  if (href === '/profile') {
+    return pathname === '/profile' || pathname.startsWith('/profile/edit');
+  }
+  return pathname.startsWith(href);
+}
+
 export function MobileTopBar() {
   const pathname = usePathname();
   const { isSignedIn, user } = useUser();
   const roleCtx = useRoleOptional();
+  const activeRole = roleCtx?.activeRole ?? 'organizer';
+  const desktopNavTabs = NAV_TABS_BY_ROLE[activeRole] ?? NAV_TABS_BY_ROLE.organizer;
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Fetch unread notification count
@@ -51,10 +61,33 @@ export function MobileTopBar() {
         {/* Left — Logo */}
         <Logo className="h-8 w-auto" />
 
-        {/* Center — Page title on desktop, hidden on mobile */}
-        <div className="hidden md:flex items-center gap-6">
-          {/* Desktop nav links can go here later if needed */}
-        </div>
+        {/* Primary nav, desktop only — this is the sole way to reach these
+            routes on desktop, since MobileBottomNav hides itself at md+.
+            Shares NAV_TABS_BY_ROLE with the bottom nav so the two can't
+            drift apart. Only rendered when signed in: signed-out visitors
+            get the Log in / Sign up buttons on the right instead. */}
+        {isSignedIn && (
+          <nav className="hidden md:flex items-center gap-1">
+            {desktopNavTabs.map((tab) => {
+              const active = isNavActive(pathname, tab.href);
+              return (
+                <Link
+                  key={tab.href}
+                  href={tab.href}
+                  className={cn(
+                    'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-label-md font-medium transition-colors',
+                    active
+                      ? 'bg-lime/20 text-lime-dark'
+                      : 'text-brand-accent hover:bg-surface-container hover:text-brand-text',
+                  )}
+                >
+                  <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
 
         {/* Right — Actions */}
         <div className="flex items-center gap-3">
@@ -69,6 +102,7 @@ export function MobileTopBar() {
           {isSignedIn && (
             <Link
               href="/notifications"
+              aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
               className="relative flex h-9 w-9 items-center justify-center rounded-full bg-surface-container transition hover:bg-surface-container-high"
             >
               <span className="material-symbols-outlined text-[20px] text-brand-text">
@@ -95,6 +129,7 @@ export function MobileTopBar() {
           ) : (
             <Link
               href="/profile"
+              aria-label="Your profile"
               className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-lime/20 ring-1 ring-surface-variant transition hover:ring-lime"
             >
               {user?.imageUrl ? (

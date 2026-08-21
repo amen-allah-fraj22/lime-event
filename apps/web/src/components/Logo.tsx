@@ -10,10 +10,10 @@ export function Logo({ className = 'h-10 w-auto', showTagline = false }: LogoPro
   return (
     <Link href="/" className="flex flex-col items-start gap-0.5">
       <Image
-        src="/logo.jpeg"
+        src="/logo.png"
         alt="lime — Fresh bookings, Fresh talent."
-        width={160}
-        height={48}
+        width={366}
+        height={160}
         className={className}
         priority
       />

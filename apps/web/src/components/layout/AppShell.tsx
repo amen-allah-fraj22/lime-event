@@ -33,8 +33,12 @@ export function AppShell({
       {/* Top bar — slim header with logo + notifications + avatar */}
       <MobileTopBar />
 
-      {/* Main content — padded at bottom on mobile to clear the bottom nav */}
-      <main className="flex-1 pb-24 md:pb-6">
+      {/* Main content — padded at bottom on mobile to clear the bottom nav.
+          The nav itself adds env(safe-area-inset-bottom) on top of its own
+          height, so the padding has to include that inset as well; a flat
+          pb-24 leaves the last ~13px of content behind the nav on any device
+          with a home indicator. */}
+      <main className="flex-1 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] md:pb-6">
         {children}
       </main>
 

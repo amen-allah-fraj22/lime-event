@@ -2,6 +2,24 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// This seed creates fake accounts (yasmine.demo@..., djkarim.demo@..., etc.) marked
+// is_verified: true with fabricated ratings. Fine for a fresh dev database; a real
+// artist landing on a pilot instance seeing "verified" fake competitors is not. There
+// is usually no separate staging database for a pilot this size, so the same
+// DATABASE_URL that was used for local dev testing can end up being the real one real
+// users are in — this guard exists so re-running `npm run db:seed` (or `db:setup`,
+// which used to chain it automatically) out of habit can't silently reintroduce demo
+// accounts once that's happened. Explicit opt-in only.
+if (process.env.SEED_CONFIRM !== 'yes') {
+  console.error(
+    '\nRefusing to seed: this inserts fake demo accounts (yasmine.demo@..., djkarim.demo@..., ' +
+      'etc.) marked as verified.\n' +
+      'Only run this against a database with no real users in it.\n' +
+      'To proceed: SEED_CONFIRM=yes npm run db:seed\n',
+  );
+  process.exit(1);
+}
+
 async function main() {
   const artists = [
     {
