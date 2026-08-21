@@ -21,7 +21,7 @@
     "lint:web": "npm run lint -w @lime/web"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "@clerk/testing": "^2.2.26"
