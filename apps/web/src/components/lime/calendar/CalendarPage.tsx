@@ -139,6 +139,36 @@ export function CalendarPage() {
     setSelected(new Date());
   }
 
+  const blockedThisMonth = (data?.day_overrides ?? []).filter((o) => {
+    if (o.status !== 'BLOCKED') return false;
+    const d = new Date(o.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  }).length;
+  const nextGig = upcoming[0];
+
+  // Mobile week strip: anchored on the selected day (or today), independent
+  // of the desktop month cursor so tapping a day doesn't jump the header.
+  const weekAnchor = selected ?? today;
+  const weekStart = new Date(weekAnchor);
+  weekStart.setDate(weekAnchor.getDate() - ((weekAnchor.getDay() + 6) % 7));
+  weekStart.setHours(0, 0, 0, 0);
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+  function selectMobileDay(d: Date) {
+    setSelected(d);
+    if (d.getFullYear() !== year || d.getMonth() !== month) {
+      setCursor(new Date(d.getFullYear(), d.getMonth(), 1));
+    }
+  }
+  function shiftWeek(days: number) {
+    const d = new Date(weekAnchor);
+    d.setDate(d.getDate() + days);
+    selectMobileDay(d);
+  }
+
   return (
     <DashboardShell title="Calendar">
       {loading && <LoadingBlock label="Loading calendar…" />}
@@ -147,13 +177,91 @@ export function CalendarPage() {
       {!loading && !error && (
         <div className="grid grid-cols-1 gap-gutter lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-8">
-              <div className="mb-8 flex items-center justify-between">
+            {/* Mobile: compact week strip instead of the full month grid */}
+            <div className="dashboard-shadow mb-gutter rounded-xl bg-surface-container-lowest p-4 md:hidden">
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="font-headline text-headline-md">
+                  {weekAnchor.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
+                </h2>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => shiftWeek(-7)}
+                    aria-label="Previous week"
+                    className="rounded-full p-1.5 transition-colors hover:bg-surface-container"
+                  >
+                    <MaterialIcon name="chevron_left" size={20} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToday}
+                    className="rounded-lg border border-outline-variant px-2.5 py-1 text-label-sm transition-colors hover:border-primary-container"
+                  >
+                    Today
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => shiftWeek(7)}
+                    aria-label="Next week"
+                    className="rounded-full p-1.5 transition-colors hover:bg-surface-container"
+                  >
+                    <MaterialIcon name="chevron_right" size={20} />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-7 gap-1.5">
+                {weekDays.map((d) => {
+                  const dayEntries = entriesForDay(entries, d);
+                  const blocked = dayEntries.some((e) => e.kind === 'override_blocked');
+                  const warn = dayEntries.some((e) => e.kind === 'override_warn');
+                  const hasEvents = dayEntries.some(
+                    (e) => e.kind === 'booking' || e.kind === 'manual_event' || e.kind === 'google_event' || (e.kind === 'event' && e.is_confirmed),
+                  );
+                  const isToday = sameDayCheck(d, today);
+                  const isSelected = selected && sameDayCheck(d, selected);
+                  return (
+                    <button
+                      key={d.toISOString()}
+                      type="button"
+                      onClick={() => selectMobileDay(d)}
+                      className={cn(
+                        'flex flex-col items-center gap-1 rounded-xl border-2 py-2 transition-all',
+                        isSelected
+                          ? 'border-primary-container bg-primary-container/10'
+                          : 'border-transparent hover:bg-surface-container-low',
+                      )}
+                    >
+                      <span className="text-[10px] uppercase text-secondary">
+                        {d.toLocaleDateString(undefined, { weekday: 'short' }).slice(0, 2)}
+                      </span>
+                      <span
+                        className={cn(
+                          'flex h-7 w-7 items-center justify-center rounded-full font-label-md',
+                          isToday && 'bg-primary text-on-primary font-bold',
+                          !isToday && blocked && 'bg-error-container text-error',
+                          !isToday && !blocked && warn && 'bg-amber-100 text-amber-700',
+                        )}
+                      >
+                        {d.getDate()}
+                      </span>
+                      <span
+                        className={cn(
+                          'h-1 w-1 rounded-full',
+                          hasEvents ? 'bg-primary-container' : 'bg-transparent',
+                        )}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Desktop: full month grid */}
+            <div className="dashboard-shadow hidden rounded-xl bg-surface-container-lowest p-8 md:block">
+              <div className="mb-6 flex items-center justify-between">
                 <div>
                   <h2 className="font-headline text-headline-lg capitalize">{monthLabel}</h2>
-                  <p className="text-body-md text-secondary">
-                    {monthEntries.length} upcoming event{monthEntries.length === 1 ? '' : 's'} this month
-                  </p>
+                  <p className="text-body-md text-secondary">Manage your availability and upcoming gigs.</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -182,7 +290,32 @@ export function CalendarPage() {
                 </div>
               </div>
 
-              <div className="calendar-grid mb-4 border-b border-outline-variant/30 pb-4">
+              <div className="mb-6 flex flex-wrap gap-2">
+                <div className="flex items-center gap-2 rounded-full border border-surface-container-highest bg-surface-container-lowest px-4 py-2 shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
+                  <span className="h-2 w-2 rounded-full bg-primary-container" />
+                  <span className="text-label-sm">
+                    {monthEntries.length} event{monthEntries.length === 1 ? '' : 's'} this month
+                  </span>
+                </div>
+                {nextGig && (
+                  <div className="flex items-center gap-2 rounded-full border border-surface-container-highest bg-surface-container-lowest px-4 py-2 shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
+                    <MaterialIcon name="event" size={16} className="text-secondary" />
+                    <span className="text-label-sm">
+                      Next gig: {new Date(nextGig.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                )}
+                {blockedThisMonth > 0 && (
+                  <div className="flex items-center gap-2 rounded-full border border-error-container bg-surface-container-lowest px-4 py-2 shadow-[0px_2px_10px_rgba(0,0,0,0.02)]">
+                    <span className="h-2 w-2 rounded-full bg-error" />
+                    <span className="text-label-sm">
+                      {blockedThisMonth} blocked day{blockedThisMonth === 1 ? '' : 's'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="calendar-grid mb-2 border-b border-outline-variant/30 pb-4">
                 {WEEKDAYS.map((d) => (
                   <div
                     key={d}
@@ -214,51 +347,46 @@ export function CalendarPage() {
                       type="button"
                       onClick={() => cell.inMonth && setSelected(cell.date)}
                       className={cn(
-                        'min-h-[100px] p-2 text-left transition-colors md:min-h-[120px] md:p-3',
+                        'min-h-[100px] p-2 text-left transition-all duration-150 md:min-h-[120px] md:p-3',
                         cell.inMonth
-                          ? 'cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low'
+                          ? 'cursor-pointer bg-surface-container-lowest hover:-translate-y-px hover:shadow-[0px_4px_12px_rgba(0,0,0,0.06)]'
                           : 'bg-surface-container-lowest text-secondary opacity-40',
-                        blocked && cell.inMonth && 'bg-surface-container opacity-60',
+                        blocked && cell.inMonth && 'bg-error-container/20',
+                        !blocked && warn && cell.inMonth && 'bg-amber-400/10',
                         isSelected && 'ring-2 ring-inset ring-primary-container',
-                        isToday && cell.inMonth && !isSelected && 'ring-1 ring-inset ring-primary-container/50',
                       )}
                     >
-                      <span className={cn('font-label-md', isToday && 'font-bold text-primary')}>
+                      <span
+                        className={cn(
+                          'inline-flex h-6 w-6 items-center justify-center rounded-full font-label-md',
+                          isToday && 'bg-primary-container font-bold text-on-primary-container',
+                        )}
+                      >
                         {cell.date.getDate()}
                       </span>
-                      {isToday && cell.inMonth && (
-                        <div className="mt-1 text-[10px] font-bold text-primary">TODAY</div>
-                      )}
                       {blocked && cell.inMonth && (
-                        <div className="mt-2 text-center text-[10px] font-bold uppercase text-secondary">
-                          Blocked
-                        </div>
+                        <div className="mt-1.5 text-[10px] font-bold uppercase text-error">Blocked</div>
                       )}
                       {!blocked && warn && cell.inMonth && (
-                        <div className="mt-2 text-center text-[10px] font-bold uppercase text-amber-600">
-                          Busy
-                        </div>
+                        <div className="mt-1.5 text-[10px] font-bold uppercase text-amber-600">Busy</div>
                       )}
                       {displayEvents.slice(0, 2).map((e) => (
                         <div
                           key={e.id}
                           className={cn(
-                            "mt-2 flex items-center gap-2 rounded-md border-l-4 p-1.5",
-                            e.kind === 'manual_event' 
-                              ? "border-amber-400 bg-amber-400/10" 
+                            "mt-1.5 flex items-center gap-1.5 truncate rounded-md border-l-4 bg-surface-container-lowest p-1.5 shadow-sm",
+                            e.kind === 'manual_event'
+                              ? "border-amber-400"
                               : e.kind === 'google_event'
-                              ? "border-blue-400 bg-blue-400/10"
-                              : "border-primary-container bg-primary-container/10"
+                              ? "border-blue-400"
+                              : "border-primary-container"
                           )}
                         >
                           <span className={cn(
-                            "h-2 w-2 shrink-0 rounded-full",
+                            "h-1.5 w-1.5 shrink-0 rounded-full",
                             e.kind === 'manual_event' ? "bg-amber-400" : e.kind === 'google_event' ? 'bg-blue-400' : "bg-primary-container"
                           )} />
-                          <span className={cn(
-                            "truncate text-[10px] font-bold",
-                            e.kind === 'manual_event' ? "text-amber-700" : e.kind === 'google_event' ? 'text-blue-700' : "text-on-primary-container"
-                          )}>
+                          <span className="truncate text-[10px] font-bold text-on-surface">
                             {e.title}
                           </span>
                         </div>
@@ -266,6 +394,22 @@ export function CalendarPage() {
                     </button>
                   );
                 })}
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-4">
+                <span className="text-label-sm text-secondary">Legend:</span>
+                <span className="flex items-center gap-1.5 text-[11px] text-secondary">
+                  <span className="h-3 w-3 rounded-sm border border-primary-container bg-primary-container/20" /> Open
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-secondary">
+                  <span className="h-3 w-3 rounded-sm border border-amber-300 bg-amber-400/10" /> Busy
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-secondary">
+                  <span className="h-3 w-3 rounded-sm border border-error-container bg-error-container/40" /> Blocked
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] text-secondary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-400" /> Google Sync
+                </span>
               </div>
             </div>
           </div>

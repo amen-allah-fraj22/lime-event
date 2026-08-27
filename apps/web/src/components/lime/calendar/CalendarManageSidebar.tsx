@@ -4,9 +4,31 @@ import { useState } from 'react';
 import api from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
+import { cn } from '@/lib/utils';
 import type { CalendarEntry } from './calendar-utils';
 import { DayStatusModal } from './DayStatusModal';
 import { CalendarSyncButton } from './CalendarSyncButton';
+
+const STATUS_META = {
+  OPEN: {
+    label: 'Open',
+    desc: 'Available for requests',
+    dot: 'bg-primary',
+    active: 'bg-primary-container text-on-primary-container',
+  },
+  WARN: {
+    label: 'Busy',
+    desc: 'Warn organizers, allow requests',
+    dot: 'bg-amber-400',
+    active: 'bg-amber-400/20 text-amber-800',
+  },
+  BLOCKED: {
+    label: 'Blocked',
+    desc: 'No requests allowed',
+    dot: 'bg-error',
+    active: 'bg-error-container text-error',
+  },
+} as const;
 
 export function CalendarManageSidebar({
   userId,
@@ -141,58 +163,30 @@ export function CalendarManageSidebar({
         </p>
       )}
 
-      <div className="mb-6 space-y-2">
+      <div className="mb-6 space-y-3">
         <label className="block text-label-sm font-bold uppercase text-secondary">
           Day Status for Organizers
         </label>
-        <div className="flex flex-col gap-2">
-          <button
-            disabled={savingStatus}
-            onClick={() => handleStatusChange('OPEN')}
-            className={`flex items-center gap-3 rounded-xl border-2 p-3 text-left transition-colors ${
-              currentStatus === 'OPEN'
-                ? 'border-primary bg-primary/10'
-                : 'border-outline-variant hover:border-outline'
-            } disabled:opacity-50`}
-          >
-            <span className="text-xl">🟢</span>
-            <div>
-              <p className={`text-sm font-bold ${currentStatus === 'OPEN' ? 'text-primary' : 'text-on-surface'}`}>Open</p>
-              <p className="text-xs text-secondary">Available for requests</p>
-            </div>
-          </button>
-
-          <button
-            disabled={savingStatus}
-            onClick={() => handleStatusChange('WARN')}
-            className={`flex items-center gap-3 rounded-xl border-2 p-3 text-left transition-colors ${
-              currentStatus === 'WARN'
-                ? 'border-amber-400 bg-amber-50'
-                : 'border-outline-variant hover:border-outline'
-            } disabled:opacity-50`}
-          >
-            <span className="text-xl">🟡</span>
-            <div>
-              <p className={`text-sm font-bold ${currentStatus === 'WARN' ? 'text-amber-900' : 'text-on-surface'}`}>Busy (Warn)</p>
-              <p className="text-xs text-secondary">Warn organizers, allow requests</p>
-            </div>
-          </button>
-
-          <button
-            disabled={savingStatus}
-            onClick={() => handleStatusChange('BLOCKED')}
-            className={`flex items-center gap-3 rounded-xl border-2 p-3 text-left transition-colors ${
-              currentStatus === 'BLOCKED'
-                ? 'border-red-400 bg-red-50'
-                : 'border-outline-variant hover:border-outline'
-            } disabled:opacity-50`}
-          >
-            <span className="text-xl">🔴</span>
-            <div>
-              <p className={`text-sm font-bold ${currentStatus === 'BLOCKED' ? 'text-red-900' : 'text-on-surface'}`}>Blocked</p>
-              <p className="text-xs text-secondary">No requests allowed</p>
-            </div>
-          </button>
+        <div className="flex gap-1 rounded-2xl border border-outline-variant/50 bg-surface-container-low p-1">
+          {(Object.keys(STATUS_META) as (keyof typeof STATUS_META)[]).map((status) => (
+            <button
+              key={status}
+              disabled={savingStatus}
+              onClick={() => handleStatusChange(status)}
+              className={cn(
+                'flex-1 rounded-xl py-2 text-sm font-bold transition-all disabled:opacity-50',
+                currentStatus === status
+                  ? `${STATUS_META[status].active} shadow-sm`
+                  : 'text-secondary hover:bg-surface-container',
+              )}
+            >
+              {STATUS_META[status].label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 rounded-lg bg-surface-container-low px-3 py-2">
+          <span className={cn('h-2 w-2 shrink-0 rounded-full', STATUS_META[currentStatus].dot)} />
+          <p className="text-xs text-secondary">{STATUS_META[currentStatus].desc}</p>
         </div>
       </div>
 
