@@ -29,11 +29,17 @@ export class BookingsService {
 
     let initiated_by = 'organizer';
     let organizerId = event.organizer_id;
-    let artistId = dto.artist_id;
+    let artistId: string;
 
     if (event.organizer_id === userId) {
-      // Organizer is inviting an artist
+      // Organizer is inviting an artist — artist_id (the invitee's User id) is
+      // required in this branch even though the DTO field itself is optional
+      // (an applying artist is allowed to omit it entirely).
+      if (!dto.artist_id) {
+        throw new BadRequestException('artist_id is required when inviting an artist.');
+      }
       initiated_by = 'organizer';
+      artistId = dto.artist_id;
     } else if (dto.artist_id === userId || !dto.artist_id) {
       // Artist is applying to an event
       initiated_by = 'artist';

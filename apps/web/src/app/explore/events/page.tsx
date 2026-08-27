@@ -48,14 +48,19 @@ export default function ExploreEventsRoute() {
       return next;
     });
     try {
-      // Fetch the currently logged-in user's artist profile ID
+      // Gate on having a complete artist profile, but only as a precondition —
+      // the profile's own id is NOT the value the API wants for artist_id.
       const meRes = await api.get('/users/me');
-      const artistId = meRes.data.artist_profile?.id;
-      if (!artistId) throw new Error("You must complete your artist profile to apply.");
+      if (!meRes.data.artist_profile?.id) {
+        throw new Error('You must complete your artist profile to apply.');
+      }
 
+      // Deliberately omit artist_id: BookingRequest.artist_id is a FK to User.id,
+      // not ArtistProfile.id, and the API resolves it from the authenticated
+      // caller when it's absent. Sending the profile id here made the server's
+      // "are you the organizer or the applying artist?" check fail with a 403.
       const res = await api.post('/booking-requests', {
         event_id: event.id,
-        artist_id: artistId,
         message: notes[event.id] || undefined,
       });
 
