@@ -6,18 +6,20 @@ export function StatCard({
   hint,
   icon,
   iconClassName = 'text-primary',
+  iconWrapClassName = 'bg-primary-container/20',
 }: {
   label: string;
   value: string | number;
   hint?: string;
   icon: string;
   iconClassName?: string;
+  iconWrapClassName?: string;
 }) {
   return (
     <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-6 transition-all hover:scale-[1.01] hover:shadow-md">
       <div className="mb-4 flex items-start justify-between">
-        <div className="rounded-lg bg-primary-container/20 p-2">
-          <MaterialIcon name={icon} className={iconClassName} />
+        <div className={`rounded-full p-2 ${iconWrapClassName}`}>
+          <MaterialIcon name={icon} className={iconClassName} size={20} />
         </div>
         {hint && <span className="text-label-sm font-bold text-primary">{hint}</span>}
       </div>

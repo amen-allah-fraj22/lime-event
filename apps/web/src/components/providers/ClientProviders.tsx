@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { ApiAuthProvider } from './ApiAuthProvider';
 import { AppStatusProvider } from './AppStatusProvider';
 import { UserSessionProvider } from './UserSessionProvider';
+import { PageviewTracker } from './PageviewTracker';
 
 /** Routes that should not run API health checks or heavy session work on first paint. */
 function isMarketingRoute(pathname: string) {
@@ -23,6 +24,7 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
     <AppStatusProvider deferHealthCheck={light}>
       <ApiAuthProvider>
+        <PageviewTracker />
         <UserSessionProvider>{children}</UserSessionProvider>
       </ApiAuthProvider>
     </AppStatusProvider>

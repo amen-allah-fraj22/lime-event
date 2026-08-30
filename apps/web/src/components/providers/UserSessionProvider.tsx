@@ -20,7 +20,13 @@ export type DbUser = {
   email: string;
   roles: string[];
   active_role: string;
-  artist_profile?: { id: string; display_name?: string } | null;
+  is_verified?: boolean;
+  artist_profile?: {
+    id: string;
+    display_name?: string;
+    profile_completion?: number;
+    is_profile_complete?: boolean;
+  } | null;
 };
 
 type UserSessionContextType = {
@@ -61,6 +67,7 @@ function toDbUser(me: Awaited<ReturnType<typeof fetchMeCached>>): DbUser {
     email: me.email,
     roles: me.roles ?? [],
     active_role: me.active_role ?? me.roles?.[0] ?? 'organizer',
+    is_verified: me.is_verified ?? false,
     artist_profile: me.artist_profile ?? null,
   };
 }

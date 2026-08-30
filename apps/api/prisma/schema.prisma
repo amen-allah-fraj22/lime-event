@@ -192,6 +192,19 @@ model Notification {
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
+/// One row per page view, for the admin dashboard's visitor counter.
+/// session_id is a random id set client-side (not tied to a user account),
+/// so anonymous and signed-in visits count the same way.
+model PageView {
+  id         String   @id @default(uuid())
+  path       String
+  session_id String
+  created_at DateTime @default(now())
+
+  @@index([created_at])
+  @@index([session_id, created_at])
+}
+
 model Message {
   id                 String         @id @default(uuid())
   booking_request_id String

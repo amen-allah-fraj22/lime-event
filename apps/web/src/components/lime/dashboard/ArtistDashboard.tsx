@@ -7,14 +7,10 @@ import { ErrorAlert } from '@/components/feedback/ErrorAlert';
 import { LoadingBlock } from '@/components/feedback/LoadingBlock';
 import { DashboardShell } from './DashboardShell';
 import { StatCard } from './StatCard';
+import { ProfileCompletionBanner } from './ProfileCompletionBanner';
 import { useDbUser } from '@/components/providers/UserSessionProvider';
 import api from '@/lib/api';
 import { getApiErrorMessage } from '@/lib/api-errors';
-
-type Me = {
-  email: string;
-  artist_profile?: { id: string; display_name: string } | null;
-};
 
 type BookingRow = {
   id: string;
@@ -37,12 +33,7 @@ export function ArtistDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const me: Me | null = dbUser
-    ? {
-        email: dbUser.email,
-        artist_profile: dbUser.artist_profile as Me['artist_profile'],
-      }
-    : null;
+  const me = dbUser;
 
   useEffect(() => {
     if (sessionLoading) return;
@@ -92,20 +83,45 @@ export function ArtistDashboard() {
         </div>
       )}
 
+      {me?.artist_profile && (
+        <ProfileCompletionBanner
+          artistProfileId={me.artist_profile.id}
+          profileCompletion={me.artist_profile.profile_completion ?? 0}
+          isProfileComplete={me.artist_profile.is_profile_complete ?? false}
+          isVerified={me.is_verified ?? false}
+        />
+      )}
+
       <div className="mb-12 grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Pending Requests"
           value={stats.pending}
           icon="pending_actions"
+          iconClassName="text-amber-600"
+          iconWrapClassName="bg-amber-100"
           hint={stats.pending > 0 ? '+ new' : undefined}
         />
-        <StatCard label="Active Bookings" value={stats.active} icon="confirmation_number" />
-        <StatCard label="Confirmed" value={stats.confirmed} icon="check_circle" />
+        <StatCard
+          label="Active Bookings"
+          value={stats.active}
+          icon="confirmation_number"
+          iconClassName="text-blue-600"
+          iconWrapClassName="bg-blue-100"
+        />
+        <StatCard
+          label="Confirmed"
+          value={stats.confirmed}
+          icon="check_circle"
+          iconClassName="text-primary"
+          iconWrapClassName="bg-primary-container/20"
+        />
         <StatCard
           label="Profile"
-          value={me?.artist_profile ? 'Live' : 'Setup'}
+          value={me?.artist_profile ? (me.artist_profile.is_profile_complete ? 'Live' : 'Setup') : 'Setup'}
           icon="visibility"
-          hint={me?.artist_profile ? '+ views' : 'Complete profile'}
+          iconClassName="text-secondary"
+          iconWrapClassName="bg-surface-variant"
+          hint={me?.artist_profile?.is_profile_complete ? '+ views' : 'Complete profile'}
         />
       </div>
 
@@ -121,9 +137,9 @@ export function ArtistDashboard() {
             {pendingRequests.length === 0 ? (
               <div className="dashboard-shadow rounded-xl border border-surface-variant/10 bg-white p-8 text-center">
                 <p className="text-secondary">No pending requests — check back soon.</p>
-                {!me?.artist_profile && (
+                {me?.artist_profile && !me.artist_profile.is_profile_complete && (
                   <Link
-                    href="/onboarding/role"
+                    href={`/artists/${me.artist_profile.id}/edit`}
                     className="mt-4 inline-block text-label-md font-bold text-primary"
                   >
                     Complete your profile →

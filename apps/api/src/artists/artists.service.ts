@@ -21,7 +21,11 @@ export class ArtistsService {
   ) {}
 
   async browse(query: BrowseArtistsDto) {
-    const where: Prisma.ArtistProfileWhereInput = {};
+    // Only verified artists are publicly discoverable — an admin approves a
+    // profile before organizers can find it in Explore/search. The artist's
+    // own profile page (findOne, below) stays reachable while pending so
+    // they can keep viewing/editing it.
+    const where: Prisma.ArtistProfileWhereInput = { user: { is_verified: true } };
 
     if (query.city?.trim()) {
       where.city = { contains: query.city.trim(), mode: 'insensitive' };

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { DbUserGuard } from '../auth/db-user.guard';
@@ -23,6 +23,21 @@ export class AdminController {
   @Get('users')
   users() {
     return this.adminService.listUsers();
+  }
+
+  @Get('artists/pending')
+  pendingArtists() {
+    return this.adminService.pendingArtists();
+  }
+
+  @Post('artists/:userId/verify')
+  verifyArtist(@Param('userId') userId: string) {
+    return this.adminService.verifyArtist(userId);
+  }
+
+  @Post('artists/:userId/reject')
+  rejectArtist(@Param('userId') userId: string) {
+    return this.adminService.rejectArtist(userId);
   }
 
   @Patch('users/:id')

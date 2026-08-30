@@ -14,6 +14,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { AdminModule } from './admin/admin.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CalendarModule } from './calendar/calendar.module';
     RatingsModule,
     AdminModule,
     CalendarModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
 })
