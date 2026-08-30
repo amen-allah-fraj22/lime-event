@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
+import { Analytics } from '@vercel/analytics/next';
 import { Plus_Jakarta_Sans, Hanken_Grotesk } from 'next/font/google';
 import { ClientProviders } from '@/components/providers/ClientProviders';
 import './globals.css';
@@ -45,6 +46,7 @@ export default function RootLayout({
           className={`${plusJakarta.variable} ${hanken.variable} font-body antialiased bg-surface text-brand-text`}
         >
           <ClientProviders>{children}</ClientProviders>
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
