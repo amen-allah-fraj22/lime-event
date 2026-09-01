@@ -3,8 +3,11 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { createClerkClient } from '@clerk/backend';
 import { PrismaService } from '../prisma/prisma.service';
 import { canSwitchActiveRole, isAppRole } from '../auth/app-roles';
+
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY! });
 
 @Injectable()
 export class UsersService {
@@ -15,6 +18,16 @@ export class UsersService {
       where: { clerk_user_id: clerkUserId },
       include: { artist_profile: true },
     });
+  }
+
+  /** Deletes cascade to ArtistProfile/Events/BookingRequests via onDelete: Cascade in the schema. */
+  async deleteMe(clerkUserId: string) {
+    await this.prisma.user.deleteMany({ where: { clerk_user_id: clerkUserId } });
+    // Deleting the Clerk account too, not just our row — otherwise the
+    // account itself survives and can still sign in, just with an empty
+    // profile that gets silently re-created via ensureDatabaseUser's 401
+    // fallback on the next request.
+    await clerkClient.users.deleteUser(clerkUserId).catch(() => undefined);
   }
 
   async addRole(userId: string, role: string) {

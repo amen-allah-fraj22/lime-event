@@ -3,8 +3,12 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useClerk } from '@clerk/nextjs';
 import { SendBookingRequestButton } from '@/components/lime/SendBookingRequestButton';
 import { MaterialIcon } from '@/components/ui/MaterialIcon';
+import api from '@/lib/api';
+import { getApiErrorMessage } from '@/lib/api-errors';
 import {
   getArtistAvatarUrl,
   getArtistCoverUrl,
@@ -101,6 +105,75 @@ function BookingCta({
       <MaterialIcon name="calendar_add_on" size={20} />
       Sign in to book
     </Link>
+  );
+}
+
+function AccountActions() {
+  const router = useRouter();
+  const { signOut } = useClerk();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleDelete() {
+    setDeleting(true);
+    setError(null);
+    try {
+      await api.delete('/users/me');
+      await signOut(() => router.push('/'));
+    } catch (err) {
+      setError(getApiErrorMessage(err).message);
+      setDeleting(false);
+    }
+  }
+
+  return (
+    <div className="mt-3 flex flex-col gap-2 border-t border-surface-variant pt-3">
+      <button
+        type="button"
+        onClick={() => signOut(() => router.push('/'))}
+        className="flex items-center gap-2 text-sm font-semibold text-secondary hover:text-on-surface"
+      >
+        <MaterialIcon name="logout" size={18} />
+        Log out
+      </button>
+
+      {!confirmingDelete ? (
+        <button
+          type="button"
+          onClick={() => setConfirmingDelete(true)}
+          className="flex items-center gap-2 text-sm font-semibold text-error hover:underline"
+        >
+          <MaterialIcon name="delete" size={18} />
+          Delete account
+        </button>
+      ) : (
+        <div className="rounded-lg border border-error/30 bg-error/5 p-3">
+          <p className="text-sm font-semibold text-error">
+            Permanently delete your account and profile? This can&apos;t be undone.
+          </p>
+          {error && <p className="mt-2 text-xs text-error">{error}</p>}
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              disabled={deleting}
+              onClick={handleDelete}
+              className="rounded-lg bg-error px-3 py-1.5 text-xs font-bold text-white disabled:opacity-60"
+            >
+              {deleting ? 'Deleting…' : 'Yes, delete it'}
+            </button>
+            <button
+              type="button"
+              disabled={deleting}
+              onClick={() => setConfirmingDelete(false)}
+              className="rounded-lg border border-outline-variant px-3 py-1.5 text-xs font-semibold text-on-surface"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -220,6 +293,7 @@ export function ArtistPublicProfile({
                   isOwner={isOwner}
                   isSignedIn={isSignedIn}
                 />
+                {isOwner && <AccountActions />}
               </div>
             </div>
             {artist.genres.length > 0 && (

@@ -37,6 +37,11 @@ export class AuthService {
     return user;
   }
 
+  /** Deletes cascade to ArtistProfile/Events/BookingRequests via onDelete: Cascade in the schema. */
+  async deleteUserByClerkId(clerkUserId: string) {
+    await this.prisma.user.deleteMany({ where: { clerk_user_id: clerkUserId } });
+  }
+
   private async ensureArtistProfile(
     userId: string,
     roles: string[],

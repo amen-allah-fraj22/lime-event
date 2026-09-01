@@ -7,6 +7,8 @@ import { useRole } from '@/context/RoleContext';
 import { AppShell } from '@/components/layout/AppShell';
 import { LoadingBlock } from '@/components/feedback/LoadingBlock';
 import { ensureDatabaseUser } from '@/lib/auth-sync';
+import api from '@/lib/api';
+import { getApiErrorMessage } from '@/lib/api-errors';
 
 /**
  * /profile — role-aware profile page
@@ -21,10 +23,25 @@ export default function ProfilePage() {
   const { activeRole } = useRole();
   const [ready, setReady] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleSignOut = async () => {
     setSigningOut(true);
     await signOut(() => router.push('/'));
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.delete('/users/me');
+      await signOut(() => router.push('/'));
+    } catch (err) {
+      setDeleteError(getApiErrorMessage(err).message);
+      setDeleting(false);
+    }
   };
 
   useEffect(() => {
@@ -131,6 +148,43 @@ export default function ProfilePage() {
               <p className="text-[12px] text-brand-accent">End your session on this device</p>
             </div>
           </button>
+
+          {/* Delete account */}
+          {!confirmingDelete ? (
+            <button
+              onClick={() => setConfirmingDelete(true)}
+              className="lime-card flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-error/5"
+            >
+              <span className="material-symbols-outlined text-[22px] text-error">delete</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-error">Delete Account</p>
+                <p className="text-[12px] text-brand-accent">Permanently delete your account and data</p>
+              </div>
+            </button>
+          ) : (
+            <div className="lime-card p-5">
+              <p className="text-sm font-semibold text-error">
+                Permanently delete your account and all your data? This can&apos;t be undone.
+              </p>
+              {deleteError && <p className="mt-2 text-xs text-error">{deleteError}</p>}
+              <div className="mt-3 flex gap-2">
+                <button
+                  disabled={deleting}
+                  onClick={handleDeleteAccount}
+                  className="rounded-lg bg-error px-4 py-2 text-xs font-bold text-white disabled:opacity-60"
+                >
+                  {deleting ? 'Deleting…' : 'Yes, delete it'}
+                </button>
+                <button
+                  disabled={deleting}
+                  onClick={() => setConfirmingDelete(false)}
+                  className="rounded-lg border border-outline-variant px-4 py-2 text-xs font-semibold text-brand-text"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </AppShell>

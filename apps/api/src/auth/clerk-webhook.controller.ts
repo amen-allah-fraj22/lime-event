@@ -71,6 +71,10 @@ export class ClerkWebhookController {
       });
     }
 
+    if (payload.type === 'user.deleted') {
+      await this.authService.deleteUserByClerkId(payload.data.id);
+    }
+
     return { received: true };
   }
 }

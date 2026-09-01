@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { DbUserGuard } from '../auth/db-user.guard';
 import { ClerkAuthGuard } from '../auth/clerk-auth.guard';
 import { UsersService } from './users.service';
@@ -30,5 +30,10 @@ export class UsersController {
     @Body() body: SetActiveRoleDto,
   ) {
     return this.usersService.setActiveRole(req.dbUser.id, body.active_role);
+  }
+
+  @Delete('me')
+  deleteMe(@Req() req: { clerkUserId: string }) {
+    return this.usersService.deleteMe(req.clerkUserId);
   }
 }

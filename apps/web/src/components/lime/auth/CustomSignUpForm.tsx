@@ -48,7 +48,6 @@ export function CustomSignUpForm({ role }: { role: AuthRole }) {
   const [step, setStep] = useState<'form' | 'verify'>('form');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -69,7 +68,6 @@ export function CustomSignUpForm({ role }: { role: AuthRole }) {
       const result = await signUp.create({
         emailAddress: email,
         password,
-        username,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
         unsafeMetadata: { role },
@@ -269,25 +267,6 @@ export function CustomSignUpForm({ role }: { role: AuthRole }) {
                 className={inputBase}
               />
             </div>
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="username" className={labelBase}>
-            Username
-          </label>
-          <div className={inputWrap}>
-            <MaterialIcon name="alternate_email" size={20} className="text-secondary" />
-            <input
-              id="username"
-              type="text"
-              autoComplete="username"
-              required
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="yourname"
-              className={inputBase}
-            />
           </div>
         </div>
 
