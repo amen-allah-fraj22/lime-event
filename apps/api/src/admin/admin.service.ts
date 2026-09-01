@@ -37,30 +37,39 @@ export class AdminService {
   }
 
   async dashboardStats() {
-    // Sequential rather than Promise.all: this endpoint can run a dozen
-    // queries in one call, and the Supabase pooler here is capped at a
-    // small number of concurrent connections — firing them all at once
-    // starves other requests. One at a time keeps this to a single
-    // connection at the cost of a slightly slower response.
-    const users = await this.prisma.user.count();
-    const bookings = await this.prisma.bookingRequest.count({
-      where: { status: { in: ['pending', 'quoted', 'accepted', 'contracted'] } },
-    });
-    const payments = await this.prisma.payment.findMany({ where: { status: 'released' } });
-    const pendingPayouts = await this.prisma.payment.count({ where: { status: 'held' } });
-    const artistCount = await this.prisma.user.count({ where: { roles: { has: 'artist' } } });
-    const organizerCount = await this.prisma.user.count({ where: { roles: { has: 'organizer' } } });
-    const agencyCount = await this.prisma.user.count({ where: { roles: { has: 'agency' } } });
-    const verifiedArtistCount = await this.prisma.artistProfile.count({
-      where: { user: { is_verified: true } },
-    });
-    const pendingArtistCount = await this.prisma.artistProfile.count({
-      where: { user: { is_verified: false } },
-    });
-    const completionAgg = await this.prisma.artistProfile.aggregate({
-      _avg: { profile_completion: true },
-    });
-    const visitors = await this.analytics.visitorStats();
+    // Parallel is safe here: DATABASE_URL now goes through Supabase's
+    // transaction-mode pooler (port 6543), which multiplexes many
+    // concurrent short queries over a small backend pool instead of
+    // holding one connection per query like the old session-mode pooler
+    // did — that's what previously made a dozen parallel queries here
+    // exhaust the pool. No need to serialize them anymore.
+    const [
+      users,
+      bookings,
+      payments,
+      pendingPayouts,
+      artistCount,
+      organizerCount,
+      agencyCount,
+      verifiedArtistCount,
+      pendingArtistCount,
+      completionAgg,
+      visitors,
+    ] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.bookingRequest.count({
+        where: { status: { in: ['pending', 'quoted', 'accepted', 'contracted'] } },
+      }),
+      this.prisma.payment.findMany({ where: { status: 'released' } }),
+      this.prisma.payment.count({ where: { status: 'held' } }),
+      this.prisma.user.count({ where: { roles: { has: 'artist' } } }),
+      this.prisma.user.count({ where: { roles: { has: 'organizer' } } }),
+      this.prisma.user.count({ where: { roles: { has: 'agency' } } }),
+      this.prisma.artistProfile.count({ where: { user: { is_verified: true } } }),
+      this.prisma.artistProfile.count({ where: { user: { is_verified: false } } }),
+      this.prisma.artistProfile.aggregate({ _avg: { profile_completion: true } }),
+      this.analytics.visitorStats(),
+    ]);
     const totalRevenue = payments.reduce((s, p) => s + p.commission_amount, 0);
     return {
       total_users: users,

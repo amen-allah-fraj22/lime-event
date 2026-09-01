@@ -20,10 +20,11 @@ export class AnalyticsService {
   }
 
   async visitorStats() {
-    // Sequential to avoid piling onto an already-constrained connection pool.
-    const today = await this.uniqueSessions(daysAgo(0));
-    const last7d = await this.uniqueSessions(daysAgo(6));
-    const last30d = await this.uniqueSessions(daysAgo(29));
+    const [today, last7d, last30d] = await Promise.all([
+      this.uniqueSessions(daysAgo(0)),
+      this.uniqueSessions(daysAgo(6)),
+      this.uniqueSessions(daysAgo(29)),
+    ]);
     return { today, last_7_days: last7d, last_30_days: last30d };
   }
 
