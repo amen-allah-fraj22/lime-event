@@ -75,4 +75,13 @@ export class CalendarController {
     if (userId !== req.dbUser.id) throw new ForbiddenException();
     return this.calendarService.getGoogleCalendarEvents(userId);
   }
+
+  @Delete(':userId/google')
+  disconnectGoogleCalendar(
+    @Param('userId') userId: string,
+    @Req() req: { dbUser: { id: string } },
+  ) {
+    if (userId !== req.dbUser.id) throw new ForbiddenException();
+    return this.calendarService.disconnectGoogleCalendar(userId);
+  }
 }

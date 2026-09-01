@@ -66,8 +66,8 @@ export default function TermsPage() {
       <LegalSection heading="7. Contact">
         <p>
           Questions about these terms:{' '}
-          <a href="mailto:contact@lime.tn" className="text-primary underline">
-            contact@lime.tn
+          <a href="mailto:contact@limeevent.com" className="text-primary underline">
+            contact@limeevent.com
           </a>
         </p>
       </LegalSection>

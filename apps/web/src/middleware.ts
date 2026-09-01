@@ -8,6 +8,8 @@ const isPublicRoute = createRouteMatcher([
   '/artists/:id',
   '/explore/artists',
   '/explore/events',
+  '/privacy',
+  '/terms',
 ]);
 
 function signInUrlWithReturnBack(req: Request): string {

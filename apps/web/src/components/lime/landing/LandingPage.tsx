@@ -11,7 +11,7 @@ import { HeroPhoto } from './HeroPhoto';
 import { PinnedVideoBackground } from './PinnedVideoBackground';
 import { FacebookIcon, InstagramIcon } from './SocialIcons';
 
-const CONTACT_EMAIL = 'contact@lime.tn';
+const CONTACT_EMAIL = 'contact@limeevent.com';
 const CONTACT_PHONE_DISPLAY = '+216 21 563 012';
 const CONTACT_PHONE_TEL = '+21621563012';
 // Placeholders — swap for the real profile URLs once they exist.

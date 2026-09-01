@@ -48,6 +48,19 @@ export function CalendarManageSidebar({
   const [eventTitle, setEventTitle] = useState('');
   const [showDayStatusModal, setShowDayStatusModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [disconnecting, setDisconnecting] = useState(false);
+
+  async function handleDisconnectGoogle() {
+    setDisconnecting(true);
+    try {
+      await api.delete(`/calendar/${userId}/google`);
+      onRefresh();
+    } catch (err) {
+      setError(getApiErrorMessage(err).message);
+    } finally {
+      setDisconnecting(false);
+    }
+  }
 
   if (!selectedDate) {
     return (
@@ -56,7 +69,7 @@ export function CalendarManageSidebar({
           <MaterialIcon name="event" size={48} className="mx-auto mb-4 opacity-50" />
           <p>Select a date on the calendar to manage availability.</p>
         </div>
-        
+
         <div className="dashboard-shadow rounded-xl bg-surface-container-lowest p-6">
           <h3 className="mb-2 font-headline text-headline-sm font-bold">Integrations</h3>
           {!googleConnected ? (
@@ -65,8 +78,19 @@ export function CalendarManageSidebar({
               <CalendarSyncButton userId={userId} onSyncComplete={onRefresh} />
             </>
           ) : (
-            <div className="flex items-center gap-2 text-sm font-bold text-primary">
-              <MaterialIcon name="check_circle" /> Google Calendar Synced
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                <MaterialIcon name="check_circle" /> Google Calendar Synced
+              </div>
+              <button
+                type="button"
+                onClick={handleDisconnectGoogle}
+                disabled={disconnecting}
+                className="text-sm font-semibold text-secondary underline hover:text-error disabled:opacity-50"
+              >
+                {disconnecting ? 'Disconnecting…' : 'Disconnect Google Calendar'}
+              </button>
+              {error && <p className="text-xs text-error">{error}</p>}
             </div>
           )}
         </div>

@@ -154,6 +154,36 @@ export class CalendarService {
     return { success: true };
   }
 
+  async disconnectGoogleCalendar(artistId: string) {
+    const profile = await this.prisma.artistProfile.findUnique({
+      where: { user_id: artistId },
+    });
+
+    // Revoke with Google, not just delete locally — this actually
+    // invalidates the token so it can't be used even if it leaked, rather
+    // than just forgetting we had it.
+    if (profile?.google_calendar_refresh_token) {
+      const { google } = require('googleapis');
+      const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        process.env.GOOGLE_REDIRECT_URI,
+      );
+      await oauth2Client.revokeToken(profile.google_calendar_refresh_token).catch(() => undefined);
+    }
+
+    await this.prisma.artistProfile.update({
+      where: { user_id: artistId },
+      data: {
+        google_calendar_access_token: null,
+        google_calendar_refresh_token: null,
+        google_calendar_token_expiry: null,
+      },
+    });
+
+    return { success: true };
+  }
+
   async getGoogleCalendarEvents(artistId: string) {
     const profile = await this.prisma.artistProfile.findUnique({
       where: { user_id: artistId }
