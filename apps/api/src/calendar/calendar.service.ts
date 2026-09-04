@@ -111,6 +111,36 @@ export class CalendarService {
     });
   }
 
+  /** Same upsert as setDayOverride, applied to many dates at once — powers
+   * drag-to-select ranges and the bulk quick actions (block weekends, copy
+   * last month) on the calendar page. */
+  async setDayOverridesBulk(artistId: string, dto: { dates: string[], status: 'OPEN' | 'WARN' | 'BLOCKED' }) {
+    await this.prisma.$transaction(
+      dto.dates.map((dateStr) => {
+        const targetDate = new Date(dateStr);
+        return this.prisma.dayAvailabilityOverride.upsert({
+          where: { artist_id_date: { artist_id: artistId, date: targetDate } },
+          update: { status: dto.status },
+          create: { artist_id: artistId, date: targetDate, status: dto.status },
+        });
+      }),
+    );
+    return { updated: dto.dates.length };
+  }
+
+  /** Returns the artist's day-override statuses for one calendar month
+   * (YYYY-MM), so "Copy last month's availability" can read a source month
+   * before writing it onto the new one. */
+  async getMonthOverrides(artistId: string, month: string) {
+    const [year, mon] = month.split('-').map(Number);
+    const start = new Date(year, mon - 1, 1);
+    const end = new Date(year, mon, 0);
+    const overrides = await this.prisma.dayAvailabilityOverride.findMany({
+      where: { artist_id: artistId, date: { gte: start, lte: end } },
+    });
+    return overrides.map((o) => ({ date: o.date.toISOString().slice(0, 10), status: o.status }));
+  }
+
   // --- Google Calendar OAuth ---
   getGoogleAuthUrl(artistId: string) {
     const { google } = require('googleapis');

@@ -63,6 +63,8 @@ export type ArtistProfileFull = {
   is_profile_complete?: boolean;
   profile_completion?: number;
   user?: { id: string; is_verified?: boolean };
+  views_this_week?: number;
+  availability_preview?: { date: string; status: 'open' | 'busy' | 'blocked' | 'booked' }[];
 };
 
 export function parseBandMembers(raw: unknown): BandMember[] {

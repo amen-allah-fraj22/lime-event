@@ -18,6 +18,8 @@ import { parsePortfolioLinks } from '@/lib/portfolio-links';
 import { cn } from '@/lib/utils';
 
 import { ArtistWhatsIncluded } from '@/components/lime/artist/ArtistWhatsIncluded';
+import { ArtistBookingSidebar } from '@/components/lime/artist/ArtistBookingSidebar';
+import { ArtistStickyBookingBar } from '@/components/lime/artist/ArtistStickyBookingBar';
 import type { ArtistProfileFull } from '@/lib/artist-profile-types';
 import { parseBandMembers } from '@/lib/artist-profile-types';
 
@@ -330,8 +332,14 @@ export function ArtistPublicProfile({
         </div>
       </div>
 
-      {/* Tab panels */}
-      <div className="mx-auto mb-24 min-h-[400px] max-w-container-max px-margin-mobile py-8 md:px-margin-desktop">
+      {/* Tab panels + sticky booking sidebar */}
+      <div
+        className={cn(
+          'mx-auto mb-24 flex max-w-container-max flex-col gap-gutter px-margin-mobile py-8 md:px-margin-desktop lg:flex-row lg:items-start',
+          !isOwner && 'pb-28 lg:pb-0',
+        )}
+      >
+      <div className="min-h-[400px] min-w-0 flex-1">
         {tab === 'about' && (
           <div className="grid grid-cols-1 gap-gutter md:grid-cols-3">
             <div className="space-y-8 md:col-span-2">
@@ -539,6 +547,37 @@ export function ArtistPublicProfile({
           </div>
         )}
       </div>
+
+      {!isOwner && (
+        <ArtistBookingSidebar
+          artist={artist}
+          bookingSlot={
+            <BookingCta
+              profileId={artist.id}
+              artistUserId={artist.user?.id}
+              artistName={artist.display_name}
+              isOwner={isOwner}
+              isSignedIn={isSignedIn}
+            />
+          }
+        />
+      )}
+      </div>
+
+      {!isOwner && (
+        <ArtistStickyBookingBar
+          artist={artist}
+          bookingSlot={
+            <BookingCta
+              profileId={artist.id}
+              artistUserId={artist.user?.id}
+              artistName={artist.display_name}
+              isOwner={isOwner}
+              isSignedIn={isSignedIn}
+            />
+          }
+        />
+      )}
 
       {/* Footer strip (Stitch) */}
       <footer className="mx-auto grid max-w-container-max grid-cols-1 gap-gutter border-t border-outline-variant px-margin-mobile py-12 md:grid-cols-2 md:px-margin-desktop">

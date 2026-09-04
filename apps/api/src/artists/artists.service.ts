@@ -76,7 +76,78 @@ export class ArtistsService {
       include: { user: { select: { id: true, is_verified: true } } },
     });
     if (!profile) throw new NotFoundException('Artist not found');
-    return toPublicArtistProfile(profile);
+
+    const [viewsThisWeek, availabilityPreview] = await Promise.all([
+      this.profileViewsThisWeek(profile.id),
+      this.getAvailabilityPreview(profile.user_id),
+    ]);
+
+    return {
+      ...toPublicArtistProfile(profile),
+      views_this_week: viewsThisWeek,
+      availability_preview: availabilityPreview,
+    };
+  }
+
+  /** Distinct visiting sessions that hit this artist's public profile page in the last 7 days. */
+  private async profileViewsThisWeek(profileId: string): Promise<number> {
+    const since = new Date();
+    since.setDate(since.getDate() - 7);
+    const rows = await this.prisma.pageView.findMany({
+      where: { path: `/artists/${profileId}`, created_at: { gte: since } },
+      select: { session_id: true },
+      distinct: ['session_id'],
+    });
+    return rows.length;
+  }
+
+  /**
+   * Day-by-day open/busy/blocked status for the next ~6 weeks, for the
+   * public profile's availability preview. Deliberately excludes any event
+   * titles or booking details — just enough for an organizer to see "is
+   * this artist plausibly free," not who else booked them or for what.
+   */
+  private async getAvailabilityPreview(
+    userId: string,
+  ): Promise<{ date: string; status: 'open' | 'busy' | 'blocked' | 'booked' }[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const rangeEnd = new Date(today);
+    rangeEnd.setDate(rangeEnd.getDate() + 42);
+
+    const [overrides, bookings] = await Promise.all([
+      this.prisma.dayAvailabilityOverride.findMany({
+        where: { artist_id: userId, date: { gte: today, lte: rangeEnd } },
+      }),
+      this.prisma.bookingRequest.findMany({
+        where: {
+          artist_id: userId,
+          status: { in: ['accepted', 'contracted', 'completed'] },
+          event: { event_date: { gte: today, lte: rangeEnd } },
+        },
+        include: { event: { select: { event_date: true } } },
+      }),
+    ]);
+
+    const bookedDates = new Set(bookings.map((b) => b.event.event_date.toISOString().slice(0, 10)));
+    const overrideByDate = new Map(
+      overrides.map((o) => [o.date.toISOString().slice(0, 10), o.status]),
+    );
+
+    const days: { date: string; status: 'open' | 'busy' | 'blocked' | 'booked' }[] = [];
+    for (let d = new Date(today); d <= rangeEnd; d.setDate(d.getDate() + 1)) {
+      const key = d.toISOString().slice(0, 10);
+      const override = overrideByDate.get(key);
+      const status = bookedDates.has(key)
+        ? 'booked'
+        : override === 'BLOCKED'
+          ? 'blocked'
+          : override === 'WARN'
+            ? 'busy'
+            : 'open';
+      days.push({ date: key, status });
+    }
+    return days;
   }
 
   async getAvailability(artistId: string, dateStr: string) {

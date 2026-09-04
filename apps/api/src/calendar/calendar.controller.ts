@@ -46,6 +46,26 @@ export class CalendarController {
     return this.calendarService.setDayOverride(userId, body);
   }
 
+  @Post(':userId/day-overrides/bulk')
+  setDayOverridesBulk(
+    @Param('userId') userId: string,
+    @Req() req: { dbUser: { id: string } },
+    @Body() body: { dates: string[], status: 'OPEN' | 'WARN' | 'BLOCKED' },
+  ) {
+    if (userId !== req.dbUser.id) throw new ForbiddenException();
+    return this.calendarService.setDayOverridesBulk(userId, body);
+  }
+
+  @Get(':userId/day-overrides/month/:month')
+  getMonthOverrides(
+    @Param('userId') userId: string,
+    @Param('month') month: string,
+    @Req() req: { dbUser: { id: string } },
+  ) {
+    if (userId !== req.dbUser.id) throw new ForbiddenException();
+    return this.calendarService.getMonthOverrides(userId, month);
+  }
+
   // --- Google Calendar OAuth ---
   
   @Get(':userId/google/auth-url')
